@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Era - Authentication</title>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="icon" type="image/x-icon" href="./images/globe.svg">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+    rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Kanit', sans-serif;
+      background-color: #f5f5f5;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 360px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      padding: 30px;
+      text-align: center;
+    }
+
+    h2 {
+      font-size: 24px;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+
+    .form-button {
+      width: 100%;
+      padding: 12px;
+      background-color: #0b93f6;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 500;
+      transition: background-color 0.3s;
+    }
+
+    .form-button:hover {
+      background-color: #0a84e0;
+    }
+
+    .form-button:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+
+    p {
+      margin-top: 15px;
+      color: #666;
+    }
+
+    .toggle {
+      color: #0b93f6;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .toggle:hover {
+      text-decoration: underline;
+    }
+
+    .error-message {
+      color: #e74c3c;
+      font-size: 14px;
+      text-align: left;
+      margin-top: 4px;
+      display: none;
+    }
+
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s infinite linear;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .debug-toggle {
+      margin-top: 20px;
+      font-size: 12px;
+      color: #999;
+      cursor: pointer;
+    }
+
+    #debug-output {
+      margin-top: 15px;
+      padding: 10px;
+      background-color: #f5f5f5;
+      border-radius: 4px;
+      text-align: left;
+      font-size: 12px;
+      max-height: 200px;
+      overflow-y: auto;
+      display: none;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+  <script src="js/notifications.js"></script>
+  <script src="js/auth-fix.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Функція для перевірки стану автентифікації при завантаженні сторінки
+      function checkAuthState() {
+        const token = localStorage.getItem('token');
+        const tokenExpires = localStorage.getItem('tokenExpires');
+        const user = localStorage.getItem('user');
+        const redirectParams = new URLSearchParams(window.location.search);
+
+        // Відображаємо параметри в debug
+        if (redirectParams.has('debug') && redirectParams.get('debug') === 'true') {
+          toggleDebug();
+          logDebug('Auth state check', {
+            hasToken: !!token,
+            tokenExpires: tokenExpires || 'Not set',
+            hasUser: !!user,
+            redirectParams: Object.fromEntries(redirectParams)
+          });
+        }
+
+        // Показуємо відповідні повідомлення для різних типів перенаправлень
+        if (redirectParams.has('verified') && redirectParams.get('verified') === 'true') {
+          window.EraNotification.success('Вашу електронну пошту підтверджено! Ви можете увійти.', 'Верифікація успішна');
+        }
+
+        if (redirectParams.has('reset') && redirectParams.get('reset') === 'true') {
+          window.EraNotification.success('Пароль успішно змінено! Ви можете увійти.', 'Скидання пароля');
+        }
+
+        if (redirectParams.has('expired') && redirectParams.get('expired') === 'true') {
+          window.EraNotification.warning('Ваша сесія закінчилася. Будь ласка, увійдіть знову.', 'Сесія закінчилася');
+        }
+
+        if (redirectParams.has('logout') && redirectParams.get('logout') === 'true') {
+          window.EraNotification.info('Ви успішно вийшли з системи.', 'Вихід');
+        }
+
+        if (redirectParams.has('error')) {
+          window.EraNotification.error(decodeURIComponent(redirectParams.get('error')), 'Помилка авторизації');
+        }
+      }
+
+      // Викликаємо перевірку стану автентифікації
+      checkAuthState();
+    });
+  </script>
+</head>
+
+<body>
+  <div class="container">
+    <h2 id="form-title">Sign In</h2>
+
+    <!-- Login Form -->
+    <form id="loginForm">
+      <div class="form-group">
+        <input class="form-input" type="text" id="login-identifier" placeholder="Email or Username" autocomplete="username">
+        <div id="login-identifier-error" class="error-message"></div>
+      </div>
+      <div class="form-group">
+        <input type="password" id="login-password" class="form-input" placeholder="Password" autocomplete="current-password">
+        <div id="login-password-error" class="error-message"></div>
+      </div>
+      <div class="form-group" style="text-align: left; margin-bottom: 20px;">
+        <label style="display: flex; align-items: center; cursor: pointer;">
+          <input type="checkbox" id="remember-me" style="margin-right: 8px;">
+          <span style="font-size: 14px; color: #666;">Remember me for 30 days</span>
+        </label>
+      </div>
+
+      <!-- Biometric Authentication Option (shown only when available) -->
+      <div id="biometric-auth-option" style="display: none; margin-bottom: 15px;">
+        <button type="button" id="biometric-login-button" class="form-button" style="background-color: #34c759; margin-bottom: 10px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" style="margin-right: 8px; vertical-align: middle;">
+            <path fill="currentColor" d="M12,2A2,2 0 0,1 14,4V8H10V4A2,2 0 0,1 12,2M22,13V21A2,2 0 0,1 20,23H4A2,2 0 0,1 2,21V13A2,2 0 0,1 4,11H6V8H8V11H16V8H18V11H20A2,2 0 0,1 22,13M16,15H8V17H16V15Z" />
+          </svg>
+          Sign in with Biometrics
+        </button>
+      </div>
+
+      <div id="login-general-error" class="error-message"></div>
+      <button type="submit" class="form-button" id="login-button">Sign In</button>
+
+      <!-- Social Login Options -->
+      <div style="margin: 20px 0; position: relative; text-align: center;">
+        <hr style="border: none; border-top: 1px solid #ddd; margin: 10px 0;">
+        <span style="position: absolute; top: 0; left: 50%; transform: translate(-50%, -50%); background: white; padding: 0 10px; color: #666; font-size: 14px;">or continue with</span>
+      </div>
+
+      <div style="display: flex; justify-content: center; gap: 15px; margin-bottom: 15px;">
+        <button type="button" onclick="loginWithGoogle()" class="social-button" style="display: flex; align-items: center; justify-content: center; padding: 10px 15px; border: 1px solid #ddd; background: white; border-radius: 4px; cursor: pointer; width: 140px;">
+          <img src="https://same-assets.com/shared-assets/google-logo.svg" alt="Google" style="width: 18px; height: 18px; margin-right: 8px;">
+          Google
+        </button>
+        <button type="button" onclick="loginWithFacebook()" class="social-button" style="display: flex; align-items: center; justify-content: center; padding: 10px 15px; border: 1px solid #ddd; background: white; border-radius: 4px; cursor: pointer; width: 140px;">
+          <img src="https://same-assets.com/shared-assets/facebook-logo.svg" alt="Facebook" style="width: 18px; height: 18px; margin-right: 8px;">
+          Facebook
+        </button>
+      </div>
+
+      <div style="display: flex; justify-content: center; gap: 15px; margin-bottom: 15px;">
+        <button type="button" onclick="loginWithGitHub()" class="social-button" style="display: flex; align-items: center; justify-content: center; padding: 10px 15px; border: 1px solid #ddd; background: white; border-radius: 4px; cursor: pointer; width: 140px;">
+          <img src="https://same-assets.com/shared-assets/github-logo.svg" alt="GitHub" style="width: 18px; height: 18px; margin-right: 8px;">
+          GitHub
+        </button>
+        <button type="button" onclick="loginWithTwitter()" class="social-button" style="display: flex; align-items: center; justify-content: center; padding: 10px 15px; border: 1px solid #ddd; background: white; border-radius: 4px; cursor: pointer; width: 140px;">
+          <img src="https://same-assets.com/shared-assets/twitter-logo.svg" alt="Twitter" style="width: 18px; height: 18px; margin-right: 8px;">
+          Twitter
+        </button>
+      </div>
+
+      <p>Don't have an account? <span class="toggle" onclick="toggleForm()">Register</span></p>
+      <p><a href="/reset-password.html" class="toggle">Forgot your password?</a></p>
+    </form>
+
+    <!-- Registration Form -->
+    <form id="registerForm" class="hidden">
+      <div class="form-group">
+        <input type="text" id="register-username" class="form-input" placeholder="Username">
+        <div id="register-username-error" class="error-message"></div>
+      </div>
+      <div class="form-group">
+        <input type="email" id="register-email" class="form-input" placeholder="Email" autocomplete="email">
+        <div id="register-email-error" class="error-message"></div>
+      </div>
+      <div class="form-group">
+        <input type="password" id="register-password" class="form-input" placeholder="Password" autocomplete="new-password">
+        <div id="register-password-error" class="error-message"></div>
+      </div>
+      <div class="form-group" style="text-align: left; margin-bottom: 20px;">
+        <label style="display: flex; align-items: center; cursor: pointer;">
+          <input type="checkbox" id="register-remember-me" style="margin-right: 8px;">
+          <span style="font-size: 14px; color: #666;">Remember me for 30 days</span>
+        </label>
+      </div>
+      <div id="register-general-error" class="error-message"></div>
+      <button type="submit" class="form-button" id="register-button">Register</button>
+      <p>Already have an account? <span class="toggle" onclick="toggleForm()">Sign In</span></p>
+    </form>
+
+    <div class="debug-toggle" onclick="toggleDebug()">Show Debug Info</div>
+    <div id="debug-output"></div>
+  </div>
+
+  <script>
+    // Configuration
+    const API_BASE_URL = window.location.origin; // Use the current origin
+    console.log('Using API base URL:', API_BASE_URL);
+
+    // Debug functions
+    let debugVisible = false;
+    function toggleDebug() {
+      debugVisible = !debugVisible;
+      document.getElementById('debug-output').style.display = debugVisible ? 'block' : 'none';
+      document.querySelector('.debug-toggle').textContent = debugVisible ? 'Hide Debug Info' : 'Show Debug Info';
+    }
+
+    function logDebug(message, data) {
+      const debugOutput = document.getElementById('debug-output');
+      const logEntry = document.createElement('div');
+      logEntry.innerHTML = `<strong>${new Date().toISOString()}</strong>: ${message}`;
+
+      if (data) {
+        const pre = document.createElement('pre');
+        try {
+          pre.textContent = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
+        } catch (e) {
+          pre.textContent = 'Failed to stringify data: ' + e.message;
+        }
+        logEntry.appendChild(pre);
+      }
+
+      debugOutput.appendChild(logEntry);
+      debugOutput.scrollTop = debugOutput.scrollHeight;
+      console.log(message, data);
+    }
+
+    // Check if we're being redirected in a loop
+    function checkRedirectLoop() {
+      const now = new Date().getTime();
+      const lastRedirectTime = parseInt(sessionStorage.getItem('lastRedirectTime') || '0');
+      const redirectCount = parseInt(sessionStorage.getItem('redirectCount') || '0');
+
+      // If we've been redirected within the last 2 seconds
+      if (now - lastRedirectTime < 2000) {
+        sessionStorage.setItem('redirectCount', (redirectCount + 1).toString());
+
+        // If we've been redirected more than 3 times in quick succession
+        if (redirectCount >= 2) {
+          console.error('Detected redirect loop - preventing further redirects');
+          sessionStorage.setItem('preventRedirect', 'true');
+
+          // Show error message
+          const errorDiv = document.createElement('div');
+          errorDiv.style.backgroundColor = '#ffeeee';
+          errorDiv.style.color = '#cc0000';
+          errorDiv.style.padding = '15px';
+          errorDiv.style.margin = '15px 0';
+          errorDiv.style.borderRadius = '5px';
+          errorDiv.innerHTML = '<strong>Authentication Error:</strong> Detected a redirect loop. Please clear your browser data and try again.';
+
+          document.querySelector('.container').prepend(errorDiv);
+
+          // Show debug info automatically
+          debugVisible = true;
+          document.getElementById('debug-output').style.display = 'block';
+          document.querySelector('.debug-toggle').textContent = 'Hide Debug Info';
+
+          return true;
+        }
+      } else {
+        // Reset counter if it's been more than 2 seconds
+        sessionStorage.setItem('redirectCount', '1');
+      }
+
+      sessionStorage.setItem('lastRedirectTime', now.toString());
+      return false;
+    }
+
+    // Utility functions
+    function showError(elementId, message) {
+      const errorElement = document.getElementById(elementId);
+      errorElement.textContent = message;
+      errorElement.style.display = 'block';
+    }
+
+    function clearError(elementId) {
+      const errorElement = document.getElementById(elementId);
+      errorElement.style.display = 'none';
+    }
+
+    function clearAllErrors(formType) {
+      if (formType === 'login') {
+        clearError('login-identifier-error');
+        clearError('login-password-error');
+        clearError('login-general-error');
+      } else {
+        clearError('register-username-error');
+        clearError('register-email-error');
+        clearError('register-password-error');
+        clearError('register-general-error');
+      }
+    }
+
+    function setButtonLoading(buttonId, isLoading) {
+      const button = document.getElementById(buttonId);
+
+      if (isLoading) {
+        button.disabled = true;
+        button.dataset.originalText = button.textContent;
+        button.innerHTML = `${button.dataset.originalText} <span class="loading"></span>`;
+      } else {
+        button.disabled = false;
+        button.textContent = button.dataset.originalText || (buttonId === 'login-button' ? 'Sign In' : 'Register');
+      }
+    }
+
+    function validateEmail(email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
+    }
+
+    // Handle JSON parsing safely
+    async function safeParseResponse(response) {
+      try {
+        const text = await response.text();
+        logDebug('Raw response:', text);
+
+        if (text.trim().startsWith('<!DOCTYPE') || text.trim().startsWith('<html') || text.trim().includes('<body')) {
+          logDebug('Response appears to be HTML instead of JSON');
+          return {
+            error: 'Server returned HTML instead of JSON. This typically indicates a server configuration issue.',
+            html: text
+          };
+        }
+
+        try {
+          return JSON.parse(text);
+        } catch (parseError) {
+          logDebug('JSON parse error:', parseError.message);
+          return {
+            error: 'Failed to parse server response as JSON',
+            rawText: text
+          };
+        }
+      } catch (error) {
+        logDebug('Error reading response:', error);
+        return { error: 'Failed to read server response' };
+      }
+    }
+
+    // Form toggle
+    function toggleForm() {
+      document.getElementById("loginForm").classList.toggle("hidden");
+      document.getElementById("registerForm").classList.toggle("hidden");
+
+      document.getElementById("form-title").textContent =
+        document.getElementById("registerForm").classList.contains("hidden")
+          ? "Sign In"
+          : "Register";
+
+      // Clear all errors and form fields
+      clearAllErrors('login');
+      clearAllErrors('register');
+
+      if (document.getElementById("loginForm").classList.contains("hidden")) {
+        document.getElementById("register-username").value = '';
+        document.getElementById("register-email").value = '';
+        document.getElementById("register-password").value = '';
+      } else {
+        document.getElementById("login-identifier").value = '';
+        document.getElementById("login-password").value = '';
+      }
+    }
+
+    // Login form submission
+    document.getElementById("loginForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      clearAllErrors('login');
+
+      const identifier = document.getElementById("login-identifier").value.trim();
+      const password = document.getElementById("login-password").value;
+      const rememberMe = document.getElementById("remember-me").checked;
+      let isValid = true;
+
+      // Validation
+      if (!identifier) {
+        showError('login-identifier-error', 'Please enter your email or username');
+        isValid = false;
+      }
+
+      if (!password) {
+        showError('login-password-error', 'Please enter your password');
+        isValid = false;
+      }
+
+      if (!isValid) return;
+
+      // Show loading state
+      setButtonLoading('login-button', true);
+
+      try {
+        logDebug('Login attempt with:', { identifier, password: '********', rememberMe });
+
+        const response = await fetch(`${API_BASE_URL}/auth/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username: identifier, password, rememberMe }),
+          credentials: 'include'
+        });
+
+        logDebug('Login response status:', response.status);
+        logDebug('Login response headers:', [...response.headers.entries()]);
+
+        const data = await safeParseResponse(response);
+
+        // Перевіряємо спеціальний код помилки для обмеження спроб
+        if (response.status === 429) {
+          logDebug('Rate limit exceeded:', data);
+
+          // Показуємо спеціальне повідомлення про блокування
+          const errorMessage = data.message || 'Too many failed login attempts. Your account is temporarily locked.';
+
+          // Use notification system for better visibility
+          if (window.EraNotification) {
+            window.EraNotification.error(errorMessage, 'Account Temporarily Locked');
+          } else {
+            showError('login-general-error', errorMessage);
+          }
+
+          // Disable login button for a short period
+          setButtonLoading('login-button', true);
+          document.getElementById('login-button').disabled = true;
+
+          // Enable the button after 5 seconds
+          setTimeout(() => {
+            document.getElementById('login-button').disabled = false;
+            setButtonLoading('login-button', false);
+          }, 5000);
+
+          return;
+        }
+
+        // Handle remaining attempts message
+        if (response.status === 400 && data.remainingAttempts !== undefined) {
+          logDebug('Login failed with remaining attempts:', data);
+
+          // Show warning with attempts counter
+          if (window.EraNotification) {
+            window.EraNotification.warning(data.message || `Invalid credentials. ${data.remainingAttempts} attempts remaining.`, 'Login Failed');
+          } else {
+            showError('login-general-error', data.message || `Invalid credentials. ${data.remainingAttempts} attempts remaining.`);
+          }
+          return;
+        }
+
+        if (data.error) {
+          // Use notification instead of showing error in form
+          if (window.EraNotification) {
+            window.EraNotification.error(data.error, 'Login Error');
+          } else {
+            showError('login-general-error', data.error);
+          }
+          return;
+        }
+
+        // Clear any previous tokens or user data
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+
+        if (response.ok) {
+          logDebug('Login successful:', data);
+
+          // Store token or session info
+          if (data.token) {
+            localStorage.setItem("token", data.token);
+            logDebug('Token stored in localStorage:', data.token.substring(0, 10) + '...');
+
+            // Store token expiration and remember me preference
+            if (data.expiresIn) {
+              // Calculate expiration date based on expiresIn
+              const expirationTime = new Date();
+              if (data.expiresIn === '30d') {
+                expirationTime.setDate(expirationTime.getDate() + 30);
+              } else {
+                expirationTime.setHours(expirationTime.getHours() + 24);
+              }
+              localStorage.setItem("tokenExpires", expirationTime.toISOString());
+              logDebug('Token expiration stored:', expirationTime.toISOString());
+            }
+
+            // Store remember me preference
+            localStorage.setItem("rememberMe", data.rememberMe ? "true" : "false");
+          } else {
+            logDebug('WARNING: No token received from server!');
+          }
+
+          // Store user data
+          if (data.user) {
+            localStorage.setItem("user", JSON.stringify(data.user));
+            logDebug('User data stored in localStorage');
+          }
+
+          // Redirect to profile or dashboard
+          const redirectUrl = data.redirect || "/profile.html";
+          logDebug('Redirecting to:', redirectUrl);
+
+          // Check for redirect loops before redirecting
+          if (!checkRedirectLoop() && sessionStorage.getItem('preventRedirect') !== 'true') {
+            // Short delay before redirect to ensure localStorage is updated
+            setTimeout(() => {
+              window.location.href = redirectUrl;
+            }, 100);
+          } else {
+            logDebug('Prevented redirect due to detected loop');
+            showError('login-general-error', 'Login successful, but redirect was prevented due to a possible loop. Please navigate manually to ' + redirectUrl);
+            document.getElementById('login-general-error').style.color = '#2ecc71';
+          }
+        } else {
+          // Handle server errors
+          showError('login-general-error', data.message || "Invalid login credentials");
+        }
+      } catch (error) {
+        console.error("Error during login:", error);
+        logDebug('Login error:', error.message);
+
+        // Use notification instead of showing error in form
+        if (window.EraNotification) {
+          window.EraNotification.error("Server connection error: " + error.message, 'Connection Error');
+        } else {
+          showError('login-general-error', "Server connection error: " + error.message);
+        }
+      } finally {
+        setButtonLoading('login-button', false);
+      }
+    });
+
+    // Registration form submission
+    document.getElementById("registerForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      clearAllErrors('register');
+
+      const username = document.getElementById("register-username").value.trim();
+      const email = document.getElementById("register-email").value.trim();
+      const password = document.getElementById("register-password").value;
+      const rememberMe = document.getElementById("register-remember-me").checked;
+      const latinRegex = /^[a-zA-Z0-9]+$/;
+      let isValid = true;
+
+      // Validation
+      if (!username) {
+        showError('register-username-error', 'Please enter username');
+        isValid = false;
+      } else if (username.length < 3) {
+        showError('register-username-error', 'Username must be at least 3 characters');
+        isValid = false;
+      } else if (!latinRegex.test(username)) {
+        showError('register-username-error', 'Username can only contain Latin letters and numbers');
+        isValid = false;
+      }
+
+      if (!email) {
+        showError('register-email-error', 'Please enter email');
+        isValid = false;
+      } else if (!validateEmail(email)) {
+        showError('register-email-error', 'Please enter a valid email');
+        isValid = false;
+      }
+
+      if (!password) {
+        showError('register-password-error', 'Please enter password');
+        isValid = false;
+      } else if (password.length < 6) {
+        showError('register-password-error', 'Password must be at least 6 characters');
+        isValid = false;
+      }
+
+      if (!isValid) return;
+
+      // Show loading state
+      setButtonLoading('register-button', true);
+
+      try {
+        logDebug('Registration attempt with:', { username, email, password: '********', rememberMe });
+
+        const response = await fetch(`${API_BASE_URL}/auth/registration`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, email, password, rememberMe }),
+          credentials: 'include'
+        });
+
+        logDebug('Registration response status:', response.status);
+        logDebug('Registration response headers:', [...response.headers.entries()]);
+
+        const data = await safeParseResponse(response);
+
+        if (data.error) {
+          // Use notification instead of showing error in form
+          if (window.EraNotification) {
+            window.EraNotification.error(data.error, 'Registration Error');
+          } else {
+            showError('register-general-error', data.error);
+          }
+          return;
+        }
+
+        if (response.ok) {
+          logDebug('Registration successful:', data);
+
+          // Store token if provided
+          if (data.token) {
+            localStorage.setItem("token", data.token);
+          }
+
+          // Store user data if provided
+          if (data.user) {
+            localStorage.setItem("user", JSON.stringify(data.user));
+          }
+
+          // Check if there's a redirect
+          if (data.redirect) {
+            window.location.href = data.redirect;
+          } else {
+            // If no redirect, show success notification instead of form error styling
+            if (window.EraNotification) {
+              window.EraNotification.success('Registration successful! Please sign in.', 'Success');
+              setTimeout(toggleForm, 2000);
+            } else {
+              showError('register-general-error', 'Registration successful! Please sign in.');
+              document.getElementById('register-general-error').style.color = '#2ecc71';
+              setTimeout(toggleForm, 2000);
+            }
+          }
+        } else {
+          // Handle error messages from server
+          if (data.errors && data.errors.length > 0) {
+            // Handle validation errors
+            data.errors.forEach(err => {
+              if (err.param === 'username') {
+                showError('register-username-error', err.msg);
+              } else if (err.param === 'email') {
+                showError('register-email-error', err.msg);
+              } else if (err.param === 'password') {
+                showError('register-password-error', err.msg);
+              }
+            });
+          } else {
+            // General error
+            showError('register-general-error', data.message || 'Registration error');
+          }
+        }
+      } catch (error) {
+        console.error("Error during registration:", error);
+        logDebug('Registration error:', error.message);
+
+        // Use notification instead of showing error in form
+        if (window.EraNotification) {
+          window.EraNotification.error("Server connection error: " + error.message, 'Connection Error');
+        } else {
+          showError('register-general-error', "Server connection error: " + error.message);
+        }
+      } finally {
+        setButtonLoading('register-button', false);
+      }
+    });
+
+    // Social Login Functions
+    async function loginWithGoogle() {
+      logDebug('Starting Google login flow');
+
+      try {
+        // In a real implementation, this would redirect to Google OAuth
+        // For demo purposes, we'll use our mock OAuth flow
+        window.location.href = `${API_BASE_URL}/oauth/google/login?redirect_uri=${encodeURIComponent(window.location.origin + '/auth-callback.html')}`;
+      } catch (error) {
+        console.error('Google login error:', error);
+        showError('login-general-error', 'Google login error: ' + error.message);
+      }
+    }
+
+    async function loginWithFacebook() {
+      logDebug('Starting Facebook login flow');
+
+      try {
+        // In a real implementation, this would redirect to Facebook OAuth
+        // For demo purposes, we'll use our mock OAuth flow
+        window.location.href = `${API_BASE_URL}/oauth/facebook/login?redirect_uri=${encodeURIComponent(window.location.origin + '/auth-callback.html')}`;
+      } catch (error) {
+        console.error('Facebook login error:', error);
+        showError('login-general-error', 'Facebook login error: ' + error.message);
+      }
+    }
+
+    async function loginWithGitHub() {
+      logDebug('Starting GitHub login flow');
+
+      try {
+        // In a real implementation, this would redirect to GitHub OAuth
+        // For demo purposes, we'll use our mock OAuth flow
+        window.location.href = `${API_BASE_URL}/oauth/github/login?redirect_uri=${encodeURIComponent(window.location.origin + '/auth-callback.html')}`;
+      } catch (error) {
+        console.error('GitHub login error:', error);
+        showError('login-general-error', 'GitHub login error: ' + error.message);
+      }
+    }
+
+    async function loginWithTwitter() {
+      logDebug('Starting Twitter login flow');
+
+      try {
+        // In a real implementation, this would redirect to Twitter OAuth
+        // For demo purposes, we'll use our mock OAuth flow
+        window.location.href = `${API_BASE_URL}/oauth/twitter/login?redirect_uri=${encodeURIComponent(window.location.origin + '/auth-callback.html')}`;
+      } catch (error) {
+        console.error('Twitter login error:', error);
+        showError('login-general-error', 'Twitter login error: ' + error.message);
+      }
+    }
+
+    // Biometric Authentication Support
+    function isBiometricAuthAvailable() {
+      // Check if the Web Authentication API is available
+      return window.PublicKeyCredential &&
+        typeof window.PublicKeyCredential === 'function' &&
+        typeof navigator.credentials !== 'undefined' &&
+        typeof navigator.credentials.get === 'function';
+    }
+
+    // Function to check if user is on a mobile device
+    function isMobileDevice() {
+      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    }
+
+    async function checkBiometricAvailability() {
+      const biometricAvailable = isBiometricAuthAvailable();
+      const isMobile = isMobileDevice();
+      const biometricDiv = document.getElementById('biometric-auth-option');
+
+      if (biometricAvailable && isMobile) {
+        // For now, just show the option. In a real app, we'd check if the user
+        // has registered biometrics for this device.
+        biometricDiv.style.display = 'block';
+        logDebug('Biometric authentication is available on this device');
+
+        // Add event listener to the biometric login button
+        document.getElementById('biometric-login-button').addEventListener('click', attemptBiometricLogin);
+      } else {
+        logDebug('Biometric authentication is not available', {
+          biometricAvailable, isMobile
+        });
+      }
+    }
+
+    async function attemptBiometricLogin() {
+      logDebug('Attempting biometric login');
+
+      try {
+        // Get username from input field
+        const username = document.getElementById("login-identifier").value.trim();
+
+        if (!username) {
+          showError('login-identifier-error', 'Please enter your username to use biometric login');
+          return;
+        }
+
+        setButtonLoading('biometric-login-button', true);
+
+        // In a real implementation, we would:
+        // 1. Get a challenge from the server
+        // 2. Use WebAuthn to get credentials
+        // 3. Send the credentials to the server for verification
+
+        // For this demo, we'll simulate with a mock call:
+        const mockDeviceId = 'device_' + Math.random().toString(36).substring(2, 10);
+        const mockBiometricKeyId = 'biokey_' + Math.random().toString(36).substring(2, 10);
+        const mockSignature = 'bio_sig_' + Math.random().toString(36).substring(2, 15);
+
+        const response = await fetch(`${API_BASE_URL}/auth/biometric/verify`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username,
+            deviceId: mockDeviceId,
+            biometricKeyId: mockBiometricKeyId,
+            biometricSignature: mockSignature
+          }),
+          credentials: 'include'
+        });
+
+        if (!response.ok) {
+          // If this is a 404 or similar, it might mean user hasn't registered biometrics
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Biometric authentication failed');
+        }
+
+        const data = await response.json();
+        logDebug('Biometric login successful', data);
+
+        // Store token and user data
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+
+        // Set expiration time
+        const expirationTime = new Date();
+        expirationTime.setDate(expirationTime.getDate() + 90); // 90 days
+        localStorage.setItem('tokenExpires', expirationTime.toISOString());
+
+        // Show success message
+        if (window.EraNotification) {
+          window.EraNotification.success('Biometric authentication successful', 'Welcome Back');
+        }
+
+        // Redirect to profile page
+        setTimeout(() => {
+          window.location.href = '/profile.html';
+        }, 1000);
+
+      } catch (error) {
+        console.error('Biometric login error:', error);
+        showError('login-general-error', 'Biometric authentication failed: ' + error.message);
+
+        if (window.EraNotification) {
+          window.EraNotification.error('Biometric authentication failed: ' + error.message, 'Authentication Error');
+        }
+      } finally {
+        setButtonLoading('biometric-login-button', false);
+      }
+    }
+
+    // Check for biometric availability when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      checkBiometricAvailability();
+    });
+
+    // Start with clear error messages
+    clearAllErrors('login');
+    clearAllErrors('register');
+
+    // Check for any query parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('verified') === 'true') {
+      showError('login-general-error', 'Email verified! You can now log in.');
+      document.getElementById('login-general-error').style.color = '#2ecc71';
+    }
+    if (urlParams.get('reset') === 'true') {
+      showError('login-general-error', 'Password reset successful! You can now log in with your new password.');
+      document.getElementById('login-general-error').style.color = '#2ecc71';
+    }
+
+    // Log initial state
+    logDebug('Auth page loaded', {
+      baseUrl: API_BASE_URL,
+      hasToken: !!localStorage.getItem('token')
+    });
+  </script>
+</body>
+
+</html>

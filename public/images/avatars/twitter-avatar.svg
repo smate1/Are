@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle -->
+  <circle cx="100" cy="100" r="100" fill="#1DA1F2"/>
+
+  <!-- Head Icon -->
+  <circle cx="100" cy="80" r="40" fill="#FFFFFF"/>
+
+  <!-- Body Icon -->
+  <path d="M100 130C67 130 40 157 40 190V200H160V190C160 157 133 130 100 130Z" fill="#FFFFFF"/>
+
+  <!-- Twitter Bird Icon -->
+  <g transform="translate(140, 40) scale(0.45)">
+    <path d="M40 15C40 15 42 18 42 19C42 19 31 32 18 32C18 32 8 32 8 32C8 32 17 27 18 25C18 25 14 25 11 21C11 21 10 20 11 20C11 20 12 20 12 20C12 20 7 18 7 13C7 12 8 12 9 13C9 13 4 8 6 4C6 3 7 4 7 4C7 4 13 13 24 13C24 13 22 7 27 4C31 1 36 4 37 6C37 6 40 5 42 4C42 4 42 6 41 7C41 7 43 6 44 6C44 6 44 7 42 9C42 13 40 15 40 15" fill="#1DA1F2"/>
+  </g>
+</svg>

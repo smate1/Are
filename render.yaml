@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: era-platform
+    env: node
+    buildCommand: npm install
+    startCommand: USE_MOCK_DB=true npm run start:node
+    envVars:
+      - key: NODE_VERSION
+        value: 18
+      - key: USE_MOCK_DB
+        value: "true"
+    healthCheckPath: /health
+    healthCheckTimeout: 5

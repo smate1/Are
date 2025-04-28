@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Era - Profile</title>
+  <link rel="stylesheet" href="./css/reset.css">
+  <link rel="stylesheet" href="./css/slick.css">
+  <link rel="stylesheet" href="./css/jquery.fancybox.css">
+  <link rel="icon" type="image/x-icon" href="./images/globe.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="./css/main.css">
+  <style>
+    .profile-container {
+      padding-top: 95px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      max-width: 800px;
+      margin: 0 auto;
+      min-height: 100vh;
+      padding-bottom: 50px;
+    }
+
+    .profile-header {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 30px;
+      padding: 20px;
+      background: #0f0f0f;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    #avatar {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid #333;
+      margin-bottom: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    #avatar:hover {
+      transform: scale(1.05);
+      border-color: #555;
+    }
+
+    #username {
+      font-size: 32px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: #fff;
+    }
+
+    .profile-email {
+      font-size: 18px;
+      color: #888;
+      margin-bottom: 20px;
+    }
+
+    .avatar-controls {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      margin-bottom: 30px;
+    }
+
+    .file-upload {
+      position: relative;
+      display: inline-block;
+      margin-bottom: 15px;
+      width: 100%;
+      max-width: 300px;
+    }
+
+    .file-upload-label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 12px 0;
+      background: #222;
+      color: #fff;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 16px;
+      text-align: center;
+    }
+
+    .file-upload-label:hover {
+      background: #333;
+    }
+
+    .file-upload input[type="file"] {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .profile-button {
+      padding: 12px 25px;
+      background: #222;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin: 10px 0;
+      font-family: 'Kanit', sans-serif;
+      width: 100%;
+      max-width: 300px;
+    }
+
+    .profile-button:hover {
+      background: #333;
+    }
+
+    .profile-button.danger {
+      background: #8B0000;
+    }
+
+    .profile-button.danger:hover {
+      background: #A00000;
+    }
+
+    .profile-section {
+      width: 100%;
+      margin-bottom: 30px;
+      background: #0f0f0f;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .profile-section h3 {
+      font-size: 22px;
+      font-weight: 500;
+      margin-bottom: 15px;
+      color: #fff;
+      border-bottom: 1px solid #333;
+      padding-bottom: 10px;
+    }
+
+    .profile-section p {
+      font-size: 16px;
+      line-height: 1.6;
+      color: #bbb;
+    }
+
+    .profile-actions {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      max-width: 300px;
+      gap: 10px;
+    }
+
+    .navigation-links {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      margin-bottom: 30px;
+    }
+
+    .nav-link {
+      margin: 0 15px;
+      color: #fff;
+      font-size: 18px;
+      text-decoration: none;
+      padding: 5px 10px;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+    }
+
+    .nav-link:hover {
+      background: #333;
+    }
+
+    /* Additional styles for the file name display */
+    .file-name {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #888;
+    }
+
+    .dark-mode {
+      background: #fff;
+      color: #000;
+    }
+
+    .dark-mode .profile-header,
+    .dark-mode .profile-section {
+      background: #f4f4f4;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .dark-mode #username {
+      color: #222;
+    }
+
+    .dark-mode .profile-section h3 {
+      color: #222;
+      border-bottom-color: #ddd;
+    }
+
+    .dark-mode .profile-section p {
+      color: #555;
+    }
+
+    .dark-mode .profile-button,
+    .dark-mode .file-upload-label {
+      background: #ddd;
+      color: #222;
+    }
+
+    .dark-mode .profile-button:hover,
+    .dark-mode .file-upload-label:hover {
+      background: #ccc;
+    }
+
+    .dark-mode .profile-button.danger {
+      background: #ffcccc;
+      color: #8B0000;
+    }
+
+    .dark-mode .profile-button.danger:hover {
+      background: #ffbbbb;
+    }
+
+    .dark-mode .nav-link {
+      color: #222;
+    }
+
+    .dark-mode .nav-link:hover {
+      background: #ddd;
+    }
+
+    /* Additional styles for the new form elements */
+    .form-group {
+      margin-bottom: 15px;
+      width: 100%;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      color: #bbb;
+      font-weight: 500;
+    }
+
+    .profile-input {
+      width: 100%;
+      padding: 10px;
+      background: #222;
+      border: 1px solid #333;
+      border-radius: 4px;
+      color: #fff;
+      font-family: 'Kanit', sans-serif;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+
+    .profile-input:focus {
+      outline: none;
+      border-color: #444;
+      background: #1a1a1a;
+    }
+
+    .profile-textarea {
+      height: 100px;
+      resize: vertical;
+    }
+
+    .dark-mode .form-group label {
+      color: #555;
+    }
+
+    .dark-mode .profile-input {
+      background: #fff;
+      border-color: #ddd;
+      color: #222;
+    }
+
+    .dark-mode .profile-input:focus {
+      border-color: #aaa;
+      background: #f9f9f9;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .profile-section {
+      animation: fadeIn 0.5s ease forwards;
+    }
+
+    .profile-section:nth-child(2) { animation-delay: 0.1s; }
+    .profile-section:nth-child(3) { animation-delay: 0.2s; }
+    .profile-section:nth-child(4) { animation-delay: 0.3s; }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      overflow: auto;
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: 10% auto;
+      padding: 20px;
+      border-radius: 8px;
+      width: 80%;
+      max-width: 600px;
+      position: relative;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .close-modal {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      font-size: 24px;
+      cursor: pointer;
+      color: #888;
+    }
+
+    .close-modal:hover {
+      color: #333;
+    }
+
+    /* Form Styles */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+      transition: border-color 0.3s;
+    }
+
+    .form-input:focus {
+      border-color: #0b93f6;
+      outline: none;
+    }
+
+    textarea.form-input {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .primary-button, .secondary-button {
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 500;
+      border: none;
+    }
+
+    .primary-button {
+      background-color: #0b93f6;
+      color: white;
+    }
+
+    .secondary-button {
+      background-color: #f5f5f5;
+      border: 1px solid #ddd;
+      color: #333;
+    }
+
+    .primary-button:hover {
+      background-color: #0a84e0;
+    }
+
+    .secondary-button:hover {
+      background-color: #eee;
+    }
+
+    /* Interest Tags */
+    .interests-container {
+      position: relative;
+    }
+
+    .interest-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .interest-tag {
+      background-color: #e8f4fd;
+      color: #0b93f6;
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+    }
+
+    .remove-tag {
+      margin-left: 5px;
+      cursor: pointer;
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .interest-input {
+      width: 100%;
+    }
+
+    /* Theme Options */
+    .theme-options, .privacy-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .theme-option, .checkbox-option {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .theme-label, .checkbox-label {
+      margin-left: 8px;
+    }
+
+    /* Password Strength */
+    .password-strength {
+      height: 4px;
+      background-color: #eee;
+      margin-top: 5px;
+      border-radius: 2px;
+    }
+
+    .password-strength-bar {
+      height: 100%;
+      width: 0;
+      background-color: #ff4d4d;
+      border-radius: 2px;
+      transition: width 0.3s, background-color 0.3s;
+    }
+
+    /* Profile bio and fullname */
+    .profile-fullname {
+      font-weight: 500;
+      font-size: 18px;
+      margin: 5px 0;
+    }
+
+    .profile-bio {
+      color: #666;
+      font-size: 14px;
+      max-width: 80%;
+      margin: 10px auto 20px;
+      line-height: 1.5;
+    }
+
+    /* Dark mode */
+    .dark-mode .modal-content {
+      background-color: #222;
+      color: #eee;
+    }
+
+    .dark-mode .form-input {
+      background-color: #333;
+      border-color: #444;
+      color: #eee;
+    }
+
+    .dark-mode .secondary-button {
+      background-color: #333;
+      border-color: #444;
+      color: #eee;
+    }
+
+    .dark-mode .close-modal {
+      color: #aaa;
+    }
+
+    .dark-mode .close-modal:hover {
+      color: #eee;
+    }
+
+    .dark-mode .interest-tag {
+      background-color: #2a4760;
+      color: #90caf9;
+    }
+  </style>
+  <script src="js/notifications.js"></script>
+  <script src="js/auth-fix.js"></script>
+</head>
+
+<body>
+  <header class="header" id="header">
+    <div class="header__top">
+      <a class="header__logo" href="main.html"><img src="./images/globe.svg" alt="" width="45" height="45"></a>
+      <form class="header__form" action="">
+        <input class="header__input" id="header__input" type="text" placeholder="Search">
+        <button class="header__btn"><img src="./images/search.svg" alt=""></button>
+      </form>
+      <div id="profile-dropdown" class="profile">
+        <label for="avatar-input-header" class="avatar-label">
+          <img id="header-avatar" src="./images/default-avatar.svg" alt="Avatar" class="avatar">
+        </label>
+        <input type="file" id="avatar-input-header" accept="image/*" class="hidden">
+        <div id="dropdown" class="dropdown hidden">
+          <button class="dropdown-btn" id="profile-btn">Profile</button>
+          <button class="dropdown-btn" id="settings-btn">Settings</button>
+          <button class="dropdown-btn" id="dark-mode-toggle">Dark Mode</button>
+          <button class="dropdown-btn" id="logout-btn">Log out</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="profile-container">
+    <div class="navigation-links">
+      <a href="main.html" class="nav-link">Home</a>
+      <a href="chats.html" class="nav-link">Chats</a>
+      <a href="map.html" class="nav-link">Map</a>
+    </div>
+
+    <div class="profile-header">
+      <img id="avatar" src="./images/default-avatar.svg" alt="Avatar">
+      <h2 id="username">Loading...</h2>
+      <p id="user-email" class="profile-email">Loading...</p>
+      <p id="user-fullname" class="profile-fullname"></p>
+      <p id="user-bio" class="profile-bio"></p>
+    </div>
+
+    <div class="avatar-controls">
+      <div class="file-upload">
+        <label for="avatarUpload" class="file-upload-label">Choose Avatar</label>
+        <input type="file" id="avatarUpload" accept="image/*">
+      </div>
+      <div id="selected-file-name" class="file-name"></div>
+      <button id="saveAvatar" class="profile-button">Save Avatar</button>
+    </div>
+
+    <div class="profile-section">
+      <h3>Profile Information</h3>
+      <div class="form-group">
+        <label for="fullName">Full Name</label>
+        <input type="text" id="fullName" class="profile-input" placeholder="Your full name">
+      </div>
+      <div class="form-group">
+        <label for="bio">Bio</label>
+        <textarea id="bio" class="profile-input profile-textarea" placeholder="Tell us about yourself"></textarea>
+      </div>
+      <div class="form-group">
+        <label for="location">Location</label>
+        <input type="text" id="location" class="profile-input" placeholder="Your location">
+      </div>
+      <div class="form-group">
+        <label for="website">Website</label>
+        <input type="url" id="website" class="profile-input" placeholder="Your website URL">
+      </div>
+      <div class="form-group">
+        <label>Interests (comma separated)</label>
+        <input type="text" id="interests" class="profile-input" placeholder="Travel, Photography, etc.">
+      </div>
+      <button id="saveProfile" class="profile-button">Save Profile</button>
+    </div>
+
+    <div class="profile-section">
+      <h3>Social Media Links</h3>
+      <div class="form-group">
+        <label for="facebook">Facebook</label>
+        <input type="url" id="facebook" class="profile-input" placeholder="Your Facebook profile URL">
+      </div>
+      <div class="form-group">
+        <label for="twitter">Twitter</label>
+        <input type="url" id="twitter" class="profile-input" placeholder="Your Twitter profile URL">
+      </div>
+      <div class="form-group">
+        <label for="instagram">Instagram</label>
+        <input type="url" id="instagram" class="profile-input" placeholder="Your Instagram profile URL">
+      </div>
+      <div class="form-group">
+        <label for="linkedin">LinkedIn</label>
+        <input type="url" id="linkedin" class="profile-input" placeholder="Your LinkedIn profile URL">
+      </div>
+      <button id="saveSocial" class="profile-button">Save Social Links</button>
+    </div>
+
+    <div class="profile-section">
+      <h3>Account Settings</h3>
+      <div class="profile-actions">
+        <button id="change-password" class="profile-button">Change Password</button>
+        <button id="toggle-dark-mode" class="profile-button">Toggle Dark Mode</button>
+        <button id="logout" class="profile-button danger">Logout</button>
+      </div>
+    </div>
+
+    <!-- Session Management Section -->
+    <div class="profile-section">
+      <h2 style="color: #fff; margin-bottom: 20px; font-size: 24px;">Session Management</h2>
+      <div class="sessions-container">
+        <div class="sessions-info">
+          <p style="color: #ccc; margin-bottom: 15px;">
+            These are your active login sessions. You can end any session, which will
+            immediately log you out of that device or browser. Your current session is highlighted.
+          </p>
+        </div>
+
+        <div id="sessions-list" style="margin-bottom: 20px;">
+          <div style="text-align: center; color: #ccc;">
+            <svg width="24" height="24" viewBox="0 0 24 24" style="animation: spin 1s infinite linear; margin-bottom: 10px;">
+              <path fill="currentColor" d="M12,4V2A10,10 0 0,0 2,12H4A8,8 0 0,1 12,4Z" />
+            </svg>
+            <p>Loading sessions...</p>
+          </div>
+        </div>
+
+        <button class="profile-button" id="end-all-sessions">End All Other Sessions</button>
+      </div>
+    </div>
+    <!-- End of Session Management Section -->
+
+    <!-- Modal for Session Management -->
+    <div id="session-modal" class="modal" style="display: none;">
+      <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h2>End Session</h2>
+        <p>Are you sure you want to end this session? This will immediately log out that device or browser.</p>
+        <div class="session-info">
+          <p><strong>Device:</strong> <span id="session-device"></span></p>
+          <p><strong>Location:</strong> <span id="session-location"></span></p>
+          <p><strong>Last Active:</strong> <span id="session-last-active"></span></p>
+        </div>
+        <div class="modal-buttons">
+          <button id="confirm-end-session" class="profile-button danger">End Session</button>
+          <button id="cancel-end-session" class="profile-button">Cancel</button>
+        </div>
+      </div>
+    </div>
+    <!-- End Modal for Session Management -->
+
+    <!-- Profile Edit Modal -->
+    <div id="profile-edit-modal" class="modal">
+      <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h2>Edit Profile</h2>
+
+        <form id="profile-edit-form">
+          <div class="form-group">
+            <label for="edit-fullname">Display Name</label>
+            <input type="text" id="edit-fullname" class="form-input" placeholder="Your full name">
+          </div>
+
+          <div class="form-group">
+            <label for="edit-bio">Bio</label>
+            <textarea id="edit-bio" class="form-input" placeholder="Tell us about yourself" rows="3"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="edit-location">Location</label>
+            <input type="text" id="edit-location" class="form-input" placeholder="Your location">
+          </div>
+
+          <div class="form-group">
+            <label>Interests</label>
+            <div class="interests-container" id="interests-container">
+              <div class="interest-tags" id="interest-tags"></div>
+              <input type="text" id="add-interest" class="form-input interest-input" placeholder="Add an interest">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Theme Preference</label>
+            <div class="theme-options">
+              <label class="theme-option">
+                <input type="radio" name="theme" value="light" checked>
+                <span class="theme-label">Light</span>
+              </label>
+              <label class="theme-option">
+                <input type="radio" name="theme" value="dark">
+                <span class="theme-label">Dark</span>
+              </label>
+              <label class="theme-option">
+                <input type="radio" name="theme" value="system">
+                <span class="theme-label">System</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Language Preference</label>
+            <select id="language-preference" class="form-input">
+              <option value="en">English</option>
+              <option value="es">Español</option>
+              <option value="fr">Français</option>
+              <option value="de">Deutsch</option>
+              <option value="zh">中文</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Privacy Settings</label>
+            <div class="privacy-options">
+              <label class="checkbox-option">
+                <input type="checkbox" id="share-location" value="1">
+                <span class="checkbox-label">Share my location with friends</span>
+              </label>
+              <label class="checkbox-option">
+                <input type="checkbox" id="show-online-status" value="1" checked>
+                <span class="checkbox-label">Show when I'm online</span>
+              </label>
+              <label class="checkbox-option">
+                <input type="checkbox" id="public-profile" value="1">
+                <span class="checkbox-label">Make my profile public</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" id="cancel-edit" class="secondary-button">Cancel</button>
+            <button type="submit" id="save-profile" class="primary-button">Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Password Change Modal -->
+    <div id="password-change-modal" class="modal">
+      <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h2>Change Password</h2>
+
+        <form id="password-change-form">
+          <div class="form-group">
+            <label for="current-password">Current Password</label>
+            <input type="password" id="current-password" class="form-input" placeholder="Your current password" required>
+          </div>
+
+          <div class="form-group">
+            <label for="new-password">New Password</label>
+            <input type="password" id="new-password" class="form-input" placeholder="New password" required>
+            <div class="password-strength">
+              <div class="password-strength-bar" id="password-strength-bar"></div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="confirm-password">Confirm New Password</label>
+            <input type="password" id="confirm-password" class="form-input" placeholder="Confirm new password" required>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" id="cancel-password" class="secondary-button">Cancel</button>
+            <button type="submit" id="save-password" class="primary-button">Change Password</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Auth Debug Panel -->
+  <div id="auth-debug-panel" style="display: none; position: fixed; bottom: 20px; right: 20px; background: rgba(0,0,0,0.8); color: #0f0; padding: 10px; border-radius: 5px; font-family: monospace; max-width: 400px; max-height: 300px; overflow: auto; z-index: 9999;">
+    <div style="font-weight: bold; margin-bottom: 5px; border-bottom: 1px solid #0f0; padding-bottom: 5px;">Authentication Status</div>
+    <div id="auth-debug-content">Loading...</div>
+    <button id="clear-auth-data" style="margin-top: 10px; padding: 5px; background: #ff0000; color: white; border: none; border-radius: 3px;">Clear Auth Data</button>
+    <button id="refresh-token" style="margin-top: 10px; margin-left: 10px; padding: 5px; background: #0000ff; color: white; border: none; border-radius: 3px;">Refresh Token</button>
+    <button id="close-debug" style="position: absolute; top: 5px; right: 5px; background: none; border: none; color: white; font-size: 16px;">&times;</button>
+  </div>
+
+  <button id="toggle-auth-debug" style="position: fixed; bottom: 20px; right: 20px; background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 20px; cursor: pointer;">?</button>
+
+  <script>
+    // Toggle dark mode functionality
+    document.getElementById('toggle-dark-mode').addEventListener('click', function() {
+      document.body.classList.toggle('dark-mode');
+      document.getElementById('header').classList.toggle('dark-mode');
+    });
+
+    // Show selected file name
+    document.getElementById('avatarUpload').addEventListener('change', function(event) {
+      const fileName = event.target.files[0] ? event.target.files[0].name : 'No file selected';
+      document.getElementById('selected-file-name').textContent = fileName;
+
+      // Preview image
+      if (event.target.files && event.target.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById('avatar').src = e.target.result;
+          document.getElementById('header-avatar').src = e.target.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+      }
+    });
+
+    // Header profile dropdown
+    document.getElementById('header-avatar').addEventListener('click', function() {
+      document.getElementById('dropdown').classList.toggle('hidden');
+    });
+
+    // Dark mode toggle in dropdown
+    document.getElementById('dark-mode-toggle').addEventListener('click', function() {
+      document.body.classList.toggle('dark-mode');
+      document.getElementById('header').classList.toggle('dark-mode');
+      document.getElementById('dropdown').classList.add('hidden');
+    });
+
+    // Save avatar button
+    document.getElementById('saveAvatar').addEventListener('click', async function() {
+      const fileInput = document.getElementById('avatarUpload');
+      if (!fileInput.files || !fileInput.files[0]) {
+        alert('Please select a file first');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('avatar', fileInput.files[0]);
+
+      try {
+        const response = await fetch('/profile/update-avatar', {
+          method: 'POST',
+          body: formData,
+          credentials: 'include'
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          alert(data.message);
+          // Update the avatar path if returned by server
+          if (data.avatarUrl) {
+            document.getElementById('avatar').src = data.avatarUrl;
+            document.getElementById('header-avatar').src = data.avatarUrl;
+          }
+        } else {
+          alert(data.message || 'Error updating avatar');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Error updating avatar');
+      }
+    });
+
+    // Save profile button
+    document.getElementById('saveProfile').addEventListener('click', async function() {
+      const fullName = document.getElementById('fullName').value.trim();
+      const bio = document.getElementById('bio').value.trim();
+      const location = document.getElementById('location').value.trim();
+      const website = document.getElementById('website').value.trim();
+      const interestsInput = document.getElementById('interests').value.trim();
+
+      // Convert comma-separated interests to array
+      const interests = interestsInput ? interestsInput.split(',').map(item => item.trim()) : [];
+
+      try {
+        const response = await fetch('/profile/update', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            fullName,
+            bio,
+            location,
+            website,
+            interests
+          }),
+          credentials: 'include'
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          alert(data.message || 'Profile updated successfully');
+        } else {
+          alert(data.message || 'Error updating profile');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Error updating profile');
+      }
+    });
+
+    // Save social links button
+    document.getElementById('saveSocial').addEventListener('click', async function() {
+      const facebook = document.getElementById('facebook').value.trim();
+      const twitter = document.getElementById('twitter').value.trim();
+      const instagram = document.getElementById('instagram').value.trim();
+      const linkedin = document.getElementById('linkedin').value.trim();
+
+      try {
+        const response = await fetch('/profile/update', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            socialLinks: {
+              facebook,
+              twitter,
+              instagram,
+              linkedin
+            }
+          }),
+          credentials: 'include'
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          alert(data.message || 'Social links updated successfully');
+        } else {
+          alert(data.message || 'Error updating social links');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Error updating social links');
+      }
+    });
+
+    // Handle logout
+    document.getElementById('logout').addEventListener('click', function() {
+      // Clear localStorage
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+
+      // Clear cookies (if any)
+      document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+
+      // Log the event
+      console.log('User logged out');
+
+      // Redirect to login page
+      window.location.href = '/auth.html';
+    });
+
+    // Fetch profile data
+    async function fetchProfileData() {
+      try {
+        const response = await fetch('/profile/profile', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include'
+        });
+
+        if (response.status === 401) {
+          // Unauthorized, redirect to login
+          window.location.href = '/auth.html';
+          return;
+        }
+
+        const data = await response.json();
+
+        // Update profile info
+        document.getElementById('username').textContent = data.username || 'Username';
+        document.getElementById('user-email').textContent = data.email || 'Email';
+        document.getElementById('user-fullname').textContent = data.fullName || '';
+        document.getElementById('user-bio').textContent = data.bio || '';
+
+        // Set avatar
+        if (data.avatar) {
+          const avatarUrl = data.avatar.startsWith('http') ? data.avatar : data.avatar;
+          document.getElementById('avatar').src = avatarUrl;
+          document.getElementById('header-avatar').src = avatarUrl;
+        }
+
+        // Fill form fields
+        document.getElementById('fullName').value = data.fullName || '';
+        document.getElementById('bio').value = data.bio || '';
+        document.getElementById('location').value = data.location || '';
+        document.getElementById('website').value = data.website || '';
+        document.getElementById('interests').value = data.interests ? data.interests.join(', ') : '';
+
+        // Fill social links
+        if (data.socialLinks) {
+          document.getElementById('facebook').value = data.socialLinks.facebook || '';
+          document.getElementById('twitter').value = data.socialLinks.twitter || '';
+          document.getElementById('instagram').value = data.socialLinks.instagram || '';
+          document.getElementById('linkedin').value = data.socialLinks.linkedin || '';
+        }
+      } catch (error) {
+        console.error('Error fetching profile:', error);
+      }
+    }
+
+    // Load profile data when page loads
+    document.addEventListener('DOMContentLoaded', fetchProfileData);
+
+    // Auth debug functionality
+    document.getElementById('toggle-auth-debug').addEventListener('click', function() {
+      const panel = document.getElementById('auth-debug-panel');
+      if (panel.style.display === 'none') {
+        panel.style.display = 'block';
+        this.style.display = 'none';
+        updateAuthDebugPanel();
+      }
+    });
+
+    document.getElementById('close-debug').addEventListener('click', function() {
+      document.getElementById('auth-debug-panel').style.display = 'none';
+      document.getElementById('toggle-auth-debug').style.display = 'block';
+    });
+
+    document.getElementById('clear-auth-data').addEventListener('click', function() {
+      if (confirm('Are you sure you want to clear all authentication data? This will log you out.')) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        localStorage.removeItem('tokenExpires');
+        localStorage.removeItem('rememberMe');
+        sessionStorage.removeItem('preventRedirect');
+        sessionStorage.removeItem('redirectCount');
+        sessionStorage.removeItem('lastRedirectTime');
+        sessionStorage.removeItem('profileRedirectCount');
+        sessionStorage.removeItem('profileRedirectTime');
+
+        if (window.EraNotification) {
+          window.EraNotification.info('Authentication data cleared. You will be redirected to login page.', 'Data Cleared');
+        }
+
+        setTimeout(() => {
+          window.location.href = '/auth.html';
+        }, 2000);
+      }
+    });
+
+    document.getElementById('refresh-token').addEventListener('click', async function() {
+      try {
+        this.disabled = true;
+        this.textContent = 'Refreshing...';
+
+        const userData = JSON.parse(localStorage.getItem('user') || '{}');
+        const username = userData.username || 'testuser';
+
+        const response = await fetch(`${API_BASE_URL}/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: username,
+            password: 'password123',
+            rememberMe: true
+          }),
+          credentials: 'include'
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          localStorage.setItem('token', data.token);
+
+          // Set token expiration
+          if (data.expiresIn) {
+            const expirationTime = new Date();
+            if (data.expiresIn === '30d') {
+              expirationTime.setDate(expirationTime.getDate() + 30);
+            } else {
+              expirationTime.setHours(expirationTime.getHours() + 24);
+            }
+            localStorage.setItem("tokenExpires", expirationTime.toISOString());
+          }
+
+          // Update user data
+          if (data.user) {
+            localStorage.setItem('user', JSON.stringify(data.user));
+          }
+
+          if (window.EraNotification) {
+            window.EraNotification.success('Token refreshed successfully!', 'Success');
+          }
+
+          updateAuthDebugPanel();
+        } else {
+          throw new Error(`Failed to refresh token: ${response.status}`);
+        }
+      } catch (error) {
+        console.error('Error refreshing token:', error);
+        if (window.EraNotification) {
+          window.EraNotification.error(`Failed to refresh token: ${error.message}`, 'Error');
+        }
+      } finally {
+        this.disabled = false;
+        this.textContent = 'Refresh Token';
+      }
+    });
+
+    function updateAuthDebugPanel() {
+      const token = localStorage.getItem('token');
+      const user = JSON.parse(localStorage.getItem('user') || 'null');
+      const tokenExpires = localStorage.getItem('tokenExpires');
+      const rememberMe = localStorage.getItem('rememberMe');
+      const preventRedirect = sessionStorage.getItem('preventRedirect');
+      const redirectCount = sessionStorage.getItem('redirectCount');
+
+      let isExpired = false;
+      if (tokenExpires) {
+        try {
+          const expiryDate = new Date(tokenExpires);
+          const now = new Date();
+          isExpired = now >= expiryDate;
+        } catch (e) {
+          console.error('Error parsing expiration date:', e);
+          isExpired = true;
+        }
+      }
+
+      const html = `
+        <div style="margin-bottom: 5px;"><strong>Token:</strong> ${token ? token.substring(0, 15) + '...' : 'None'}</div>
+        <div style="margin-bottom: 5px;"><strong>User:</strong> ${user ? user.username : 'None'}</div>
+        <div style="margin-bottom: 5px;"><strong>Expires:</strong> ${tokenExpires ? new Date(tokenExpires).toLocaleString() : 'None'}</div>
+        <div style="margin-bottom: 5px;"><strong>Status:</strong> ${token ? (isExpired ? 'EXPIRED' : 'VALID') : 'NO TOKEN'}</div>
+        <div style="margin-bottom: 5px;"><strong>Remember Me:</strong> ${rememberMe === 'true' ? 'Yes' : 'No'}</div>
+        <div style="margin-bottom: 5px;"><strong>Redirect Protection:</strong> ${preventRedirect === 'true' ? 'Enabled' : 'Disabled'}</div>
+        <div style="margin-bottom: 5px;"><strong>Redirect Count:</strong> ${redirectCount || '0'}</div>
+      `;
+
+      document.getElementById('auth-debug-content').innerHTML = html;
+    }
+  </script>
+  <script src="js/profile.js"></script>
+</body>
+
+</html>

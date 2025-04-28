@@ -1,0 +1,229 @@
+*,
+html {
+	box-sizing: border-box;
+}
+
+html {
+	scroll-behavior: smooth;
+}
+
+body {
+	font-family: 'Kanit', serif;
+	font-weight: 400;
+	font-style: normal;
+	color: #fff;
+	font-size: 16px;
+	background: #a0a0a0;
+	max-height: 100vh;
+	overflow: hidden;
+	background-image: url('../images/new-york.jpg');
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position: top center;
+}
+
+.profile-btn{
+	background: #fff;
+	width: 50px;
+	height: 50px;
+}
+.container {
+	max-width: 1630px;
+	padding: 0 15px;
+	margin: 0 auto;
+}
+
+canvas {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	pointer-events: none;
+}
+
+.main__title {
+	font-family: 'Kanit', serif;
+	font-weight: 400;
+	font-size: 55px;
+	font-style: normal;
+	text-align: center;
+	padding: 20px 20px 10px;
+}
+
+.main__descr{
+	font-family: 'Kanit', serif;
+	font-weight: 200;
+	font-size: 35px;
+	font-style: normal;
+	text-align: center;
+	margin-bottom: 20px;
+}
+
+.globe {
+	position: relative;
+	z-index: 100;
+}
+
+@keyframes rotateGlobe {
+  from {
+    transform: translateY(-50%) rotate(0deg);
+  }
+  to {
+    transform: translateY(-50%) rotate(360deg);
+  }
+}
+
+@keyframes rotateGlobeBottom {
+  from {
+    transform: translateY(50%) rotate(0deg);
+  }
+  to {
+    transform: translateY(50%) rotate(360deg);
+  }
+}
+
+.globe-img {
+  width: 100px;
+  height: 100px;
+  position: fixed;
+  animation: rotateGlobe 10s linear infinite;
+}
+
+/* Верхні зображення */
+.globe-img:nth-child(1) {
+  left: -50px;
+  top: 0;
+}
+
+.globe-img:nth-child(2) {
+  right: -50px;
+  top: 0;
+}
+
+/* Нижні зображення */
+.globe-img:nth-child(3) {
+  left: -50px;
+  bottom: 0;
+  animation: rotateGlobeBottom 10s linear infinite;
+}
+
+.globe-img:nth-child(4) {
+  right: -50px;
+  bottom: 0;
+  animation: rotateGlobeBottom 10s linear infinite;
+}
+
+.paused {
+    animation-play-state: paused !important; /* Зупиняє анімацію */
+}
+
+.button-box {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+
+.toggle-btn {
+    padding: 10px 20px;
+    cursor: pointer;
+    border: none;
+    background-color: #ddd;
+    border-radius: 5px;
+    transition: 0.3s;
+}
+
+.toggle-btn:hover {
+    background-color: #bbb;
+}
+
+/* Поля вводу */
+.input-group {
+    display: none;
+    flex-direction: column;
+}
+
+.input-field {
+    width: 90%;
+    padding: 10px;
+    margin: 5px auto;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Кнопка відправки */
+.submit-btn {
+    width: 100%;
+    padding: 10px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+.submit-btn:hover {
+    background-color: #218838;
+}
+
+.form__wrapper {
+	position: absolute;
+	top: 50%;
+	right: 50%;
+	transform: translateX(50%);
+}
+
+.form {
+	width: 200px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: relative;
+	transform: translateY(-50%);
+}
+.form__btn {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 200px;
+	background: transparent;
+	border: 2px solid #fff;
+	border-radius: 20px;
+	padding: 4px 4px 4px 50px;
+	transition: all .3s;
+}
+
+.form__btn:hover{
+	background: #fff;
+}
+
+.form__btn:hover.form__btn span{
+	color: #000;
+}
+
+.form__btn:hover .color-change {
+  fill: #000 !important;
+}
+
+.form__btn span{
+	color: #fff;
+	font-family: 'Kanit', serif;
+	font-weight: 400;
+	font-style: normal;
+	font-size: 18px;
+	color: #fff;
+	white-space: nowrap;
+}
+.hidden {
+	display: none;
+}
+.form__btn svg {
+	width: 32px;
+	height: 32px;
+}
+
+.form__btn {
+	position: absolute;
+	right: 10px;
+}

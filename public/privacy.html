@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Privacy Settings - Era</title>
+  <link rel="stylesheet" href="./css/reset.css">
+  <link rel="stylesheet" href="./css/slick.css">
+  <link rel="stylesheet" href="./css/jquery.fancybox.css">
+  <link rel="icon" type="image/x-icon" href="./images/globe.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="./css/main.css">
+  <style>
+    .privacy-container {
+      padding: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .page-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: white;
+    }
+
+    .action-btn {
+      padding: 10px 20px;
+      background-color: #0b93f6;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.2s ease;
+    }
+
+    .action-btn:hover {
+      background-color: #0a84e1;
+    }
+
+    .card {
+      background-color: #0f0f0f;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      border-bottom: 1px solid #222;
+      padding-bottom: 10px;
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 500;
+      color: white;
+    }
+
+    .card-description {
+      color: #aaa;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-toggle {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .form-label {
+      color: white;
+      font-size: 16px;
+    }
+
+    .form-label-description {
+      color: #aaa;
+      font-size: 14px;
+      margin-top: 5px;
+      margin-bottom: 10px;
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 24px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #444;
+      transition: .4s;
+      border-radius: 24px;
+    }
+
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .toggle-slider {
+      background-color: #0b93f6;
+    }
+
+    input:checked + .toggle-slider:before {
+      transform: translateX(26px);
+    }
+
+    .invisibility-options {
+      display: none;
+      margin-top: 15px;
+      padding: 15px;
+      background-color: #1a1a1a;
+      border-radius: 5px;
+    }
+
+    .invisibility-options.visible {
+      display: block;
+    }
+
+    .form-inline {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .form-select {
+      padding: 8px 12px;
+      border-radius: 5px;
+      background-color: #333;
+      color: white;
+      border: 1px solid #555;
+      margin-left: 10px;
+      margin-right: 10px;
+    }
+
+    .timer-display {
+      padding: 15px;
+      background-color: #222;
+      border-radius: 5px;
+      margin: 15px 0;
+      text-align: center;
+      display: none;
+    }
+
+    .timer-display.active {
+      display: block;
+    }
+
+    .timer-text {
+      font-size: 20px;
+      color: white;
+      margin-bottom: 10px;
+    }
+
+    .timer-expires {
+      font-size: 14px;
+      color: #aaa;
+    }
+
+    .visible-to-section {
+      margin-top: 15px;
+    }
+
+    .visible-to-title {
+      font-size: 16px;
+      color: white;
+      margin-bottom: 10px;
+    }
+
+    .visible-to-description {
+      font-size: 14px;
+      color: #aaa;
+      margin-bottom: 15px;
+    }
+
+    .visible-to-lists {
+      display: flex;
+      gap: 20px;
+    }
+
+    .visible-to-users, .visible-to-groups {
+      flex: 1;
+    }
+
+    .list-container {
+      max-height: 200px;
+      overflow-y: auto;
+      border: 1px solid #333;
+      border-radius: 5px;
+      padding: 10px;
+      background-color: #1a1a1a;
+      margin-top: 10px;
+    }
+
+    .list-title {
+      font-size: 14px;
+      color: white;
+      margin-bottom: 5px;
+    }
+
+    .list-item {
+      display: flex;
+      align-items: center;
+      padding: 8px 5px;
+      border-bottom: 1px solid #333;
+    }
+
+    .list-item:last-child {
+      border-bottom: none;
+    }
+
+    .list-checkbox {
+      margin-right: 10px;
+    }
+
+    .list-avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+
+    .list-item-name {
+      color: white;
+      flex: 1;
+    }
+
+    /* Dark mode overrides */
+    .dark-mode .card {
+      background-color: white;
+    }
+
+    .dark-mode .card-header {
+      border-color: #ddd;
+    }
+
+    .dark-mode .card-title {
+      color: #333;
+    }
+
+    .dark-mode .card-description {
+      color: #555;
+    }
+
+    .dark-mode .form-label {
+      color: #333;
+    }
+
+    .dark-mode .form-label-description {
+      color: #555;
+    }
+
+    .dark-mode .invisibility-options {
+      background-color: #f0f0f0;
+    }
+
+    .dark-mode .form-select {
+      background-color: white;
+      color: #333;
+      border-color: #ddd;
+    }
+
+    .dark-mode .timer-display {
+      background-color: #e9e9e9;
+    }
+
+    .dark-mode .timer-text {
+      color: #333;
+    }
+
+    .dark-mode .timer-expires {
+      color: #666;
+    }
+
+    .dark-mode .visible-to-title {
+      color: #333;
+    }
+
+    .dark-mode .visible-to-description {
+      color: #555;
+    }
+
+    .dark-mode .list-container {
+      background-color: white;
+      border-color: #ddd;
+    }
+
+    .dark-mode .list-title {
+      color: #333;
+    }
+
+    .dark-mode .list-item {
+      border-color: #ddd;
+    }
+
+    .dark-mode .list-item-name {
+      color: #333;
+    }
+  </style>
+</head>
+
+<body>
+  <header class="header" id="header">
+    <div class="header__top">
+      <a class="header__logo" href="map.html"><img src="./images/globe.svg" alt="" width="45" height="45"></a>
+      <form class="header__form" action="">
+        <input class="header__input" id="header__input" type="text" placeholder="Search">
+        <button class="header__btn"><img src="./images/search.svg" alt=""></button>
+      </form>
+      <div id="profile" class="profile">
+        <label for="avatar-input" class="avatar-label">
+          <img id="avatar" src="./images/default-avatar.svg" alt="Avatar" class="avatar">
+        </label>
+        <input type="file" id="avatar-input" accept="image/*" class="hidden">
+        <div id="dropdown" class="dropdown hidden">
+          <button class="dropdown-btn" id="profile-btn">Profile</button>
+          <button class="dropdown-btn" id="settings-btn">Settings</button>
+          <button class="dropdown-btn" id="dark-mode-toggle">Dark Mode</button>
+          <button class="dropdown-btn" id="logout-btn">Log out</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="main__wrapper page-container">
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar__menu">
+        <a class="sidebar__menu-link" href="./main.html">Home</a>
+        <a class="sidebar__menu-link" href="./chats.html">Chats</a>
+        <a class="sidebar__menu-link" href="./map.html">Map</a>
+        <a class="sidebar__menu-link" href="./social.html">Social</a>
+        <a class="sidebar__menu-link" href="./friend-groups.html">Friend Groups</a>
+        <a class="sidebar__menu-link active" href="./privacy.html">Privacy</a>
+      </div>
+    </div>
+
+    <div class="privacy-container">
+      <div class="page-header">
+        <h1 class="page-title">Privacy Settings</h1>
+        <button id="save-settings-btn" class="action-btn">Save Changes</button>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">General Privacy</h2>
+        </div>
+        <div class="card-description">Control who can see your information and how it's shared</div>
+
+        <div class="form-group">
+          <div class="form-toggle">
+            <div>
+              <label class="form-label">Share My Location</label>
+              <div class="form-label-description">Allow friends to see your location on the map</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="share-location-toggle">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="form-toggle">
+            <div>
+              <label class="form-label">Show Online Status</label>
+              <div class="form-label-description">Show your online status to friends</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="show-online-toggle">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="form-toggle">
+            <div>
+              <label class="form-label">Public Profile</label>
+              <div class="form-label-description">Allow anyone to view your profile (not just friends)</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="public-profile-toggle">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Invisibility Mode</h2>
+        </div>
+        <div class="card-description">Temporarily hide your location and online status from others</div>
+
+        <div class="form-group">
+          <div class="form-toggle">
+            <div>
+              <label class="form-label">Enable Invisibility Mode</label>
+              <div class="form-label-description">Become invisible to most users except those you allow</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="invisibility-toggle">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div id="invisibility-options" class="invisibility-options">
+          <div class="form-inline">
+            <label>Stay invisible for:</label>
+            <select id="invisibility-duration" class="form-select">
+              <option value="1">1 hour</option>
+              <option value="8" selected>8 hours</option>
+              <option value="24">24 hours</option>
+              <option value="48">2 days</option>
+              <option value="168">1 week</option>
+            </select>
+          </div>
+
+          <div id="invisibility-timer" class="timer-display">
+            <div class="timer-text"><span id="timer-hours">00</span>:<span id="timer-minutes">00</span>:<span id="timer-seconds">00</span></div>
+            <div class="timer-expires">Invisibility ends at <span id="invisibility-end-time">--:--</span> on <span id="invisibility-end-date">--/--/----</span></div>
+            <button id="disable-invisibility-btn" class="action-btn" style="margin-top: 15px;">Disable Invisibility</button>
+          </div>
+
+          <div class="visible-to-section">
+            <div class="visible-to-title">Stay Visible To:</div>
+            <div class="visible-to-description">Choose who can still see your location and status while in invisibility mode</div>
+
+            <div class="visible-to-lists">
+              <div class="visible-to-users">
+                <div class="list-title">Friends</div>
+                <div id="visible-friends-list" class="list-container">
+                  <div style="color: #777; text-align: center;">Loading friends...</div>
+                </div>
+              </div>
+
+              <div class="visible-to-groups">
+                <div class="list-title">Friend Groups</div>
+                <div id="visible-groups-list" class="list-container">
+                  <div style="color: #777; text-align: center;">Loading groups...</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Authentication check
+    const token = localStorage.getItem('token');
+    const userData = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null;
+
+    if (!token || !userData) {
+      window.location.href = '/auth.html';
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      // Update avatar from user data
+      if (userData && userData.avatar) {
+        document.getElementById('avatar').src = userData.avatar;
+      }
+
+      // Set up event listeners
+      document.getElementById('save-settings-btn').addEventListener('click', savePrivacySettings);
+      document.getElementById('invisibility-toggle').addEventListener('change', toggleInvisibilityOptions);
+      document.getElementById('disable-invisibility-btn').addEventListener('click', disableInvisibility);
+
+      // Set up avatar dropdown toggle
+      document.getElementById('avatar').addEventListener('click', function() {
+        document.getElementById('dropdown').classList.toggle('hidden');
+      });
+
+      // Close dropdown when clicking outside
+      window.addEventListener('click', function(e) {
+        if (!document.getElementById('profile').contains(e.target)) {
+          document.getElementById('dropdown').classList.add('hidden');
+        }
+      });
+
+      // Profile button handler
+      document.getElementById('profile-btn').addEventListener('click', function() {
+        window.location.href = '/profile.html';
+      });
+
+      // Logout handler
+      document.getElementById('logout-btn').addEventListener('click', function() {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        window.location.href = '/auth.html';
+      });
+
+      // Dark mode toggle
+      document.getElementById('dark-mode-toggle').addEventListener('click', function() {
+        document.body.classList.toggle('dark-mode');
+        document.getElementById('header')?.classList.toggle('dark-mode');
+        document.getElementById('sidebar')?.classList.toggle('dark-mode');
+        document.getElementById('header__input')?.classList.toggle('dark-mode');
+        const darkModeButton = document.getElementById('dark-mode-toggle');
+        darkModeButton.textContent = document.body.classList.contains('dark-mode') ? 'Light Mode' : 'Dark Mode';
+      });
+
+      // Load initial data
+      loadPrivacySettings();
+      loadFriends();
+      loadFriendGroups();
+    });
+
+    // Global variables
+    let friends = [];
+    let friendGroups = [];
+    let invisibilityTimer = null;
+    let privacySettings = null;
+
+    // Load privacy settings
+    async function loadPrivacySettings() {
+      try {
+        const response = await fetch('/privacy', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to load privacy settings');
+        }
+
+        const data = await response.json();
+        privacySettings = data;
+
+        // Update UI with settings
+        updatePrivacyUI(data);
+      } catch (error) {
+        console.error('Error loading privacy settings:', error);
+        alert(`Error loading privacy settings: ${error.message}`);
+      }
+    }
+
+    // Update UI with privacy settings
+    function updatePrivacyUI(settings) {
+      // General privacy toggles
+      document.getElementById('share-location-toggle').checked = settings.shareLocation || false;
+      document.getElementById('show-online-toggle').checked = settings.showOnlineStatus !== false; // Default is true
+      document.getElementById('public-profile-toggle').checked = settings.publicProfile || false;
+
+      // Invisibility mode
+      const isInvisible = settings.privacyMode && settings.privacyMode.isInvisible;
+      document.getElementById('invisibility-toggle').checked = isInvisible;
+
+      // Show/hide invisibility options
+      toggleInvisibilityOptions();
+
+      // If invisibility is active, start the timer
+      if (isInvisible && settings.privacyMode.invisibleUntil) {
+        startInvisibilityTimer(new Date(settings.privacyMode.invisibleUntil));
+      }
+
+      // Update visibility selections
+      if (settings.privacyMode) {
+        const visibleTo = settings.privacyMode.visibleTo || [];
+        const visibleToGroups = settings.privacyMode.visibleToGroups || [];
+
+        // When friends and groups are loaded, we'll update the checkboxes
+        window.visibleTo = visibleTo;
+        window.visibleToGroups = visibleToGroups;
+      }
+    }
+
+    // Load friends for visibility selection
+    async function loadFriends() {
+      try {
+        const response = await fetch('/social/friends', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to load friends');
+        }
+
+        friends = await response.json();
+        renderFriendsList();
+      } catch (error) {
+        console.error('Error loading friends:', error);
+        document.getElementById('visible-friends-list').innerHTML =
+          `<div style="color: #777; text-align: center;">Error loading friends: ${error.message}</div>`;
+      }
+    }
+
+    // Load friend groups for visibility selection
+    async function loadFriendGroups() {
+      try {
+        const response = await fetch('/friend-groups', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to load friend groups');
+        }
+
+        friendGroups = await response.json();
+        renderGroupsList();
+      } catch (error) {
+        console.error('Error loading friend groups:', error);
+        document.getElementById('visible-groups-list').innerHTML =
+          `<div style="color: #777; text-align: center;">Error loading groups: ${error.message}</div>`;
+      }
+    }
+
+    // Render friends list with checkbox selection
+    function renderFriendsList() {
+      const container = document.getElementById('visible-friends-list');
+
+      if (!friends || friends.length === 0) {
+        container.innerHTML = '<div style="color: #777; text-align: center;">You have no friends yet</div>';
+        return;
+      }
+
+      // Get visible friends from global state if available
+      const visibleTo = window.visibleTo || [];
+
+      const html = friends.map(friend => {
+        const isVisible = visibleTo.includes(friend._id);
+
+        return `
+          <div class="list-item">
+            <input type="checkbox" class="list-checkbox visible-friend-checkbox" value="${friend._id}" ${isVisible ? 'checked' : ''}>
+            <img src="${friend.avatar || './images/default-avatar.svg'}" alt="${friend.username}" class="list-avatar">
+            <div class="list-item-name">${friend.fullName || friend.username}</div>
+          </div>
+        `;
+      }).join('');
+
+      container.innerHTML = html;
+    }
+
+    // Render groups list with checkbox selection
+    function renderGroupsList() {
+      const container = document.getElementById('visible-groups-list');
+
+      if (!friendGroups || friendGroups.length === 0) {
+        container.innerHTML = '<div style="color: #777; text-align: center;">You have no friend groups yet</div>';
+        return;
+      }
+
+      // Get visible groups from global state if available
+      const visibleToGroups = window.visibleToGroups || [];
+
+      const html = friendGroups.map(group => {
+        const isVisible = visibleToGroups.includes(group.name);
+
+        return `
+          <div class="list-item">
+            <input type="checkbox" class="list-checkbox visible-group-checkbox" value="${group.name}" ${isVisible ? 'checked' : ''}>
+            <div class="list-avatar" style="background-color: ${group.color || '#555'}"></div>
+            <div class="list-item-name">${group.name}</div>
+          </div>
+        `;
+      }).join('');
+
+      container.innerHTML = html;
+    }
+
+    // Toggle invisibility options visibility
+    function toggleInvisibilityOptions() {
+      const isInvisible = document.getElementById('invisibility-toggle').checked;
+      const optionsDiv = document.getElementById('invisibility-options');
+
+      if (isInvisible) {
+        optionsDiv.classList.add('visible');
+      } else {
+        optionsDiv.classList.remove('visible');
+      }
+    }
+
+    // Start invisibility timer
+    function startInvisibilityTimer(endDate) {
+      const timerDisplay = document.getElementById('invisibility-timer');
+      timerDisplay.classList.add('active');
+
+      // Display end date and time
+      const dateOptions = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
+      const timeOptions = { hour: '2-digit', minute: '2-digit' };
+
+      document.getElementById('invisibility-end-date').textContent = endDate.toLocaleDateString(undefined, dateOptions);
+      document.getElementById('invisibility-end-time').textContent = endDate.toLocaleTimeString(undefined, timeOptions);
+
+      // Clear existing timer if any
+      if (invisibilityTimer) {
+        clearInterval(invisibilityTimer);
+      }
+
+      // Update timer every second
+      invisibilityTimer = setInterval(() => {
+        const now = new Date();
+        const diff = endDate - now;
+
+        if (diff <= 0) {
+          // Timer expired
+          clearInterval(invisibilityTimer);
+          document.getElementById('invisibility-toggle').checked = false;
+          timerDisplay.classList.remove('active');
+          toggleInvisibilityOptions();
+          alert('Invisibility mode has expired');
+          return;
+        }
+
+        // Calculate hours, minutes, seconds
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+        // Update display
+        document.getElementById('timer-hours').textContent = hours.toString().padStart(2, '0');
+        document.getElementById('timer-minutes').textContent = minutes.toString().padStart(2, '0');
+        document.getElementById('timer-seconds').textContent = seconds.toString().padStart(2, '0');
+      }, 1000);
+    }
+
+    // Save privacy settings
+    async function savePrivacySettings() {
+      const shareLocation = document.getElementById('share-location-toggle').checked;
+      const showOnlineStatus = document.getElementById('show-online-toggle').checked;
+      const publicProfile = document.getElementById('public-profile-toggle').checked;
+      const isInvisible = document.getElementById('invisibility-toggle').checked;
+
+      let privacyMode = null;
+
+      if (isInvisible) {
+        // Get duration in hours
+        const durationHours = parseInt(document.getElementById('invisibility-duration').value);
+
+        // Get selected friends
+        const visibleTo = Array.from(document.querySelectorAll('.visible-friend-checkbox:checked'))
+          .map(checkbox => checkbox.value);
+
+        // Get selected groups
+        const visibleToGroups = Array.from(document.querySelectorAll('.visible-group-checkbox:checked'))
+          .map(checkbox => checkbox.value);
+
+        privacyMode = {
+          isInvisible,
+          durationHours,
+          visibleTo,
+          visibleToGroups
+        };
+      } else {
+        privacyMode = {
+          isInvisible: false
+        };
+      }
+
+      const settings = {
+        shareLocation,
+        showOnlineStatus,
+        publicProfile,
+        privacyMode
+      };
+
+      try {
+        const response = await fetch('/privacy', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(settings)
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Failed to save privacy settings');
+        }
+
+        const data = await response.json();
+        privacySettings = data.privacySettings;
+
+        // Update UI with new settings
+        updatePrivacyUI(data.privacySettings);
+
+        alert('Privacy settings saved successfully');
+      } catch (error) {
+        console.error('Error saving privacy settings:', error);
+        alert(`Error: ${error.message}`);
+      }
+    }
+
+    // Disable invisibility mode
+    async function disableInvisibility() {
+      try {
+        const response = await fetch('/privacy/invisible', {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Failed to disable invisibility mode');
+        }
+
+        // Clear timer
+        if (invisibilityTimer) {
+          clearInterval(invisibilityTimer);
+          invisibilityTimer = null;
+        }
+
+        // Update UI
+        document.getElementById('invisibility-toggle').checked = false;
+        document.getElementById('invisibility-timer').classList.remove('active');
+        toggleInvisibilityOptions();
+
+        alert('Invisibility mode disabled');
+      } catch (error) {
+        console.error('Error disabling invisibility mode:', error);
+        alert(`Error: ${error.message}`);
+      }
+    }
+  </script>
+</body>
+</html>

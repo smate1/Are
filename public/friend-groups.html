@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Friend Groups - Era</title>
+  <link rel="stylesheet" href="./css/reset.css">
+  <link rel="stylesheet" href="./css/slick.css">
+  <link rel="stylesheet" href="./css/jquery.fancybox.css">
+  <link rel="icon" type="image/x-icon" href="./images/globe.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="./css/main.css">
+  <style>
+    .groups-container {
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .page-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: white;
+    }
+
+    .action-btn {
+      padding: 10px 20px;
+      background-color: #0b93f6;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.2s ease;
+    }
+
+    .action-btn:hover {
+      background-color: #0a84e1;
+    }
+
+    .groups-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .group-card {
+      background-color: #0f0f0f;
+      border-radius: 8px;
+      padding: 20px;
+      transition: transform 0.2s ease;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .group-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .group-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .group-name {
+      font-size: 20px;
+      font-weight: 500;
+      color: white;
+    }
+
+    .group-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .group-action {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #aaa;
+      font-size: 20px;
+      transition: color 0.2s ease;
+    }
+
+    .group-action:hover {
+      color: white;
+    }
+
+    .group-description {
+      color: #aaa;
+      margin-bottom: 15px;
+      font-size: 14px;
+      min-height: 40px;
+    }
+
+    .group-members {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .group-member {
+      position: relative;
+    }
+
+    .member-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #0f0f0f;
+      transition: transform 0.2s ease;
+    }
+
+    .member-avatar:hover {
+      transform: scale(1.1);
+    }
+
+    .group-privacy {
+      border-top: 1px solid #1a1a1a;
+      padding-top: 15px;
+      font-size: 14px;
+      color: #777;
+    }
+
+    .privacy-option {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 5px;
+    }
+
+    .privacy-label {
+      color: #aaa;
+    }
+
+    .group-color-indicator {
+      width: 10px;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background-color: #0f0f0f;
+      margin: 10% auto;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 500px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      position: relative;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-title {
+      font-size: 20px;
+      font-weight: 500;
+      color: white;
+    }
+
+    .close-modal {
+      background: none;
+      border: none;
+      color: #aaa;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    .close-modal:hover {
+      color: white;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 5px;
+      color: #aaa;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 5px;
+      background-color: #1a1a1a;
+      border: 1px solid #333;
+      color: white;
+    }
+
+    .form-textarea {
+      width: 100%;
+      padding: 10px;
+      border-radius: 5px;
+      background-color: #1a1a1a;
+      border: 1px solid #333;
+      color: white;
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .form-color {
+      width: 100%;
+      height: 40px;
+      border: none;
+      border-radius: 5px;
+      background-color: transparent;
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .cancel-btn {
+      padding: 10px 20px;
+      background-color: #333;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .save-btn {
+      padding: 10px 20px;
+      background-color: #0b93f6;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .friend-list {
+      max-height: 200px;
+      overflow-y: auto;
+      border: 1px solid #333;
+      border-radius: 5px;
+      padding: 10px;
+      background-color: #1a1a1a;
+    }
+
+    .friend-item {
+      display: flex;
+      align-items: center;
+      padding: 8px 5px;
+      border-bottom: 1px solid #333;
+    }
+
+    .friend-item:last-child {
+      border-bottom: none;
+    }
+
+    .friend-checkbox {
+      margin-right: 10px;
+    }
+
+    .friend-avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+
+    .friend-name {
+      color: white;
+      flex: 1;
+    }
+
+    .loading {
+      text-align: center;
+      color: #aaa;
+      padding: 20px;
+      font-size: 18px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: #aaa;
+    }
+
+    .empty-state-icon {
+      font-size: 48px;
+      margin-bottom: 20px;
+      color: #555;
+    }
+
+    .empty-state-title {
+      font-size: 20px;
+      margin-bottom: 10px;
+      color: white;
+    }
+
+    .empty-state-text {
+      margin-bottom: 20px;
+    }
+
+    /* Dark mode overrides */
+    .dark-mode .group-card {
+      background-color: white;
+    }
+
+    .dark-mode .group-name {
+      color: #333;
+    }
+
+    .dark-mode .group-description {
+      color: #555;
+    }
+
+    .dark-mode .form-input,
+    .dark-mode .form-textarea,
+    .dark-mode .friend-list {
+      background-color: white;
+      border-color: #ddd;
+      color: #333;
+    }
+
+    .dark-mode .modal-content {
+      background-color: white;
+    }
+
+    .dark-mode .modal-title {
+      color: #333;
+    }
+
+    .dark-mode .form-label {
+      color: #555;
+    }
+
+    .dark-mode .friend-name {
+      color: #333;
+    }
+
+    .dark-mode .friend-item {
+      border-color: #ddd;
+    }
+
+    .dark-mode .empty-state-title {
+      color: #333;
+    }
+  </style>
+</head>
+
+<body>
+  <header class="header" id="header">
+    <div class="header__top">
+      <a class="header__logo" href="map.html"><img src="./images/globe.svg" alt="" width="45" height="45"></a>
+      <form class="header__form" action="">
+        <input class="header__input" id="header__input" type="text" placeholder="Search">
+        <button class="header__btn"><img src="./images/search.svg" alt=""></button>
+      </form>
+      <div id="profile" class="profile">
+        <label for="avatar-input" class="avatar-label">
+          <img id="avatar" src="./images/default-avatar.svg" alt="Avatar" class="avatar">
+        </label>
+        <input type="file" id="avatar-input" accept="image/*" class="hidden">
+        <div id="dropdown" class="dropdown hidden">
+          <button class="dropdown-btn" id="profile-btn">Profile</button>
+          <button class="dropdown-btn" id="settings-btn">Settings</button>
+          <button class="dropdown-btn" id="dark-mode-toggle">Dark Mode</button>
+          <button class="dropdown-btn" id="logout-btn">Log out</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="main__wrapper page-container">
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar__menu">
+        <a class="sidebar__menu-link" href="./main.html">Home</a>
+        <a class="sidebar__menu-link" href="./chats.html">Chats</a>
+        <a class="sidebar__menu-link" href="./map.html">Map</a>
+        <a class="sidebar__menu-link" href="./social.html">Social</a>
+        <a class="sidebar__menu-link active" href="./friend-groups.html">Friend Groups</a>
+      </div>
+    </div>
+
+    <div class="groups-container">
+      <div class="page-header">
+        <h1 class="page-title">Friend Groups</h1>
+        <button id="create-group-btn" class="action-btn">Create New Group</button>
+      </div>
+
+      <div id="groups-grid" class="groups-grid">
+        <div class="loading">Loading friend groups...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modals -->
+  <div id="group-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modal-title" class="modal-title">Create New Group</h2>
+        <button class="close-modal">&times;</button>
+      </div>
+      <form id="group-form">
+        <input type="hidden" id="group-id" value="">
+        <div class="form-group">
+          <label for="group-name" class="form-label">Group Name</label>
+          <input type="text" id="group-name" class="form-input" placeholder="Enter group name" required>
+        </div>
+        <div class="form-group">
+          <label for="group-description" class="form-label">Description</label>
+          <textarea id="group-description" class="form-textarea" placeholder="Enter group description"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="group-color" class="form-label">Group Color</label>
+          <input type="color" id="group-color" class="form-color" value="#0b93f6">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Members</label>
+          <div id="friend-list" class="friend-list">
+            <div class="loading">Loading friends...</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Privacy Settings</label>
+          <div class="privacy-settings">
+            <div class="form-check">
+              <input type="checkbox" id="can-see-location" checked>
+              <label for="can-see-location">Can see my location</label>
+            </div>
+            <div class="form-check">
+              <input type="checkbox" id="can-see-activity" checked>
+              <label for="can-see-activity">Can see my activity</label>
+            </div>
+            <div class="form-check">
+              <input type="checkbox" id="can-message" checked>
+              <label for="can-message">Can message me</label>
+            </div>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="cancel-btn">Cancel</button>
+          <button type="submit" class="save-btn">Save Group</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="delete-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Delete Group</h2>
+        <button class="close-modal">&times;</button>
+      </div>
+      <p>Are you sure you want to delete this group? This action cannot be undone.</p>
+      <div class="form-actions">
+        <button type="button" class="cancel-btn">Cancel</button>
+        <button type="button" id="confirm-delete-btn" class="save-btn" style="background-color: #e74c3c;">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Authentication check
+    const token = localStorage.getItem('token');
+    const userData = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null;
+
+    if (!token || !userData) {
+      window.location.href = '/auth.html';
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      // Update avatar from user data
+      if (userData && userData.avatar) {
+        document.getElementById('avatar').src = userData.avatar;
+      }
+
+      // Set up event listeners
+      document.getElementById('create-group-btn').addEventListener('click', openCreateGroupModal);
+      document.querySelectorAll('.close-modal, .cancel-btn').forEach(el => {
+        el.addEventListener('click', closeAllModals);
+      });
+      document.getElementById('group-form').addEventListener('submit', saveGroup);
+      document.getElementById('confirm-delete-btn').addEventListener('click', deleteGroup);
+
+      // Set up avatar dropdown toggle
+      document.getElementById('avatar').addEventListener('click', function() {
+        document.getElementById('dropdown').classList.toggle('hidden');
+      });
+
+      // Close dropdown when clicking outside
+      window.addEventListener('click', function(e) {
+        if (!document.getElementById('profile').contains(e.target)) {
+          document.getElementById('dropdown').classList.add('hidden');
+        }
+      });
+
+      // Profile button handler
+      document.getElementById('profile-btn').addEventListener('click', function() {
+        window.location.href = '/profile.html';
+      });
+
+      // Logout handler
+      document.getElementById('logout-btn').addEventListener('click', function() {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        window.location.href = '/auth.html';
+      });
+
+      // Dark mode toggle
+      document.getElementById('dark-mode-toggle').addEventListener('click', function() {
+        document.body.classList.toggle('dark-mode');
+        document.getElementById('header')?.classList.toggle('dark-mode');
+        document.getElementById('sidebar')?.classList.toggle('dark-mode');
+        document.getElementById('header__input')?.classList.toggle('dark-mode');
+        const darkModeButton = document.getElementById('dark-mode-toggle');
+        darkModeButton.textContent = document.body.classList.contains('dark-mode') ? 'Light Mode' : 'Dark Mode';
+      });
+
+      // Load initial data
+      loadGroups();
+      loadFriends();
+    });
+
+    // Global variables
+    let currentGroupId = null;
+    let friends = [];
+    let groups = [];
+
+    // Load all friend groups
+    async function loadGroups() {
+      try {
+        const response = await fetch('/friend-groups', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to load friend groups');
+        }
+
+        const data = await response.json();
+        groups = data;
+        renderGroups(data);
+      } catch (error) {
+        console.error('Error loading groups:', error);
+        document.getElementById('groups-grid').innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">⚠️</div>
+            <div class="empty-state-title">Error Loading Groups</div>
+            <div class="empty-state-text">${error.message}</div>
+            <button class="action-btn" onclick="loadGroups()">Try Again</button>
+          </div>
+        `;
+      }
+    }
+
+    // Load all friends for member selection
+    async function loadFriends() {
+      try {
+        const response = await fetch('/social/friends', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to load friends');
+        }
+
+        const data = await response.json();
+        friends = data;
+      } catch (error) {
+        console.error('Error loading friends:', error);
+      }
+    }
+
+    // Render all groups
+    function renderGroups(groups) {
+      const container = document.getElementById('groups-grid');
+
+      if (!groups || groups.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">👥</div>
+            <div class="empty-state-title">No Friend Groups Yet</div>
+            <div class="empty-state-text">Create your first friend group to organize your friends and manage privacy settings.</div>
+            <button class="action-btn" onclick="openCreateGroupModal()">Create New Group</button>
+          </div>
+        `;
+        return;
+      }
+
+      const html = groups.map(group => {
+        // Generate random hex color if none is provided
+        const color = group.color || `#${Math.floor(Math.random()*16777215).toString(16)}`;
+
+        return `
+          <div class="group-card" data-id="${group.name}">
+            <div class="group-color-indicator" style="background-color: ${color}"></div>
+            <div class="group-header">
+              <h3 class="group-name">${group.name}</h3>
+              <div class="group-actions">
+                <button class="group-action edit-group" data-id="${group.name}">✏️</button>
+                <button class="group-action delete-group" data-id="${group.name}">🗑️</button>
+              </div>
+            </div>
+            <div class="group-description">${group.description || 'No description'}</div>
+            <div class="group-members">
+              ${group.members.map(member => `
+                <div class="group-member" title="${member.fullName || member.username}">
+                  <img src="${member.avatar || './images/default-avatar.svg'}" alt="${member.username}" class="member-avatar">
+                </div>
+              `).join('')}
+              ${group.members.length === 0 ? '<em style="color: #777;">No members yet</em>' : ''}
+            </div>
+            <div class="group-privacy">
+              <div class="privacy-option">
+                <span class="privacy-label">Can see my location:</span>
+                <span>${group.privacySettings?.canSeeLocation !== false ? '✅' : '❌'}</span>
+              </div>
+              <div class="privacy-option">
+                <span class="privacy-label">Can see my activity:</span>
+                <span>${group.privacySettings?.canSeeActivity !== false ? '✅' : '❌'}</span>
+              </div>
+              <div class="privacy-option">
+                <span class="privacy-label">Can message me:</span>
+                <span>${group.privacySettings?.canMessage !== false ? '✅' : '❌'}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      container.innerHTML = html;
+
+      // Add event listeners to edit and delete buttons
+      document.querySelectorAll('.edit-group').forEach(button => {
+        button.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const groupName = button.getAttribute('data-id');
+          openEditGroupModal(groupName);
+        });
+      });
+
+      document.querySelectorAll('.delete-group').forEach(button => {
+        button.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const groupName = button.getAttribute('data-id');
+          openDeleteGroupModal(groupName);
+        });
+      });
+    }
+
+    // Render the friend list in the modal
+    function renderFriendList(selectedFriends = []) {
+      const container = document.getElementById('friend-list');
+
+      if (!friends || friends.length === 0) {
+        container.innerHTML = `<p style="color: #aaa; text-align: center; padding: 10px;">You don't have any friends yet.</p>`;
+        return;
+      }
+
+      const html = friends.map(friend => {
+        const isSelected = selectedFriends.some(memberId => memberId === friend._id);
+
+        return `
+          <div class="friend-item">
+            <input type="checkbox" class="friend-checkbox" value="${friend._id}" ${isSelected ? 'checked' : ''}>
+            <img src="${friend.avatar || './images/default-avatar.svg'}" alt="${friend.username}" class="friend-avatar">
+            <div class="friend-name">${friend.fullName || friend.username}</div>
+          </div>
+        `;
+      }).join('');
+
+      container.innerHTML = html;
+    }
+
+    // Open the create group modal
+    function openCreateGroupModal() {
+      document.getElementById('modal-title').textContent = 'Create New Group';
+      document.getElementById('group-id').value = '';
+      document.getElementById('group-name').value = '';
+      document.getElementById('group-description').value = '';
+      document.getElementById('group-color').value = '#0b93f6';
+      document.getElementById('can-see-location').checked = true;
+      document.getElementById('can-see-activity').checked = true;
+      document.getElementById('can-message').checked = true;
+
+      // Reset friend selection
+      renderFriendList([]);
+
+      // Show the modal
+      document.getElementById('group-modal').style.display = 'block';
+      currentGroupId = null;
+    }
+
+    // Open the edit group modal
+    function openEditGroupModal(groupName) {
+      const group = groups.find(g => g.name === groupName);
+      if (!group) return;
+
+      document.getElementById('modal-title').textContent = 'Edit Group';
+      document.getElementById('group-id').value = group.name; // Store the original name for updating
+      document.getElementById('group-name').value = group.name;
+      document.getElementById('group-description').value = group.description || '';
+      document.getElementById('group-color').value = group.color || '#0b93f6';
+
+      // Set privacy checkboxes
+      document.getElementById('can-see-location').checked =
+        group.privacySettings?.canSeeLocation !== false;
+      document.getElementById('can-see-activity').checked =
+        group.privacySettings?.canSeeActivity !== false;
+      document.getElementById('can-message').checked =
+        group.privacySettings?.canMessage !== false;
+
+      // Set selected friends
+      const selectedMembers = group.members.map(member => member._id);
+      renderFriendList(selectedMembers);
+
+      // Show the modal
+      document.getElementById('group-modal').style.display = 'block';
+      currentGroupId = group.name;
+    }
+
+    // Open the delete group confirmation modal
+    function openDeleteGroupModal(groupName) {
+      document.getElementById('delete-modal').style.display = 'block';
+      currentGroupId = groupName;
+    }
+
+    // Close all modals
+    function closeAllModals() {
+      document.getElementById('group-modal').style.display = 'none';
+      document.getElementById('delete-modal').style.display = 'none';
+      currentGroupId = null;
+    }
+
+    // Save the group (create or update)
+    async function saveGroup(e) {
+      e.preventDefault();
+
+      // Get form values
+      const originalName = document.getElementById('group-id').value;
+      const name = document.getElementById('group-name').value.trim();
+      const description = document.getElementById('group-description').value.trim();
+      const color = document.getElementById('group-color').value;
+
+      // Get selected friends
+      const selectedFriends = Array.from(document.querySelectorAll('.friend-checkbox:checked'))
+        .map(checkbox => checkbox.value);
+
+      // Get privacy settings
+      const privacySettings = {
+        canSeeLocation: document.getElementById('can-see-location').checked,
+        canSeeActivity: document.getElementById('can-see-activity').checked,
+        canMessage: document.getElementById('can-message').checked
+      };
+
+      // Create group data object
+      const groupData = {
+        name,
+        description,
+        color,
+        members: selectedFriends,
+        privacySettings
+      };
+
+      try {
+        let response;
+
+        // If we have an original name (editing) and it's different from the new name
+        if (originalName && originalName !== name) {
+          // Update the group with new name
+          response = await fetch(`/friend-groups/${originalName}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(groupData)
+          });
+        } else if (originalName) {
+          // Update the group (name unchanged)
+          response = await fetch(`/friend-groups/${originalName}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(groupData)
+          });
+        } else {
+          // Create a new group
+          response = await fetch('/friend-groups', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(groupData)
+          });
+        }
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Failed to save group');
+        }
+
+        // Close the modal and reload groups
+        closeAllModals();
+        loadGroups();
+
+        // Show success message
+        alert(originalName ? 'Group updated successfully' : 'Group created successfully');
+      } catch (error) {
+        console.error('Error saving group:', error);
+        alert(`Error: ${error.message}`);
+      }
+    }
+
+    // Delete the current group
+    async function deleteGroup() {
+      if (!currentGroupId) return;
+
+      try {
+        const response = await fetch(`/friend-groups/${currentGroupId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Failed to delete group');
+        }
+
+        // Close the modal and reload groups
+        closeAllModals();
+        loadGroups();
+
+        // Show success message
+        alert('Group deleted successfully');
+      } catch (error) {
+        console.error('Error deleting group:', error);
+        alert(`Error: ${error.message}`);
+      }
+    }
+  </script>
+</body>
+</html>

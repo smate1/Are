@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Debug</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #333;
+        }
+        pre {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        button {
+            padding: 10px 15px;
+            background: #0b93f6;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        .container {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .error {
+            color: red;
+        }
+        .success {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <h1>Login Debug Tool</h1>
+
+    <div class="container">
+        <h2>Current Authentication State</h2>
+        <div id="auth-state"></div>
+        <button id="check-auth">Check Authentication</button>
+    </div>
+
+    <div class="container">
+        <h2>Test Login</h2>
+        <label>
+            Username:
+            <input type="text" id="username" value="testuser">
+        </label>
+        <br><br>
+        <label>
+            Password:
+            <input type="password" id="password" value="password123">
+        </label>
+        <br><br>
+        <button id="login-button">Attempt Login</button>
+        <div id="login-result"></div>
+    </div>
+
+    <div class="container">
+        <h2>API Endpoint Test</h2>
+        <button id="status-button">Test API Status</button>
+        <div id="api-status"></div>
+    </div>
+
+    <div class="container">
+        <h2>Token Validation Test</h2>
+        <button id="validate-token">Validate Current Token</button>
+        <div id="token-result"></div>
+    </div>
+
+    <div class="container">
+        <h2>Inspect Cookies</h2>
+        <button id="check-cookies">Check Cookies</button>
+        <div id="cookies-result"></div>
+    </div>
+
+    <div class="container">
+        <h2>Clear Auth Data</h2>
+        <button id="clear-auth">Clear Token & User Data</button>
+        <div id="clear-result"></div>
+    </div>
+
+    <script>
+        // Configuration
+        const API_BASE_URL = window.location.origin;
+
+        // DOM Elements
+        const authStateEl = document.getElementById('auth-state');
+        const loginResultEl = document.getElementById('login-result');
+        const apiStatusEl = document.getElementById('api-status');
+        const tokenResultEl = document.getElementById('token-result');
+        const cookiesResultEl = document.getElementById('cookies-result');
+        const clearResultEl = document.getElementById('clear-result');
+
+        // Check Authentication State
+        document.getElementById('check-auth').addEventListener('click', function() {
+            const token = localStorage.getItem('token');
+            const userData = localStorage.getItem('user');
+
+            let html = '<h3>LocalStorage:</h3>';
+            html += `<p>Token: ${token ? 'Present (length: ' + token.length + ')' : 'Not found'}</p>`;
+            html += `<p>User Data: ${userData ? 'Present' : 'Not found'}</p>`;
+
+            if (userData) {
+                try {
+                    const user = JSON.parse(userData);
+                    html += `<pre>${JSON.stringify(user, null, 2)}</pre>`;
+                } catch (e) {
+                    html += `<p class="error">Error parsing user data: ${e.message}</p>`;
+                }
+            }
+
+            authStateEl.innerHTML = html;
+        });
+
+        // Test Login
+        document.getElementById('login-button').addEventListener('click', async function() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            loginResultEl.innerHTML = '<p>Attempting login...</p>';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password }),
+                    credentials: 'include'
+                });
+
+                const status = response.status;
+                let data;
+
+                try {
+                    const text = await response.text();
+                    try {
+                        data = JSON.parse(text);
+                    } catch (e) {
+                        data = { error: 'Failed to parse JSON', rawResponse: text };
+                    }
+                } catch (e) {
+                    data = { error: 'Failed to read response text' };
+                }
+
+                loginResultEl.innerHTML = `
+                    <h3>Login Result (${status}):</h3>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+
+                if (response.ok && data.token) {
+                    localStorage.setItem('token', data.token);
+                    if (data.user) {
+                        localStorage.setItem('user', JSON.stringify(data.user));
+                    }
+                    loginResultEl.innerHTML += `<p class="success">Login successful! Token stored.</p>`;
+                } else {
+                    loginResultEl.innerHTML += `<p class="error">Login failed!</p>`;
+                }
+
+            } catch (error) {
+                loginResultEl.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+            }
+        });
+
+        // Test API Status
+        document.getElementById('status-button').addEventListener('click', async function() {
+            apiStatusEl.innerHTML = '<p>Checking API status...</p>';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/status`);
+                const data = await response.json();
+
+                apiStatusEl.innerHTML = `
+                    <h3>API Status:</h3>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                apiStatusEl.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+            }
+        });
+
+        // Validate Token
+        document.getElementById('validate-token').addEventListener('click', async function() {
+            const token = localStorage.getItem('token');
+
+            if (!token) {
+                tokenResultEl.innerHTML = '<p class="error">No token found in localStorage</p>';
+                return;
+            }
+
+            tokenResultEl.innerHTML = '<p>Validating token...</p>';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/validate-token`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    credentials: 'include'
+                });
+
+                const status = response.status;
+                let data;
+
+                try {
+                    data = await response.json();
+                } catch (e) {
+                    const text = await response.text();
+                    data = { error: 'Failed to parse JSON', rawResponse: text };
+                }
+
+                tokenResultEl.innerHTML = `
+                    <h3>Token Validation (${status}):</h3>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+
+                if (response.ok) {
+                    tokenResultEl.innerHTML += `<p class="success">Token is valid!</p>`;
+                } else {
+                    tokenResultEl.innerHTML += `<p class="error">Token validation failed!</p>`;
+                }
+
+            } catch (error) {
+                tokenResultEl.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+            }
+        });
+
+        // Check Cookies
+        document.getElementById('check-cookies').addEventListener('click', function() {
+            const cookies = document.cookie.split(';').reduce((acc, cookie) => {
+                const [name, value] = cookie.trim().split('=');
+                if (name) acc[name] = value;
+                return acc;
+            }, {});
+
+            cookiesResultEl.innerHTML = `
+                <h3>Cookies:</h3>
+                <pre>${JSON.stringify(cookies, null, 2)}</pre>
+            `;
+        });
+
+        // Clear Auth Data
+        document.getElementById('clear-auth').addEventListener('click', function() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+
+            // Also try to clear the token cookie
+            document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+
+            clearResultEl.innerHTML = `<p class="success">Auth data cleared from localStorage and cookies!</p>`;
+        });
+
+        // Initialize - check auth state on load
+        document.getElementById('check-auth').click();
+    </script>
+</body>
+</html>

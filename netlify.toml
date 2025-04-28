@@ -1,0 +1,29 @@
+[build]
+  command = "npm install"
+  publish = "public"
+
+[build.environment]
+  NODE_VERSION = "18"
+  USE_MOCK_DB = "true"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+[functions.api]
+  external_node_modules = ["express"]
+  included_files = ["index.js", "public/**", "models/**", "middleware/**", "*.js"]
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[dev]
+  command = "npm run dev:node"
+  port = 5002
+  targetPort = 5002
+  autoLaunch = true
+
+[images]
+  remote_images = ["https://example.com/images/*", "https://picsum.photos/*", "https://via.placeholder.com/*"]

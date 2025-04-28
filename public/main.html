@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Era</title>
+  <link rel="stylesheet" href="./css/reset.css">
+  <link rel="stylesheet" href="./css/slick.css">
+  <link rel="stylesheet" href="./css/jquery.fancybox.css">
+  <link rel="icon" type="image/x-icon" href="./images/globe.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="./css/main.css">
+</head>
+
+<body>
+  <header class="header" id="header">
+    <div class="header__top">
+      <a class="header__logo" href="main.html">
+        <img src="./images/globe.svg" alt="" width="45" height="45">
+      </a>
+      <form class="header__form" action="">
+        <input class="header__input" type="text" placeholder="Search">
+        <button class="header__btn">
+          <img src="./images/search.svg" alt="">
+        </button>
+      </form>
+      <div id="profile" class="profile">
+        <label for="avatar-input" class="avatar-label">
+          <img id="avatar" src="./images/default-avatar.svg" alt="Avatar" class="avatar">
+        </label>
+        <input type="file" id="avatar-input" accept="image/*" class="hidden">
+        <div id="dropdown" class="dropdown hidden">
+          <button class="dropdown-btn" id="profile-btn">Профіль</button>
+          <button class="dropdown-btn" id="settings-btn">Налаштування</button>
+          <button class="dropdown-btn" id="dark-mode-toggle">Dark Mode</button>
+          <button class="dropdown-btn" id="logout-btn">Вийти</button>
+        </div>
+      </div>
+    </div>
+  </header>
+  <div class="main__wrapper">
+    <div class="sidebar">
+      <div class="sidebar__menu">
+        <a class="sidebar__menu-link" href="./main.html">
+          Home
+        </a>
+        <a class="sidebar__menu-link" href="./profile.html">
+          Profile
+        </a>
+        <a class="sidebar__menu-link" href="./social-network.html">
+          Social Media
+        </a>
+        <a class="sidebar__menu-link" href="./chats.html">
+          Chats
+        </a>
+        <a class="sidebar__menu-link" href="./map.html">
+          Map
+        </a>
+      </div>
+    </div>
+    <div class="main__info page-container">
+      <h1 class="main__title">
+        New Zeland
+      </h1>
+      <div class="main__post">
+        <img class="main__post-img" src="./images/default-cover.jpg" alt="" height="500" width="100%">
+        <div class="main__post-text">
+          Lorem ipsum dolor sit, amet consectetur adipisicing elit. Vitae culpa sequi vel, atque beatae quas incidunt
+          soluta maxime illo ex dolore libero et magni. Provident beatae aliquid sequi nulla officia.
+          Ipsum cum ex nulla modi non maiores enim, ut commodi corporis beatae eum suscipit unde consequuntur dicta, quo
+          officia nihil! Modi itaque illo vero dolorem eos praesentium dolore alias. Nesciunt!
+          Optio odio sint dolores deserunt est rerum illo quaerat voluptatum nam? Corrupti accusantium recusandae
+          mollitia culpa at voluptatum porro eveniet exercitationem harum maxime incidunt placeat ipsa, fugit aperiam
+          quae. Dolore!
+          Ipsum aut beatae minus similique tempore error cumque expedita illo ut explicabo quibusdam, ad, autem dolores
+          maiores, reprehenderit quidem consequuntur? Ea unde enim accusamus saepe asperiores perspiciatis maxime quia
+          eligendi!
+          A natus amet ipsa maxime expedita doloremque minima explicabo nisi tempora, nam praesentium, numquam veritatis
+          error officia perferendis. Perferendis distinctio cum inventore consectetur at aliquid expedita odit
+          repudiandae exercitationem vel?
+          Incidunt molestias maiores cum. Repudiandae cumque alias quos laborum
+        </div>
+      </div>
+      <div class="main__post">
+        <img class="main__post-img" src="./images/default-cover.jpg" alt="" height="500" width="100%">
+        <div class="main__post-text">
+          Lorem ipsum dolor sit, amet consectetur adipisicing elit. Vitae culpa sequi vel, atque beatae quas incidunt
+          soluta maxime illo ex dolore libero et magni. Provident beatae aliquid sequi nulla officia.
+          Ipsum cum ex nulla modi non maiores enim, ut commodi corporis beatae eum suscipit unde consequuntur dicta, quo
+          officia nihil! Modi itaque illo vero dolorem eos praesentium dolore alias. Nesciunt!
+          Optio odio sint dolores deserunt est rerum illo quaerat voluptatum nam? Corrupti accusantium recusandae
+          mollitia culpa at voluptatum porro eveniet exercitationem harum maxime incidunt placeat ipsa, fugit aperiam
+          quae. Dolore!
+          Ipsum aut beatae minus similique tempore error cumque expedita illo ut explicabo quibusdam, ad, autem dolores
+          maiores, reprehenderit quidem consequuntur? Ea unde enim accusamus saepe asperiores perspiciatis maxime quia
+          eligendi!
+          A natus amet ipsa maxime expedita doloremque minima explicabo nisi tempora, nam praesentium, numquam veritatis
+          error officia perferendis. Perferendis distinctio cum inventore consectetur at aliquid expedita odit
+          repudiandae exercitationem vel?
+          Incidunt molestias maiores cum. Repudiandae cumque alias quos laborum
+        </div>
+      </div>
+      <div class="main__post">
+        <img class="main__post-img" src="./images/default-cover.jpg" alt="" height="500" width="100%">
+        <div class="main__post-text">
+          Lorem ipsum dolor sit, amet consectetur adipisicing elit. Vitae culpa sequi vel, atque beatae quas incidunt
+          soluta maxime illo ex dolore libero et magni. Provident beatae aliquid sequi nulla officia.
+          Ipsum cum ex nulla modi non maiores enim, ut commodi corporis beatae eum suscipit unde consequuntur dicta, quo
+          officia nihil! Modi itaque illo vero dolorem eos praesentium dolore alias. Nesciunt!
+          Optio odio sint dolores deserunt est rerum illo quaerat voluptatum nam? Corrupti accusantium recusandae
+          mollitia culpa at voluptatum porro eveniet exercitationem harum maxime incidunt placeat ipsa, fugit aperiam
+          quae. Dolore!
+          Ipsum aut beatae minus similique tempore error cumque expedita illo ut explicabo quibusdam, ad, autem dolores
+          maiores, reprehenderit quidem consequuntur? Ea unde enim accusamus saepe asperiores perspiciatis maxime quia
+          eligendi!
+          A natus amet ipsa maxime expedita doloremque minima explicabo nisi tempora, nam praesentium, numquam veritatis
+          error officia perferendis. Perferendis distinctio cum inventore consectetur at aliquid expedita odit
+          repudiandae exercitationem vel?
+          Incidunt molestias maiores cum. Repudiandae cumque alias quos laborum
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const userId = sessionStorage.getItem('userId');
+
+    // Завантаження аватарки для конкретного користувача
+    window.addEventListener('load', function () {
+      if (userId) {
+        const savedAvatar = localStorage.getItem(`avatar_${userId}`);
+        if (savedAvatar) {
+          document.getElementById('avatar').src = savedAvatar;
+        }
+      }
+    });
+
+    document.getElementById('avatar').addEventListener('click', function () {
+      const dropdown = document.getElementById('dropdown');
+      dropdown.classList.toggle('hidden');
+    });
+
+    document.getElementById('avatar-input').addEventListener('change', function (event) {
+      if (!userId) {
+        alert('Помилка: Користувач не авторизований!');
+        return;
+      }
+
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          document.getElementById('avatar').src = e.target.result;
+          localStorage.setItem(`avatar_${userId}`, e.target.result); // Збереження для конкретного користувача
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    window.addEventListener('click', function (e) {
+      if (!document.getElementById('profile').contains(e.target)) {
+        document.getElementById('dropdown').classList.add('hidden');
+      }
+    });
+
+    document.getElementById('profile-btn').addEventListener('click', function () {
+      alert('Переходимо в профіль!');
+    });
+
+    document.getElementById('settings-btn').addEventListener('click', function () {
+      alert('Відкриваємо налаштування!');
+    });
+
+    document.getElementById('dark-mode-toggle').addEventListener('click', function () {
+      document.body.classList.toggle('dark-mode');
+      document.getElementById('header')?.classList.toggle('dark-mode');
+      const darkModeButton = document.getElementById('dark-mode-toggle');
+      darkModeButton.textContent = document.body.classList.contains('dark-mode') ? 'Light Mode' : 'Dark Mode';
+    });
+
+    document.getElementById('logout-btn').addEventListener('click', function () {
+      sessionStorage.removeItem('userId');
+      window.location.href = 'auth.html'; // Перехід на сторінку авторизації
+    });
+  </script>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="./js/slick.min.js"></script>
+  <script src="./js/jquery.fancybox.min.js"></script>
+  <script src="./js/main.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Functions Debug</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2, h3 {
+            margin-top: 0;
+            color: #2563eb;
+        }
+        button {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background-color: #1d4ed8;
+        }
+        button:disabled {
+            background-color: #93c5fd;
+            cursor: not-allowed;
+        }
+        .panel {
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        .panel-header {
+            background-color: #f1f5f9;
+            padding: 10px 15px;
+            border-bottom: 1px solid #ddd;
+            font-weight: bold;
+        }
+        .panel-body {
+            padding: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .result {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            padding: 10px;
+            margin-top: 10px;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        .error {
+            background-color: #fee2e2;
+            border-color: #fecaca;
+            color: #b91c1c;
+        }
+        .success {
+            background-color: #d1fae5;
+            border-color: #a7f3d0;
+            color: #047857;
+        }
+        .user-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .user-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 15px;
+            width: 200px;
+            background-color: #f8fafc;
+        }
+        .user-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Social Functions Debugging</h1>
+        <p>Use this page to test and debug social functionality. Current user: <span id="current-user">Loading...</span></p>
+
+        <div class="panel">
+            <div class="panel-header">API Tests</div>
+            <div class="panel-body">
+                <button id="test-get-profile">Get Profile</button>
+                <button id="test-get-friends">Get Friends</button>
+                <button id="test-get-requests">Get Friend Requests</button>
+                <button id="test-get-activity">Get Activity</button>
+                <button id="test-get-nearby">Get Nearby Users</button>
+                <div id="api-result" class="result">Results will appear here</div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-header">User List</div>
+            <div class="panel-body">
+                <p>All available test users:</p>
+                <div id="user-list" class="user-list">Loading users...</div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-header">Friend Actions</div>
+            <div class="panel-body">
+                <div>
+                    <label for="user-id-input">Enter User ID:</label>
+                    <input type="text" id="user-id-input" placeholder="User ID">
+                </div>
+                <div style="margin-top: 10px;">
+                    <button id="send-request-btn">Send Friend Request</button>
+                    <button id="accept-request-btn">Accept Request</button>
+                    <button id="remove-friend-btn">Remove Friend</button>
+                </div>
+                <div id="action-result" class="result">Results will appear here</div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-header">Location Testing</div>
+            <div class="panel-body">
+                <button id="update-location-btn">Update Current Location</button>
+                <button id="toggle-sharing-btn">Toggle Location Sharing</button>
+                <button id="get-friends-locations-btn">Get Friends' Locations</button>
+                <div id="location-result" class="result">Results will appear here</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Store token and user data
+        const token = localStorage.getItem('token');
+        let currentUser = null;
+        let allUsers = [];
+
+        // Check authentication
+        if (!token) {
+            window.location.href = '/auth.html';
+        }
+
+        // Helper function to make authenticated requests
+        async function apiRequest(url, method = 'GET', body = null) {
+            try {
+                const options = {
+                    method,
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                };
+
+                if (body) {
+                    options.body = JSON.stringify(body);
+                }
+
+                const response = await fetch(url, options);
+                const data = await response.json();
+
+                return {
+                    ok: response.ok,
+                    status: response.status,
+                    data
+                };
+            } catch (error) {
+                console.error('API request error:', error);
+                return {
+                    ok: false,
+                    error: error.message
+                };
+            }
+        }
+
+        // Format JSON for display
+        function formatJson(json) {
+            return JSON.stringify(json, null, 2);
+        }
+
+        // Show result in result container
+        function showResult(elementId, result, isError = false) {
+            const element = document.getElementById(elementId);
+            element.textContent = formatJson(result);
+            element.className = isError ? 'result error' : 'result';
+
+            if (isError) {
+                element.classList.add('error');
+                element.classList.remove('success');
+            } else {
+                element.classList.add('success');
+                element.classList.remove('error');
+            }
+        }
+
+        // Load and display current user
+        async function loadCurrentUser() {
+            const result = await apiRequest('/profile/profile');
+
+            if (result.ok) {
+                currentUser = result.data;
+                document.getElementById('current-user').textContent = `${currentUser.username} (ID: ${currentUser.id})`;
+                return currentUser;
+            } else {
+                document.getElementById('current-user').textContent = 'Error loading user';
+                return null;
+            }
+        }
+
+        // Load all users for testing
+        async function loadAllUsers() {
+            const result = await apiRequest('/profile/search?q=test');
+
+            if (result.ok && result.data) {
+                allUsers = result.data;
+                renderUserList();
+            } else {
+                document.getElementById('user-list').innerHTML = 'Error loading users';
+            }
+        }
+
+        // Render user list
+        function renderUserList() {
+            if (!allUsers || !allUsers.length) {
+                document.getElementById('user-list').innerHTML = 'No users found';
+                return;
+            }
+
+            const html = allUsers.map(user => `
+                <div class="user-card">
+                    <img src="${user.avatar || '/images/default-avatar.svg'}" alt="${user.username}" class="user-avatar">
+                    <div><strong>${user.fullName || user.username}</strong></div>
+                    <div>@${user.username}</div>
+                    <div style="color: #666; font-size: 0.8em; margin: 5px 0;">ID: ${user._id}</div>
+                    <button class="copy-id-btn" data-id="${user._id}">Copy ID</button>
+                    <button class="add-friend-btn" data-id="${user._id}">Add Friend</button>
+                </div>
+            `).join('');
+
+            document.getElementById('user-list').innerHTML = html;
+
+            // Add event listeners to buttons
+            document.querySelectorAll('.copy-id-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    document.getElementById('user-id-input').value = id;
+                });
+            });
+
+            document.querySelectorAll('.add-friend-btn').forEach(btn => {
+                btn.addEventListener('click', async function() {
+                    const id = this.getAttribute('data-id');
+                    const result = await apiRequest(`/social/friend-request/${id}`, 'POST');
+                    showResult('action-result', result, !result.ok);
+                });
+            });
+        }
+
+        // Initialize page
+        async function initialize() {
+            await loadCurrentUser();
+            await loadAllUsers();
+
+            // Set up event listeners
+            document.getElementById('test-get-profile').addEventListener('click', async () => {
+                const result = await apiRequest('/profile/profile');
+                showResult('api-result', result, !result.ok);
+            });
+
+            document.getElementById('test-get-friends').addEventListener('click', async () => {
+                const result = await apiRequest('/social/friends');
+                showResult('api-result', result, !result.ok);
+            });
+
+            document.getElementById('test-get-requests').addEventListener('click', async () => {
+                const result = await apiRequest('/social/friend-requests');
+                showResult('api-result', result, !result.ok);
+            });
+
+            document.getElementById('test-get-activity').addEventListener('click', async () => {
+                const result = await apiRequest('/social/activity');
+                showResult('api-result', result, !result.ok);
+            });
+
+            document.getElementById('test-get-nearby').addEventListener('click', async () => {
+                const result = await apiRequest('/social/nearby-users');
+                showResult('api-result', result, !result.ok);
+            });
+
+            document.getElementById('send-request-btn').addEventListener('click', async () => {
+                const userId = document.getElementById('user-id-input').value;
+                if (!userId) {
+                    showResult('action-result', { error: 'Please enter a User ID' }, true);
+                    return;
+                }
+
+                const result = await apiRequest(`/social/friend-request/${userId}`, 'POST');
+                showResult('action-result', result, !result.ok);
+            });
+
+            document.getElementById('accept-request-btn').addEventListener('click', async () => {
+                const userId = document.getElementById('user-id-input').value;
+                if (!userId) {
+                    showResult('action-result', { error: 'Please enter a User ID' }, true);
+                    return;
+                }
+
+                const result = await apiRequest(`/social/accept-friend/${userId}`, 'POST');
+                showResult('action-result', result, !result.ok);
+            });
+
+            document.getElementById('remove-friend-btn').addEventListener('click', async () => {
+                const userId = document.getElementById('user-id-input').value;
+                if (!userId) {
+                    showResult('action-result', { error: 'Please enter a User ID' }, true);
+                    return;
+                }
+
+                const result = await apiRequest(`/social/friend/${userId}`, 'DELETE');
+                showResult('action-result', result, !result.ok);
+            });
+
+            document.getElementById('update-location-btn').addEventListener('click', async () => {
+                if (!navigator.geolocation) {
+                    showResult('location-result', { error: 'Geolocation is not supported by your browser' }, true);
+                    return;
+                }
+
+                navigator.geolocation.getCurrentPosition(
+                    async (position) => {
+                        const result = await apiRequest('/social/update-location', 'POST', {
+                            coordinates: [position.coords.longitude, position.coords.latitude],
+                            isSharing: true
+                        });
+
+                        showResult('location-result', {
+                            result,
+                            coordinates: [position.coords.longitude, position.coords.latitude]
+                        }, !result.ok);
+                    },
+                    (error) => {
+                        showResult('location-result', {
+                            error: `Geolocation error: ${error.message}`,
+                            code: error.code
+                        }, true);
+                    }
+                );
+            });
+
+            document.getElementById('toggle-sharing-btn').addEventListener('click', async () => {
+                const result = await apiRequest('/social/toggle-location-sharing', 'POST', {
+                    isSharing: true
+                });
+
+                showResult('location-result', result, !result.ok);
+            });
+
+            document.getElementById('get-friends-locations-btn').addEventListener('click', async () => {
+                const result = await apiRequest('/social/friends/locations');
+                showResult('location-result', result, !result.ok);
+            });
+        }
+
+        // Run initialization when DOM is ready
+        document.addEventListener('DOMContentLoaded', initialize);
+    </script>
+</body>
+</html>

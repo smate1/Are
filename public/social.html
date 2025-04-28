@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Social - Era</title>
+  <link rel="stylesheet" href="./css/reset.css">
+  <link rel="stylesheet" href="./css/slick.css">
+  <link rel="stylesheet" href="./css/jquery.fancybox.css">
+  <link rel="icon" type="image/x-icon" href="./images/globe.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="./css/main.css">
+  <style>
+    .social-container {
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .social-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .social-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: white;
+    }
+
+    .social-tabs {
+      display: flex;
+      border-bottom: 1px solid #333;
+      margin-bottom: 20px;
+    }
+
+    .social-tab {
+      padding: 10px 20px;
+      font-size: 16px;
+      color: #aaa;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s ease;
+    }
+
+    .social-tab:hover {
+      color: white;
+    }
+
+    .social-tab.active {
+      color: white;
+      border-bottom: 2px solid #0b93f6;
+    }
+
+    .social-content {
+      display: none;
+    }
+
+    .social-content.active {
+      display: block;
+    }
+
+    .social-card {
+      background-color: #0f0f0f;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 500;
+      margin-bottom: 15px;
+      color: white;
+    }
+
+    .user-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .user-card {
+      background-color: #1a1a1a;
+      padding: 15px;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      transition: transform 0.2s ease;
+    }
+
+    .user-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .user-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      margin-bottom: 10px;
+      object-fit: cover;
+    }
+
+    .user-name {
+      font-weight: 500;
+      margin-bottom: 5px;
+      color: white;
+    }
+
+    .user-username {
+      font-size: 14px;
+      color: #aaa;
+      margin-bottom: 10px;
+    }
+
+    .user-actions {
+      margin-top: 10px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .activity-feed {
+      max-height: 600px;
+      overflow-y: auto;
+      padding-right: 10px;
+    }
+
+    .activity-item {
+      display: flex;
+      padding: 15px;
+      background-color: #1a1a1a;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+
+    .activity-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      margin-right: 15px;
+      object-fit: cover;
+    }
+
+    .activity-content {
+      flex: 1;
+    }
+
+    .activity-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 5px;
+    }
+
+    .activity-username {
+      font-weight: 500;
+      color: white;
+    }
+
+    .activity-time {
+      font-size: 14px;
+      color: #777;
+    }
+
+    .activity-message {
+      color: #ccc;
+      margin-bottom: 10px;
+    }
+
+    .activity-actions {
+      display: flex;
+      gap: 15px;
+    }
+
+    .activity-action {
+      color: #aaa;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .activity-action:hover {
+      color: white;
+    }
+
+    .search-bar {
+      width: 100%;
+      padding: 12px 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      background-color: #1a1a1a;
+      border: 1px solid #333;
+      color: white;
+      font-size: 16px;
+    }
+
+    .search-results {
+      margin-top: 20px;
+    }
+
+    .request-item {
+      display: flex;
+      align-items: center;
+      padding: 15px;
+      background-color: #1a1a1a;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    .request-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      margin-right: 15px;
+      object-fit: cover;
+    }
+
+    .request-info {
+      flex: 1;
+    }
+
+    .request-name {
+      font-weight: 500;
+      color: white;
+      margin-bottom: 5px;
+    }
+
+    .request-username {
+      font-size: 14px;
+      color: #aaa;
+    }
+
+    .request-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .button {
+      padding: 8px 15px;
+      font-size: 14px;
+      cursor: pointer;
+      background-color: #0f0f0f;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      transition: all 0.2s ease;
+    }
+
+    .button:hover {
+      background-color: #333;
+    }
+
+    .button.primary {
+      background-color: #0b93f6;
+    }
+
+    .button.primary:hover {
+      background-color: #0a84e1;
+    }
+
+    .button.danger {
+      background-color: #e74c3c;
+    }
+
+    .button.danger:hover {
+      background-color: #c0392b;
+    }
+
+    .no-results {
+      text-align: center;
+      padding: 30px;
+      color: #aaa;
+    }
+
+    /* Dark mode overrides */
+    .dark-mode .social-card,
+    .dark-mode .button {
+      background-color: #f0f0f0;
+    }
+
+    .dark-mode .user-card,
+    .dark-mode .activity-item,
+    .dark-mode .request-item,
+    .dark-mode .search-bar {
+      background-color: white;
+      border: 1px solid #ddd;
+    }
+
+    .dark-mode .social-title,
+    .dark-mode .card-title,
+    .dark-mode .user-name,
+    .dark-mode .activity-username,
+    .dark-mode .request-name {
+      color: #333;
+    }
+
+    .dark-mode .user-username,
+    .dark-mode .activity-message,
+    .dark-mode .request-username {
+      color: #555;
+    }
+
+    .dark-mode .social-tab {
+      color: #777;
+    }
+
+    .dark-mode .social-tab.active {
+      color: #0b93f6;
+    }
+
+    .dark-mode .button {
+      color: #333;
+    }
+
+    .dark-mode .button.primary,
+    .dark-mode .button.danger {
+      color: white;
+    }
+  </style>
+</head>
+
+<body>
+  <header class="header" id="header">
+    <div class="header__top">
+      <a class="header__logo" href="map.html"><img src="./images/globe.svg" alt="" width="45" height="45"></a>
+      <form class="header__form" action="">
+        <input class="header__input" id="header__input" type="text" placeholder="Search">
+        <button class="header__btn"><img src="./images/search.svg" alt=""></button>
+      </form>
+      <div id="profile" class="profile">
+        <label for="avatar-input" class="avatar-label">
+          <img id="avatar" src="./images/default-avatar.svg" alt="Avatar" class="avatar">
+        </label>
+        <input type="file" id="avatar-input" accept="image/*" class="hidden">
+        <div id="dropdown" class="dropdown hidden">
+          <button class="dropdown-btn" id="profile-btn">Profile</button>
+          <button class="dropdown-btn" id="settings-btn">Settings</button>
+          <button class="dropdown-btn" id="dark-mode-toggle">Dark Mode</button>
+          <button class="dropdown-btn" id="logout-btn">Log out</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="main__wrapper page-container">
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar__menu">
+        <a class="sidebar__menu-link" href="./main.html">Home</a>
+        <a class="sidebar__menu-link" href="./chats.html">Chats</a>
+        <a class="sidebar__menu-link" href="./map.html">Map</a>
+        <a class="sidebar__menu-link active" href="./social.html">Social</a>
+        <a class="sidebar__menu-link" href="./admin.html">Admin</a>
+      </div>
+    </div>
+
+    <div class="social-container">
+      <div class="social-header">
+        <h1 class="social-title" data-i18n="social.title">Social</h1>
+      </div>
+
+      <div class="social-tabs">
+        <div class="social-tab active" data-tab="friends-tab" data-i18n="social.friends">Friends</div>
+        <div class="social-tab" data-tab="requests-tab" data-i18n="social.pendingRequests">Pending Requests</div>
+        <div class="social-tab" data-tab="activity-tab" data-i18n="social.activityFeed">Activity Feed</div>
+        <div class="social-tab" data-tab="find-tab" data-i18n="social.findFriends">Find Friends</div>
+      </div>
+
+      <!-- Tab content will be loaded dynamically with JavaScript -->
+      <div id="tab-content"></div>
+    </div>
+  </div>
+
+  <script src="./js/i18n.js"></script>
+  <script src="./js/social.js"></script>
+</body>
+
+</html>

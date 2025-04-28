@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auth Fix - Era Platform</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #0b93f6;
+            border-bottom: 2px solid #0b93f6;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .card {
+            background: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #444;
+            margin-top: 0;
+        }
+        .btn {
+            display: inline-block;
+            background: #0b93f6;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        .btn:hover {
+            background: #0a84e0;
+        }
+        .btn.danger {
+            background: #e74c3c;
+        }
+        .btn.danger:hover {
+            background: #c0392b;
+        }
+        .btn.success {
+            background: #2ecc71;
+        }
+        .btn.success:hover {
+            background: #27ae60;
+        }
+        .status {
+            padding: 15px;
+            border-radius: 4px;
+            margin: 15px 0;
+        }
+        .status.error {
+            background: #ffecec;
+            border-left: 4px solid #e74c3c;
+        }
+        .status.success {
+            background: #e7f9e7;
+            border-left: 4px solid #2ecc71;
+        }
+        .status.warning {
+            background: #fff9e6;
+            border-left: 4px solid #f39c12;
+        }
+        .status.info {
+            background: #e7f3f9;
+            border-left: 4px solid #3498db;
+        }
+        pre {
+            background: #f1f1f1;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        code {
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>Authentication Fix Utility</h1>
+
+    <div class="card">
+        <h2>Current Status</h2>
+        <div id="status-area"></div>
+        <button class="btn" id="check-status">Check Status</button>
+    </div>
+
+    <div class="card">
+        <h2>Fix Authentication Issues</h2>
+        <p>If you're experiencing login redirect loops or persistent authentication problems, use these tools to fix them:</p>
+
+        <div>
+            <button class="btn" id="clear-session-storage">Clear Session Storage</button>
+            <button class="btn" id="clear-local-storage">Clear Local Storage</button>
+            <button class="btn" id="clear-cookies">Clear Auth Cookies</button>
+            <button class="btn danger" id="clear-all">Clear All Auth Data</button>
+        </div>
+
+        <div id="fix-results"></div>
+    </div>
+
+    <div class="card">
+        <h2>Navigation</h2>
+        <p>After clearing your authentication data, you can navigate to:</p>
+        <div>
+            <a href="/auth.html" class="btn success">Login Page</a>
+            <a href="/profile.html" class="btn">Profile Page</a>
+            <a href="/index.html" class="btn">Home Page</a>
+            <a href="/login-debug.html" class="btn">Debug Tool</a>
+        </div>
+    </div>
+
+    <script>
+        // DOM elements
+        const statusArea = document.getElementById('status-area');
+        const fixResults = document.getElementById('fix-results');
+
+        // Status check function
+        document.getElementById('check-status').addEventListener('click', function() {
+            let output = '';
+
+            // Check localStorage
+            const token = localStorage.getItem('token');
+            const userData = localStorage.getItem('user');
+
+            output += '<div class="status info"><h3>Local Storage:</h3>';
+            output += `<p>Token: ${token ? `Present (${token.length} chars)` : 'Not found'}</p>`;
+            output += `<p>User Data: ${userData ? 'Present' : 'Not found'}</p>`;
+
+            if (userData) {
+                try {
+                    const user = JSON.parse(userData);
+                    output += '<p>User Info:</p>';
+                    output += `<pre>${JSON.stringify(user, null, 2)}</pre>`;
+                } catch (e) {
+                    output += `<p>Error parsing user data: ${e.message}</p>`;
+                }
+            }
+            output += '</div>';
+
+            // Check sessionStorage for redirect loop detection
+            const preventRedirect = sessionStorage.getItem('preventRedirect');
+            const redirectCount = sessionStorage.getItem('redirectCount');
+            const lastRedirectTime = sessionStorage.getItem('lastRedirectTime');
+            const profileRedirectCount = sessionStorage.getItem('profileRedirectCount');
+            const profileRedirectTime = sessionStorage.getItem('profileRedirectTime');
+
+            output += '<div class="status warning"><h3>Session Storage (Redirect Protection):</h3>';
+            output += `<p>Prevent Redirect: ${preventRedirect || 'Not set'}</p>`;
+            output += `<p>Redirect Count: ${redirectCount || '0'}</p>`;
+            output += `<p>Last Redirect Time: ${lastRedirectTime ? new Date(parseInt(lastRedirectTime)).toLocaleTimeString() : 'Not set'}</p>`;
+            output += `<p>Profile Redirect Count: ${profileRedirectCount || '0'}</p>`;
+            output += `<p>Profile Redirect Time: ${profileRedirectTime ? new Date(parseInt(profileRedirectTime)).toLocaleTimeString() : 'Not set'}</p>`;
+            output += '</div>';
+
+            // Check cookies
+            const cookies = document.cookie.split(';')
+                .map(cookie => cookie.trim())
+                .filter(cookie => cookie.length > 0)
+                .reduce((acc, cookie) => {
+                    const [key, value] = cookie.split('=').map(part => part.trim());
+                    if (key) acc[key] = value;
+                    return acc;
+                }, {});
+
+            output += '<div class="status info"><h3>Cookies:</h3>';
+            if (Object.keys(cookies).length > 0) {
+                output += `<pre>${JSON.stringify(cookies, null, 2)}</pre>`;
+            } else {
+                output += '<p>No cookies found</p>';
+            }
+            output += '</div>';
+
+            // Display results
+            statusArea.innerHTML = output;
+        });
+
+        // Fix functions
+        document.getElementById('clear-session-storage').addEventListener('click', function() {
+            // Clear redirect protection
+            sessionStorage.removeItem('preventRedirect');
+            sessionStorage.removeItem('redirectCount');
+            sessionStorage.removeItem('lastRedirectTime');
+            sessionStorage.removeItem('profileRedirectCount');
+            sessionStorage.removeItem('profileRedirectTime');
+
+            fixResults.innerHTML = '<div class="status success">Session storage cleared successfully!</div>';
+        });
+
+        document.getElementById('clear-local-storage').addEventListener('click', function() {
+            // Clear auth data
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+
+            fixResults.innerHTML = '<div class="status success">Local storage auth data cleared successfully!</div>';
+        });
+
+        document.getElementById('clear-cookies').addEventListener('click', function() {
+            // Clear auth cookies
+            document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+
+            fixResults.innerHTML = '<div class="status success">Auth cookies cleared successfully!</div>';
+        });
+
+        document.getElementById('clear-all').addEventListener('click', function() {
+            // Clear everything
+            sessionStorage.removeItem('preventRedirect');
+            sessionStorage.removeItem('redirectCount');
+            sessionStorage.removeItem('lastRedirectTime');
+            sessionStorage.removeItem('profileRedirectCount');
+            sessionStorage.removeItem('profileRedirectTime');
+
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+
+            document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+
+            fixResults.innerHTML = '<div class="status success">All authentication data cleared successfully! You should now be able to log in without any redirect loops.</div>';
+        });
+
+        // Initialize - check status on page load
+        document.getElementById('check-status').click();
+    </script>
+</body>
+</html>

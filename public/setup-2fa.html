@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Era - Two-Factor Authentication Setup</title>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="icon" type="image/x-icon" href="./images/globe.svg">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+    rel="stylesheet">
+  <script src="js/notifications.js"></script>
+  <style>
+    body {
+      font-family: 'Kanit', sans-serif;
+      background-color: #f5f5f5;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      color: #333;
+    }
+
+    header {
+      background-color: #0b93f6;
+      padding: 15px 0;
+      color: white;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .header-content {
+      max-width: 1200px;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 20px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo img {
+      width: 32px;
+      height: 32px;
+    }
+
+    .logo h1 {
+      font-size: 24px;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .user-menu {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .user-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid white;
+      cursor: pointer;
+    }
+
+    .container {
+      max-width: 800px;
+      width: 100%;
+      margin: 120px auto 40px;
+      padding: 0 20px;
+    }
+
+    .card {
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      padding: 30px;
+      margin-bottom: 30px;
+    }
+
+    .card-header {
+      margin-bottom: 20px;
+    }
+
+    .card-title {
+      font-size: 24px;
+      font-weight: 600;
+      margin: 0 0 10px;
+    }
+
+    .card-subtitle {
+      font-size: 16px;
+      color: #666;
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    .step {
+      margin-bottom: 30px;
+    }
+
+    .step-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 0 0 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .step-number {
+      background-color: #0b93f6;
+      color: white;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .step-content {
+      padding-left: 40px;
+    }
+
+    .qr-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 20px 0;
+    }
+
+    .qr-code {
+      max-width: 200px;
+      border: 1px solid #ddd;
+      padding: 10px;
+      background-color: white;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+
+    .secret-key {
+      font-family: monospace;
+      padding: 12px;
+      background-color: #f5f5f5;
+      border-radius: 6px;
+      font-size: 14px;
+      word-break: break-all;
+      text-align: center;
+      margin-bottom: 15px;
+      max-width: 300px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #555;
+    }
+
+    .form-input {
+      width: 100%;
+      max-width: 300px;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 16px;
+      font-family: monospace;
+      letter-spacing: 4px;
+      text-align: center;
+    }
+
+    .form-button {
+      padding: 12px 25px;
+      background-color: #0b93f6;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 500;
+      transition: background-color 0.3s;
+    }
+
+    .form-button:hover {
+      background-color: #0a84e0;
+    }
+
+    .form-button:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+
+    .backup-codes {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 10px;
+      margin: 20px 0;
+    }
+
+    .backup-code {
+      font-family: monospace;
+      padding: 10px;
+      background-color: #f5f5f5;
+      border-radius: 6px;
+      font-size: 14px;
+      text-align: center;
+      border: 1px solid #ddd;
+    }
+
+    .warning {
+      background-color: #fff6e6;
+      border-left: 4px solid #f39c12;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 4px;
+      color: #7d5400;
+    }
+
+    .success {
+      background-color: #e8f7e8;
+      border-left: 4px solid #2ecc71;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 4px;
+      color: #1b7a44;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 10px;
+      color: #0b93f6;
+      text-decoration: none;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s infinite linear;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Responsive styles */
+    @media (max-width: 768px) {
+      .container {
+        padding: 0 15px;
+        margin-top: 100px;
+      }
+
+      .card {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="header-content">
+      <div class="logo">
+        <img src="images/globe.svg" alt="Era Logo">
+        <h1>Era Platform</h1>
+      </div>
+      <div class="user-menu">
+        <img src="images/default-avatar.svg" alt="User Avatar" class="user-avatar" id="header-avatar">
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="card" id="setup-card">
+      <div class="card-header">
+        <h2 class="card-title">Set Up Two-Factor Authentication</h2>
+        <p class="card-subtitle">Enhance your account security by adding a second layer of protection. Two-factor
+          authentication requires a code from your phone in addition to your password.</p>
+      </div>
+
+      <div class="step">
+        <h3 class="step-title"><span class="step-number">1</span> Install an authenticator app</h3>
+        <div class="step-content">
+          <p>If you don't already have an authenticator app, download and install one of these:</p>
+          <ul style="margin: 15px 0; padding-left: 20px; line-height: 1.6;">
+            <li><strong>Google Authenticator</strong> - <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2" target="_blank">Android</a> | <a href="https://apps.apple.com/app/google-authenticator/id388497605" target="_blank">iOS</a></li>
+            <li><strong>Microsoft Authenticator</strong> - <a href="https://play.google.com/store/apps/details?id=com.azure.authenticator" target="_blank">Android</a> | <a href="https://apps.apple.com/app/microsoft-authenticator/id983156458" target="_blank">iOS</a></li>
+            <li><strong>Authy</strong> - <a href="https://play.google.com/store/apps/details?id=com.authy.authy" target="_blank">Android</a> | <a href="https://apps.apple.com/app/authy/id494168017" target="_blank">iOS</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="step">
+        <h3 class="step-title"><span class="step-number">2</span> Scan the QR code</h3>
+        <div class="step-content">
+          <p>Open your authenticator app and scan this QR code:</p>
+          <div class="qr-container">
+            <div id="loading-qr" style="text-align: center; padding: 20px;">
+              <div class="loading" style="width: 30px; height: 30px; border-width: 5px; margin: 0 auto;"></div>
+              <p style="margin-top: 10px; color: #666;">Generating QR code...</p>
+            </div>
+            <img id="qr-code" class="qr-code hidden" alt="QR Code" src="">
+            <div class="warning hidden" id="manual-entry-tip">
+              If you can't scan the QR code, enter this secret key manually in your authenticator app:
+              <div class="secret-key" id="secret-key"></div>
+              <button class="form-button" id="show-manual-key">Show Secret Key</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <h3 class="step-title"><span class="step-number">3</span> Verify your setup</h3>
+        <div class="step-content">
+          <p>Enter the 6-digit code from your authenticator app to verify your setup:</p>
+          <div class="form-group">
+            <input type="text" id="verification-code" class="form-input" placeholder="000000" maxlength="6" autocomplete="off">
+          </div>
+          <button type="button" id="verify-button" class="form-button" disabled>Verify and Enable</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card hidden" id="success-card">
+      <div class="card-header">
+        <h2 class="card-title">Two-Factor Authentication Enabled!</h2>
+        <p class="card-subtitle">Your account is now protected with two-factor authentication. Each time you log in, you'll need to enter a code from your authenticator app.</p>
+        <div class="success">
+          <strong>Success!</strong> Two-factor authentication has been successfully enabled for your account.
+        </div>
+      </div>
+
+      <div class="step">
+        <h3 class="step-title"><span class="step-number">!</span> Save your backup codes</h3>
+        <div class="step-content">
+          <p>If you lose access to your authenticator app, you can use one of these backup codes to log in. Each code can only be used once, so keep them in a safe place.</p>
+
+          <div class="warning" style="margin-bottom: 20px;">
+            <strong>Important:</strong> These codes will only be shown once. Please save them somewhere safe.
+          </div>
+
+          <div class="backup-codes" id="backup-codes">
+            <!-- Backup codes will be inserted here -->
+          </div>
+
+          <button type="button" id="copy-codes" class="form-button">Copy All Codes</button>
+        </div>
+      </div>
+
+      <a href="/profile.html" class="back-link">← Back to Profile</a>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async function() {
+      // Elements
+      const qrCode = document.getElementById('qr-code');
+      const secretKey = document.getElementById('secret-key');
+      const verificationCode = document.getElementById('verification-code');
+      const verifyButton = document.getElementById('verify-button');
+      const setupCard = document.getElementById('setup-card');
+      const successCard = document.getElementById('success-card');
+      const backupCodesContainer = document.getElementById('backup-codes');
+      const copyCodesButton = document.getElementById('copy-codes');
+      const loadingQr = document.getElementById('loading-qr');
+      const manualEntryTip = document.getElementById('manual-entry-tip');
+      const showManualKeyButton = document.getElementById('show-manual-key');
+      const headerAvatar = document.getElementById('header-avatar');
+
+      // State
+      let secret = '';
+      let backupCodes = [];
+      const API_BASE_URL = window.location.origin;
+
+      // Check authentication
+      const token = localStorage.getItem('token');
+      const userData = JSON.parse(localStorage.getItem('user') || 'null');
+
+      if (!token || !userData) {
+        window.location.href = '/auth.html';
+        return;
+      }
+
+      // Update avatar if available
+      if (userData && userData.avatar) {
+        const avatarUrl = userData.avatar.startsWith('http')
+          ? userData.avatar
+          : `${API_BASE_URL}/${userData.avatar}`;
+        headerAvatar.src = avatarUrl;
+      }
+
+      // Enable verification button when code is entered
+      verificationCode.addEventListener('input', function() {
+        verifyButton.disabled = this.value.length !== 6;
+      });
+
+      // Generate QR code and secret
+      try {
+        loadingQr.classList.remove('hidden');
+
+        const response = await fetch(`${API_BASE_URL}/2fa/setup`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error(`Error setting up 2FA: ${response.status}`);
+        }
+
+        const data = await response.json();
+        secret = data.secret;
+
+        // Display QR code
+        qrCode.src = data.qrCode;
+        qrCode.classList.remove('hidden');
+        loadingQr.classList.add('hidden');
+        manualEntryTip.classList.remove('hidden');
+
+        // Set secret key (but keep it hidden)
+        secretKey.textContent = secret;
+
+        if (window.EraNotification) {
+          window.EraNotification.info('QR code generated successfully. Scan it with your authenticator app.', 'QR Code Ready');
+        }
+      } catch (error) {
+        console.error('Error setting up 2FA:', error);
+        loadingQr.innerHTML = `<p style="color: #e74c3c;">Error generating QR code: ${error.message}</p>`;
+
+        if (window.EraNotification) {
+          window.EraNotification.error(`Failed to generate QR code: ${error.message}`, 'Setup Error');
+        }
+      }
+
+      // Show manual key button
+      showManualKeyButton.addEventListener('click', function() {
+        secretKey.style.display = 'block';
+        this.style.display = 'none';
+      });
+
+      // Verify button click handler
+      verifyButton.addEventListener('click', async function() {
+        const code = verificationCode.value.trim();
+
+        if (code.length !== 6) {
+          if (window.EraNotification) {
+            window.EraNotification.error('Please enter a valid 6-digit code', 'Validation Error');
+          }
+          return;
+        }
+
+        // Disable button and show loading
+        verifyButton.disabled = true;
+        verifyButton.innerHTML = 'Verifying... <span class="loading"></span>';
+
+        try {
+          const response = await fetch(`${API_BASE_URL}/2fa/verify`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              token: code,
+              secret: secret
+            })
+          });
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.message || 'Invalid verification code');
+          }
+
+          // Success! Show backup codes
+          backupCodes = data.backupCodes;
+
+          // Update user data to indicate 2FA is enabled
+          if (userData) {
+            userData.has2FA = true;
+            localStorage.setItem('user', JSON.stringify(userData));
+          }
+
+          // Display backup codes
+          backupCodesContainer.innerHTML = '';
+          backupCodes.forEach(code => {
+            const codeElement = document.createElement('div');
+            codeElement.className = 'backup-code';
+            codeElement.textContent = code;
+            backupCodesContainer.appendChild(codeElement);
+          });
+
+          // Show success card and hide setup card
+          setupCard.classList.add('hidden');
+          successCard.classList.remove('hidden');
+
+          if (window.EraNotification) {
+            window.EraNotification.success('Two-factor authentication has been enabled successfully', 'Setup Complete');
+          }
+
+          // Scroll to top
+          window.scrollTo(0, 0);
+        } catch (error) {
+          console.error('Error verifying 2FA:', error);
+
+          // Reset button
+          verifyButton.disabled = false;
+          verifyButton.textContent = 'Verify and Enable';
+
+          if (window.EraNotification) {
+            window.EraNotification.error(error.message || 'Failed to verify code', 'Verification Error');
+          }
+        }
+      });
+
+      // Copy backup codes button
+      copyCodesButton.addEventListener('click', function() {
+        const codesText = backupCodes.join('\n');
+
+        navigator.clipboard.writeText(codesText)
+          .then(() => {
+            if (window.EraNotification) {
+              window.EraNotification.success('Backup codes copied to clipboard', 'Copied');
+            }
+            copyCodesButton.textContent = 'Copied!';
+            setTimeout(() => {
+              copyCodesButton.textContent = 'Copy All Codes';
+            }, 2000);
+          })
+          .catch(err => {
+            console.error('Error copying text:', err);
+            if (window.EraNotification) {
+              window.EraNotification.error('Failed to copy codes', 'Copy Error');
+            }
+          });
+      });
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Тестування соціальних функцій - Era</title>
+  <link rel="stylesheet" href="./css/reset.css">
+  <link rel="stylesheet" href="./css/main.css">
+  <link rel="icon" type="image/x-icon" href="./images/globe.svg">
+  <style>
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .section {
+      background-color: #1a1a1a;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 500;
+      margin-bottom: 15px;
+      color: white;
+    }
+
+    .user-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .user-card {
+      background-color: #0f0f0f;
+      padding: 15px;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .user-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      margin-bottom: 10px;
+      object-fit: cover;
+    }
+
+    .user-name {
+      font-weight: 500;
+      margin-bottom: 5px;
+      color: white;
+    }
+
+    .user-username {
+      font-size: 14px;
+      color: #aaa;
+      margin-bottom: 10px;
+    }
+
+    .user-actions {
+      margin-top: 10px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .request-item {
+      display: flex;
+      align-items: center;
+      padding: 15px;
+      background-color: #0f0f0f;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    .request-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      margin-right: 15px;
+      object-fit: cover;
+    }
+
+    .request-info {
+      flex: 1;
+    }
+
+    .request-name {
+      font-weight: 500;
+      color: white;
+      margin-bottom: 5px;
+    }
+
+    .request-username {
+      font-size: 14px;
+      color: #aaa;
+    }
+
+    .request-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .button {
+      padding: 8px 15px;
+      font-size: 14px;
+      cursor: pointer;
+      background-color: #333;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+
+    .button.primary {
+      background-color: #0b93f6;
+    }
+
+    .button.danger {
+      background-color: #e74c3c;
+    }
+
+    .current-user-info {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .current-user-avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      margin-right: 20px;
+      object-fit: cover;
+    }
+
+    .current-user-details {
+      flex: 1;
+    }
+
+    .current-user-name {
+      font-size: 24px;
+      font-weight: 600;
+      color: white;
+      margin-bottom: 5px;
+    }
+
+    .current-user-username {
+      font-size: 16px;
+      color: #aaa;
+      margin-bottom: 10px;
+    }
+
+    .message-list {
+      max-height: 300px;
+      overflow-y: auto;
+      margin-bottom: 20px;
+    }
+
+    .message-item {
+      display: flex;
+      margin-bottom: 15px;
+    }
+
+    .message-item.sent {
+      justify-content: flex-end;
+    }
+
+    .message-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 10px;
+      object-fit: cover;
+    }
+
+    .message-item.sent .message-avatar {
+      order: 1;
+      margin-right: 0;
+      margin-left: 10px;
+    }
+
+    .message-content {
+      background-color: #333;
+      padding: 10px 15px;
+      border-radius: 18px;
+      max-width: 70%;
+      color: white;
+    }
+
+    .message-item.sent .message-content {
+      background-color: #0b93f6;
+    }
+
+    .message-form {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .message-input {
+      flex: 1;
+      padding: 10px 15px;
+      border-radius: 20px;
+      border: none;
+      background-color: #333;
+      color: white;
+    }
+
+    .friend-group {
+      margin-top: 20px;
+    }
+
+    .tab-buttons {
+      display: flex;
+      margin-bottom: 20px;
+    }
+
+    .tab-button {
+      padding: 10px 20px;
+      background-color: #0f0f0f;
+      color: #aaa;
+      border: none;
+      cursor: pointer;
+    }
+
+    .tab-button.active {
+      background-color: #1a1a1a;
+      color: white;
+      border-bottom: 2px solid #0b93f6;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 style="margin-bottom: 30px; color: white; font-size: 24px;">Тестування соціальних функцій Era Platform</h1>
+
+    <!-- Секція інформації про поточного користувача -->
+    <div class="section">
+      <h2 class="section-title">Поточний користувач</h2>
+      <div id="current-user-info" class="current-user-info">
+        <img id="current-user-avatar" src="./images/default-avatar.svg" alt="Аватар" class="current-user-avatar">
+        <div class="current-user-details">
+          <h3 id="current-user-name" class="current-user-name">Не авторизовано</h3>
+          <p id="current-user-username" class="current-user-username">Будь ласка, увійдіть в систему</p>
+          <button id="logout-btn" class="button danger" style="display: none;">Вийти</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Вкладки для різних функцій -->
+    <div class="tab-buttons">
+      <button class="tab-button active" data-tab="test-users">Тестові користувачі</button>
+      <button class="tab-button" data-tab="friends">Друзі</button>
+      <button class="tab-button" data-tab="requests">Запити на дружбу</button>
+      <button class="tab-button" data-tab="messages">Повідомлення</button>
+      <button class="tab-button" data-tab="map">Карта</button>
+    </div>
+
+    <!-- Вміст вкладок -->
+
+    <!-- Тестові користувачі -->
+    <div id="test-users" class="tab-content active">
+      <div class="section">
+        <h2 class="section-title">Тестові користувачі</h2>
+        <p style="color: #aaa; margin-bottom: 20px;">Оберіть одного з тестових користувачів, щоб увійти в систему від його імені</p>
+        <div id="test-users-list" class="user-list">
+          <div class="user-card">
+            <p style="color: #aaa;">Завантаження користувачів...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Друзі -->
+    <div id="friends" class="tab-content">
+      <div class="section">
+        <h2 class="section-title">Ваші друзі</h2>
+        <div id="friends-list" class="user-list">
+          <div class="user-card">
+            <p style="color: #aaa;">Авторизуйтесь для перегляду друзів</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Запити на дружбу -->
+    <div id="requests" class="tab-content">
+      <div class="section">
+        <h2 class="section-title">Отримані запити</h2>
+        <div id="received-requests">
+          <p style="color: #aaa;">Авторизуйтесь для перегляду запитів</p>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2 class="section-title">Надіслані запити</h2>
+        <div id="sent-requests">
+          <p style="color: #aaa;">Авторизуйтесь для перегляду запитів</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Повідомлення -->
+    <div id="messages" class="tab-content">
+      <div class="section">
+        <h2 class="section-title">Спілкування</h2>
+        <p style="color: #aaa; margin-bottom: 20px;">Оберіть співрозмовника зі списку друзів</p>
+
+        <div id="conversation-container" style="display: none;">
+          <div class="message-list" id="messages-list">
+            <p style="color: #aaa; text-align: center;">Повідомлень поки немає</p>
+          </div>
+
+          <div class="message-form">
+            <input type="text" class="message-input" id="message-input" placeholder="Введіть повідомлення...">
+            <button class="button primary" id="send-message-btn">Надіслати</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Карта -->
+    <div id="map" class="tab-content">
+      <div class="section">
+        <h2 class="section-title">Локації друзів</h2>
+        <div id="map-container" style="width: 100%; height: 400px; background-color: #333; border-radius: 8px;">
+          <p style="color: #aaa; text-align: center; padding-top: 180px;">Карта буде тут</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Глобальні змінні
+    let currentUser = null;
+    let testUsers = [];
+    let friends = [];
+    let friendRequests = { sent: [], received: [] };
+    let selectedFriend = null;
+
+    // Обробка вкладок
+    document.querySelectorAll('.tab-button').forEach(button => {
+      button.addEventListener('click', () => {
+        // Приховати всі вкладки
+        document.querySelectorAll('.tab-content').forEach(tab => {
+          tab.classList.remove('active');
+        });
+
+        // Очистити активні класи з кнопок
+        document.querySelectorAll('.tab-button').forEach(btn => {
+          btn.classList.remove('active');
+        });
+
+        // Показати обрану вкладку
+        const tabId = button.getAttribute('data-tab');
+        document.getElementById(tabId).classList.add('active');
+        button.classList.add('active');
+      });
+    });
+
+    // Функція для отримання тестових користувачів
+    async function loadTestUsers() {
+      try {
+        const response = await fetch('/social/test-users', {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+
+        if (response.ok) {
+          const users = await response.json();
+          testUsers = users;
+          renderTestUsers();
+        } else {
+          console.error('Failed to load test users:', await response.text());
+        }
+      } catch (error) {
+        console.error('Error loading test users:', error);
+      }
+    }
+
+    // Функція для входу як тестовий користувач
+    async function loginAsTestUser(userId) {
+      try {
+        const response = await fetch(`/social/test-login/${userId}`, {
+          method: 'POST'
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('user', JSON.stringify(data.user));
+          currentUser = data.user;
+
+          // Оновити інтерфейс
+          updateCurrentUserInfo();
+          loadFriends();
+          loadFriendRequests();
+
+          // Переключитись на вкладку друзів
+          document.querySelector('.tab-button[data-tab="friends"]').click();
+        } else {
+          console.error('Failed to login as test user:', await response.text());
+        }
+      } catch (error) {
+        console.error('Error logging in as test user:', error);
+      }
+    }
+
+    // Функція для виходу з системи
+    function logout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      currentUser = null;
+      updateCurrentUserInfo();
+
+      // Переключитись на вкладку тестових користувачів
+      document.querySelector('.tab-button[data-tab="test-users"]').click();
+    }
+
+    // Функція для оновлення інформації про поточного користувача
+    function updateCurrentUserInfo() {
+      const currentUserAvatar = document.getElementById('current-user-avatar');
+      const currentUserName = document.getElementById('current-user-name');
+      const currentUserUsername = document.getElementById('current-user-username');
+      const logoutButton = document.getElementById('logout-btn');
+
+      if (currentUser) {
+        currentUserAvatar.src = currentUser.avatar || './images/default-avatar.svg';
+        currentUserName.textContent = currentUser.fullName || 'Користувач';
+        currentUserUsername.textContent = currentUser.username;
+        logoutButton.style.display = 'inline-block';
+      } else {
+        currentUserAvatar.src = './images/default-avatar.svg';
+        currentUserName.textContent = 'Не авторизовано';
+        currentUserUsername.textContent = 'Будь ласка, увійдіть в систему';
+        logoutButton.style.display = 'none';
+      }
+    }
+
+    // Функція для отримання друзів
+    async function loadFriends() {
+      if (!currentUser) return;
+
+      try {
+        const response = await fetch('/social/friends', {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          friends = data;
+          renderFriends();
+        } else {
+          console.error('Failed to load friends:', await response.text());
+        }
+      } catch (error) {
+        console.error('Error loading friends:', error);
+      }
+    }
+
+    // Функція для отримання запитів на дружбу
+    async function loadFriendRequests() {
+      if (!currentUser) return;
+
+      try {
+        const response = await fetch('/social/friend-requests', {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          friendRequests = data;
+          renderFriendRequests();
+        } else {
+          console.error('Failed to load friend requests:', await response.text());
+        }
+      } catch (error) {
+        console.error('Error loading friend requests:', error);
+      }
+    }
+
+    // Функція для надсилання запиту на дружбу
+    async function sendFriendRequest(userId) {
+      if (!currentUser) return;
+
+      try {
+        const response = await fetch(`/social/friend-request/${userId}`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+
+        if (response.ok) {
+          alert('Запит на дружбу надіслано!');
+          loadFriendRequests();
+          loadTestUsers();
+        } else {
+          const errorData = await response.json();
+          alert(`Помилка: ${errorData.message}`);
+        }
+      } catch (error) {
+        console.error('Error sending friend request:', error);
+        alert('Помилка при надсиланні запиту на дружбу');
+      }
+    }
+
+    // Функція для прийняття запиту на дружбу
+    async function acceptFriendRequest(userId) {
+      if (!currentUser) return;
+
+      try {
+        const response = await fetch(`/social/accept-friend/${userId}`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+
+        if (response.ok) {
+          alert('Запит на дружбу прийнято!');
+          loadFriends();
+          loadFriendRequests();
+        } else {
+          const errorData = await response.json();
+          alert(`Помилка: ${errorData.message}`);
+        }
+      } catch (error) {
+        console.error('Error accepting friend request:', error);
+        alert('Помилка при прийнятті запиту на дружбу');
+      }
+    }
+
+    // Функція для відхилення запиту на дружбу
+    async function declineFriendRequest(userId) {
+      if (!currentUser) return;
+
+      try {
+        const response = await fetch(`/social/decline-friend/${userId}`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+
+        if (response.ok) {
+          alert('Запит на дружбу відхилено');
+          loadFriendRequests();
+        } else {
+          const errorData = await response.json();
+          alert(`Помилка: ${errorData.message}`);
+        }
+      } catch (error) {
+        console.error('Error declining friend request:', error);
+        alert('Помилка при відхиленні запиту на дружбу');
+      }
+    }
+
+    // Функція для видалення друга
+    async function removeFriend(userId) {
+      if (!currentUser) return;
+
+      if (!confirm('Ви впевнені, що хочете видалити цього друга?')) {
+        return;
+      }
+
+      try {
+        const response = await fetch(`/social/friend/${userId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+
+        if (response.ok) {
+          alert('Друга видалено');
+          loadFriends();
+        } else {
+          const errorData = await response.json();
+          alert(`Помилка: ${errorData.message}`);
+        }
+      } catch (error) {
+        console.error('Error removing friend:', error);
+        alert('Помилка при видаленні друга');
+      }
+    }
+
+    // Функція для відображення тестових користувачів
+    function renderTestUsers() {
+      const container = document.getElementById('test-users-list');
+
+      if (!testUsers.length) {
+        container.innerHTML = '<p style="color: #aaa; text-align: center;">Тестових користувачів не знайдено</p>';
+        return;
+      }
+
+      container.innerHTML = '';
+
+      testUsers.forEach(user => {
+        const userCard = document.createElement('div');
+        userCard.className = 'user-card';
+
+        const avatar = document.createElement('img');
+        avatar.src = user.avatar || './images/default-avatar.svg';
+        avatar.alt = user.username;
+        avatar.className = 'user-avatar';
+
+        const name = document.createElement('div');
+        name.className = 'user-name';
+        name.textContent = user.fullName || user.username;
+
+        const username = document.createElement('div');
+        username.className = 'user-username';
+        username.textContent = user.username;
+
+        const loginButton = document.createElement('button');
+        loginButton.className = 'button primary';
+        loginButton.textContent = 'Увійти як';
+        loginButton.addEventListener('click', () => loginAsTestUser(user._id));
+
+        userCard.appendChild(avatar);
+        userCard.appendChild(name);
+        userCard.appendChild(username);
+        userCard.appendChild(loginButton);
+
+        container.appendChild(userCard);
+      });
+    }
+
+    // Функція для відображення друзів
+    function renderFriends() {
+      const container = document.getElementById('friends-list');
+
+      if (!currentUser) {
+        container.innerHTML = '<p style="color: #aaa; text-align: center;">Авторизуйтесь для перегляду друзів</p>';
+        return;
+      }
+
+      if (!friends.length) {
+        container.innerHTML = '<p style="color: #aaa; text-align: center;">У вас поки немає друзів</p>';
+        return;
+      }
+
+      container.innerHTML = '';
+
+      friends.forEach(friend => {
+        const userCard = document.createElement('div');
+        userCard.className = 'user-card';
+
+        const avatar = document.createElement('img');
+        avatar.src = friend.avatar || './images/default-avatar.svg';
+        avatar.alt = friend.username;
+        avatar.className = 'user-avatar';
+
+        const name = document.createElement('div');
+        name.className = 'user-name';
+        name.textContent = friend.fullName || friend.username;
+
+        const username = document.createElement('div');
+        username.className = 'user-username';
+        username.textContent = friend.username;
+
+        const actions = document.createElement('div');
+        actions.className = 'user-actions';
+
+        const messageButton = document.createElement('button');
+        messageButton.className = 'button primary';
+        messageButton.textContent = 'Повідомлення';
+        messageButton.addEventListener('click', () => {
+          selectedFriend = friend;
+          document.querySelector('.tab-button[data-tab="messages"]').click();
+          // TODO: завантажити повідомлення
+        });
+
+        const removeButton = document.createElement('button');
+        removeButton.className = 'button danger';
+        removeButton.textContent = 'Видалити';
+        removeButton.addEventListener('click', () => removeFriend(friend._id));
+
+        actions.appendChild(messageButton);
+        actions.appendChild(removeButton);
+
+        userCard.appendChild(avatar);
+        userCard.appendChild(name);
+        userCard.appendChild(username);
+        userCard.appendChild(actions);
+
+        container.appendChild(userCard);
+      });
+    }
+
+    // Функція для відображення запитів на дружбу
+    function renderFriendRequests() {
+      const receivedContainer = document.getElementById('received-requests');
+      const sentContainer = document.getElementById('sent-requests');
+
+      if (!currentUser) {
+        receivedContainer.innerHTML = '<p style="color: #aaa; text-align: center;">Авторизуйтесь для перегляду запитів</p>';
+        sentContainer.innerHTML = '<p style="color: #aaa; text-align: center;">Авторизуйтесь для перегляду запитів</p>';
+        return;
+      }
+
+      // Отримані запити
+      if (!friendRequests.received || !friendRequests.received.length) {
+        receivedContainer.innerHTML = '<p style="color: #aaa; text-align: center;">Немає отриманих запитів на дружбу</p>';
+      } else {
+        receivedContainer.innerHTML = '';
+
+        friendRequests.received.forEach(request => {
+          const requestItem = document.createElement('div');
+          requestItem.className = 'request-item';
+
+          const avatar = document.createElement('img');
+          avatar.src = request.avatar || './images/default-avatar.svg';
+          avatar.alt = request.username;
+          avatar.className = 'request-avatar';
+
+          const info = document.createElement('div');
+          info.className = 'request-info';
+
+          const name = document.createElement('div');
+          name.className = 'request-name';
+          name.textContent = request.fullName || request.username;
+
+          const username = document.createElement('div');
+          username.className = 'request-username';
+          username.textContent = request.username;
+
+          info.appendChild(name);
+          info.appendChild(username);
+
+          const actions = document.createElement('div');
+          actions.className = 'request-actions';
+
+          const acceptButton = document.createElement('button');
+          acceptButton.className = 'button primary';
+          acceptButton.textContent = 'Прийняти';
+          acceptButton.addEventListener('click', () => acceptFriendRequest(request._id));
+
+          const declineButton = document.createElement('button');
+          declineButton.className = 'button danger';
+          declineButton.textContent = 'Відхилити';
+          declineButton.addEventListener('click', () => declineFriendRequest(request._id));
+
+          actions.appendChild(acceptButton);
+          actions.appendChild(declineButton);
+
+          requestItem.appendChild(avatar);
+          requestItem.appendChild(info);
+          requestItem.appendChild(actions);
+
+          receivedContainer.appendChild(requestItem);
+        });
+      }
+
+      // Надіслані запити
+      if (!friendRequests.sent || !friendRequests.sent.length) {
+        sentContainer.innerHTML = '<p style="color: #aaa; text-align: center;">Немає надісланих запитів на дружбу</p>';
+      } else {
+        sentContainer.innerHTML = '';
+
+        friendRequests.sent.forEach(request => {
+          const requestItem = document.createElement('div');
+          requestItem.className = 'request-item';
+
+          const avatar = document.createElement('img');
+          avatar.src = request.avatar || './images/default-avatar.svg';
+          avatar.alt = request.username;
+          avatar.className = 'request-avatar';
+
+          const info = document.createElement('div');
+          info.className = 'request-info';
+
+          const name = document.createElement('div');
+          name.className = 'request-name';
+          name.textContent = request.fullName || request.username;
+
+          const username = document.createElement('div');
+          username.className = 'request-username';
+          username.textContent = request.username;
+
+          info.appendChild(name);
+          info.appendChild(username);
+
+          const status = document.createElement('div');
+          status.style.color = '#aaa';
+          status.textContent = 'Очікує підтвердження';
+
+          requestItem.appendChild(avatar);
+          requestItem.appendChild(info);
+          requestItem.appendChild(status);
+
+          sentContainer.appendChild(requestItem);
+        });
+      }
+    }
+
+    // Ініціалізація сторінки
+    document.addEventListener('DOMContentLoaded', () => {
+      // Встановити поточного користувача з localStorage
+      const userJson = localStorage.getItem('user');
+      if (userJson) {
+        try {
+          currentUser = JSON.parse(userJson);
+          updateCurrentUserInfo();
+          loadFriends();
+          loadFriendRequests();
+        } catch (error) {
+          console.error('Error parsing user data:', error);
+        }
+      }
+
+      // Завантажити тестових користувачів
+      loadTestUsers();
+
+      // Обробник для кнопки виходу
+      document.getElementById('logout-btn').addEventListener('click', logout);
+    });
+  </script>
+</body>
+</html>

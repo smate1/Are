@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign in to Twitter / X</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      background-color: #000000;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: #e7e9ea;
+    }
+
+    .container {
+      width: 400px;
+      background-color: #000000;
+      border: 1px solid #2f3336;
+      border-radius: 16px;
+      padding: 32px;
+    }
+
+    .twitter-logo {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 32px;
+    }
+
+    .twitter-logo svg {
+      width: 40px;
+      height: 40px;
+      fill: #ffffff;
+    }
+
+    h1 {
+      font-size: 31px;
+      font-weight: 700;
+      margin-bottom: 32px;
+      text-align: center;
+    }
+
+    .subtitle {
+      font-size: 17px;
+      margin-bottom: 32px;
+      text-align: center;
+      color: #71767b;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      background-color: #000000;
+      color: #e7e9ea;
+      border: 1px solid #333639;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    input:focus {
+      border-color: #1d9bf0;
+      outline: none;
+    }
+
+    .button {
+      display: block;
+      width: 100%;
+      padding: 12px 0;
+      background-color: #1d9bf0;
+      color: white;
+      border: none;
+      border-radius: 9999px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 24px;
+    }
+
+    .button:hover {
+      background-color: #1a8cd8;
+    }
+
+    .cancel {
+      display: block;
+      width: 100%;
+      padding: 12px 0;
+      background-color: transparent;
+      color: #e7e9ea;
+      border: 1px solid #333639;
+      border-radius: 9999px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 12px;
+      text-align: center;
+      text-decoration: none;
+    }
+
+    .cancel:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .app-info {
+      margin: 32px 0;
+      padding: 16px;
+      background-color: #16181c;
+      border-radius: 12px;
+    }
+
+    .app-name {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .app-description {
+      font-size: 14px;
+      color: #71767b;
+    }
+
+    .user-account {
+      display: flex;
+      align-items: center;
+      padding: 12px;
+      border: 1px solid #333639;
+      border-radius: 4px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .user-account:hover {
+      background-color: #16181c;
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 12px;
+    }
+
+    .user-info {
+      flex: 1;
+    }
+
+    .display-name {
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .handle {
+      font-size: 14px;
+      color: #71767b;
+    }
+
+    .permissions {
+      margin-top: 24px;
+      font-size: 14px;
+      color: #71767b;
+    }
+
+    .permission-item {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .permission-icon {
+      width: 16px;
+      height: 16px;
+      margin-right: 8px;
+      margin-top: 2px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="twitter-logo">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path>
+      </svg>
+    </div>
+
+    <h1>Sign in to X</h1>
+
+    <div class="app-info">
+      <div class="app-name">Era Platform</div>
+      <div class="app-description">This app will be able to:</div>
+      <div class="permissions">
+        <div class="permission-item">
+          <span class="permission-icon">✓</span>
+          <span>See your X profile and account info</span>
+        </div>
+        <div class="permission-item">
+          <span class="permission-icon">✓</span>
+          <span>Access your email address</span>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="user-account" onclick="authorizeUser()">
+        <img src="https://same-assets.com/shared-assets/twitter-user.jpg" alt="Avatar" class="avatar">
+        <div class="user-info">
+          <div class="display-name">Twitter User</div>
+          <div class="handle">@twitteruser</div>
+        </div>
+      </div>
+
+      <div class="user-account" onclick="authorizeUser()">
+        <img src="https://same-assets.com/shared-assets/twitter-user2.jpg" alt="Avatar" class="avatar">
+        <div class="user-info">
+          <div class="display-name">Social Media Pro</div>
+          <div class="handle">@socialmediapro</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="button" onclick="authorizeUser()">Authorize app</button>
+    <a href="#" class="cancel" onclick="cancelAuth()">Cancel</a>
+  </div>
+
+  <script>
+    // Parse URL to get redirect URI
+    const urlParams = new URLSearchParams(window.location.search);
+    const redirectUri = urlParams.get('redirect_uri') || '/auth-callback.html';
+
+    function authorizeUser() {
+      // Generate mock authorization code
+      const authCode = 'twitter_' + Math.random().toString(36).substring(2, 15);
+
+      // Redirect back to the callback URL with the code
+      window.location.href = `${redirectUri}?code=${authCode}&provider=twitter`;
+    }
+
+    function cancelAuth() {
+      window.location.href = `${redirectUri}?error=access_denied&provider=twitter`;
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Era - Authentication Callback</title>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="icon" type="image/x-icon" href="./images/globe.svg">
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Kanit', sans-serif;
+      background-color: #f5f5f5;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 400px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      padding: 30px;
+      text-align: center;
+    }
+
+    .loading {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(0, 0, 0, 0.1);
+      border-radius: 50%;
+      border-top-color: #0b93f6;
+      animation: spin 1s infinite linear;
+      margin-bottom: 20px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    h2 {
+      font-size: 24px;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    p {
+      color: #666;
+      margin-bottom: 15px;
+      line-height: 1.5;
+    }
+
+    .success {
+      color: #2ecc71;
+    }
+
+    .error {
+      color: #e74c3c;
+    }
+
+    #debug {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #f8f9fa;
+      border-radius: 5px;
+      text-align: left;
+      font-size: 12px;
+      color: #888;
+      max-height: 200px;
+      overflow-y: auto;
+      display: none;
+    }
+
+    .debug-toggle {
+      font-size: 12px;
+      color: #999;
+      cursor: pointer;
+      margin-top: 20px;
+      display: inline-block;
+    }
+  </style>
+  <script src="js/notifications.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="loading"></div>
+    <h2>Processing Login</h2>
+    <p>Please wait while we complete your authentication...</p>
+    <div id="status"></div>
+    <div id="debug"></div>
+    <div class="debug-toggle" onclick="toggleDebug()">Show Debug Info</div>
+  </div>
+
+  <script>
+    // Configuration
+    const API_BASE_URL = window.location.origin;
+    let debugVisible = false;
+
+    // Parse URL parameters
+    const params = new URLSearchParams(window.location.search);
+    const provider = params.get('provider');
+    const code = params.get('code');
+    const token = params.get('token');
+    const error = params.get('error');
+
+    function toggleDebug() {
+      debugVisible = !debugVisible;
+      document.getElementById('debug').style.display = debugVisible ? 'block' : 'none';
+      document.querySelector('.debug-toggle').textContent = debugVisible ? 'Hide Debug Info' : 'Show Debug Info';
+    }
+
+    function log(message) {
+      console.log(message);
+      const debugEl = document.getElementById('debug');
+      const logItem = document.createElement('div');
+      logItem.textContent = `${new Date().toISOString()}: ${message}`;
+      debugEl.appendChild(logItem);
+      debugEl.scrollTop = debugEl.scrollHeight;
+    }
+
+    async function processOAuthCallback() {
+      try {
+        log(`Processing OAuth callback. Provider: ${provider || 'unknown'}`);
+        log(`Params: ${window.location.search}`);
+
+        // Check for errors
+        if (error) {
+          document.querySelector('.loading').style.display = 'none';
+          document.getElementById('status').innerHTML = `
+            <p class="error">Authentication failed: ${error}</p>
+            <p><a href="/auth.html">Return to login page</a></p>
+          `;
+          log(`Error from provider: ${error}`);
+          return;
+        }
+
+        // If we have a token directly (our mock implementation might use this)
+        if (token) {
+          log('Token provided directly in URL');
+          await processToken(token);
+          return;
+        }
+
+        // If we have a code, exchange it for a token
+        if (code) {
+          log(`Code received: ${code.substring(0, 5)}...`);
+
+          // Exchange the code for a token
+          try {
+            const response = await fetch(`${API_BASE_URL}/oauth/callback`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                code,
+                provider,
+                redirect_uri: window.location.origin + '/auth-callback.html'
+              })
+            });
+
+            if (!response.ok) {
+              throw new Error(`Server returned ${response.status}`);
+            }
+
+            const data = await response.json();
+            log(`Token exchange successful`);
+
+            if (data.token) {
+              await processToken(data.token, data.user, data.expiresIn);
+            } else {
+              throw new Error('No token received from server');
+            }
+          } catch (error) {
+            document.querySelector('.loading').style.display = 'none';
+            document.getElementById('status').innerHTML = `
+              <p class="error">Failed to complete authentication: ${error.message}</p>
+              <p><a href="/auth.html">Return to login page</a></p>
+            `;
+            log(`Error exchanging code: ${error.message}`);
+          }
+        } else {
+          // No code or token
+          document.querySelector('.loading').style.display = 'none';
+          document.getElementById('status').innerHTML = `
+            <p class="error">Missing authentication data</p>
+            <p><a href="/auth.html">Return to login page</a></p>
+          `;
+          log('No code or token provided');
+        }
+      } catch (error) {
+        document.querySelector('.loading').style.display = 'none';
+        document.getElementById('status').innerHTML = `
+          <p class="error">An unexpected error occurred: ${error.message}</p>
+          <p><a href="/auth.html">Return to login page</a></p>
+        `;
+        log(`Unexpected error: ${error.message}`);
+      }
+    }
+
+    async function processToken(token, userData = null, expiresIn = '24h') {
+      log('Processing received token');
+
+      try {
+        // Store token
+        localStorage.setItem('token', token);
+
+        // Store expiration
+        const expirationTime = new Date();
+        if (expiresIn === '30d') {
+          expirationTime.setDate(expirationTime.getDate() + 30);
+        } else {
+          expirationTime.setHours(expirationTime.getHours() + 24);
+        }
+        localStorage.setItem('tokenExpires', expirationTime.toISOString());
+
+        // If we don't have user data, fetch it
+        if (!userData) {
+          log('Fetching user data using token');
+          const userResponse = await fetch(`${API_BASE_URL}/auth/current`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+
+          if (!userResponse.ok) {
+            throw new Error(`Failed to fetch user data: ${userResponse.status}`);
+          }
+
+          userData = await userResponse.json();
+          log('User data retrieved successfully');
+        }
+
+        // Store user data
+        localStorage.setItem('user', JSON.stringify(userData));
+
+        // Update status
+        document.querySelector('.loading').style.display = 'none';
+        document.getElementById('status').innerHTML = `
+          <p class="success">Authentication successful!</p>
+          <p>Welcome, ${userData.username || 'User'}!</p>
+          <p>Redirecting to your profile...</p>
+        `;
+
+        // Redirect to profile page
+        setTimeout(() => {
+          window.location.href = '/profile.html';
+        }, 2000);
+      } catch (error) {
+        document.querySelector('.loading').style.display = 'none';
+        document.getElementById('status').innerHTML = `
+          <p class="error">Failed to process authentication: ${error.message}</p>
+          <p><a href="/auth.html">Return to login page</a></p>
+        `;
+        log(`Error processing token: ${error.message}`);
+      }
+    }
+
+    // Start processing immediately
+    document.addEventListener('DOMContentLoaded', processOAuthCallback);
+  </script>
+</body>
+</html>

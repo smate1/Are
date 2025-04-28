@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OAuth Mock - Era Platform</title>
+  <link rel="icon" type="image/x-icon" href="../images/globe.svg">
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Kanit', sans-serif;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      color: #333;
+    }
+
+    .container {
+      max-width: 500px;
+      width: 100%;
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-weight: 600;
+      color: #444;
+    }
+
+    .provider-logo {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 20px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 32px;
+    }
+
+    .google { background-color: #4285F4; }
+    .facebook { background-color: #1877F2; }
+    .github { background-color: #24292E; }
+    .twitter { background-color: #1DA1F2; }
+
+    .provider-name {
+      font-size: 20px;
+      font-weight: 500;
+      margin-bottom: 30px;
+    }
+
+    .info-row {
+      margin-bottom: 15px;
+      text-align: left;
+      padding: 10px;
+      background-color: #f9f9f9;
+      border-radius: 5px;
+    }
+
+    .info-row strong {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 30px;
+    }
+
+    button {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-family: 'Kanit', sans-serif;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .primary {
+      background-color: #0b93f6;
+      color: white;
+    }
+
+    .primary:hover {
+      background-color: #0a84e0;
+    }
+
+    .secondary {
+      background-color: #f5f5f5;
+      color: #333;
+    }
+
+    .secondary:hover {
+      background-color: #e5e5e5;
+    }
+
+    .error {
+      color: #e74c3c;
+      margin-top: 20px;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>OAuth Mock Login</h1>
+
+    <div id="provider-info">
+      <div id="provider-logo" class="provider-logo google">G</div>
+      <div id="provider-name" class="provider-name">Google</div>
+    </div>
+
+    <div class="info-row">
+      <strong>State:</strong>
+      <span id="state-param"></span>
+    </div>
+
+    <div class="info-row">
+      <strong>Callback URL:</strong>
+      <span id="callback-url"></span>
+    </div>
+
+    <div class="info-row">
+      <strong>You will be logged in as:</strong>
+      <span id="mock-identity"></span>
+    </div>
+
+    <div class="buttons">
+      <button id="allow-btn" class="primary">Allow Access</button>
+      <button id="deny-btn" class="secondary">Deny Access</button>
+    </div>
+
+    <div id="error" class="error" style="display: none;"></div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Get URL parameters
+      const urlParams = new URLSearchParams(window.location.search);
+      const provider = window.location.pathname.split('/').pop() || urlParams.get('provider') || 'google';
+      const state = urlParams.get('state') || '';
+      const callbackUrl = urlParams.get('callbackUrl') || '';
+
+      // Display provider info
+      const providerLogoElement = document.getElementById('provider-logo');
+      const providerNameElement = document.getElementById('provider-name');
+
+      // Set provider logo and name
+      switch (provider) {
+        case 'google':
+          providerLogoElement.textContent = 'G';
+          providerLogoElement.className = 'provider-logo google';
+          providerNameElement.textContent = 'Google';
+          break;
+        case 'facebook':
+          providerLogoElement.textContent = 'f';
+          providerLogoElement.className = 'provider-logo facebook';
+          providerNameElement.textContent = 'Facebook';
+          break;
+        case 'github':
+          providerLogoElement.textContent = '<>';
+          providerLogoElement.className = 'provider-logo github';
+          providerNameElement.textContent = 'GitHub';
+          break;
+        case 'twitter':
+          providerLogoElement.textContent = 't';
+          providerLogoElement.className = 'provider-logo twitter';
+          providerNameElement.textContent = 'Twitter';
+          break;
+        default:
+          providerLogoElement.textContent = '?';
+          providerLogoElement.className = 'provider-logo';
+          providerNameElement.textContent = 'Unknown Provider';
+      }
+
+      // Display parameters
+      document.getElementById('state-param').textContent = state;
+      document.getElementById('callback-url').textContent = callbackUrl;
+
+      // Set mock identity
+      let mockIdentity;
+      switch (provider) {
+        case 'google':
+          mockIdentity = 'Google User (google.user@example.com)';
+          break;
+        case 'facebook':
+          mockIdentity = 'Facebook User (facebook.user@example.com)';
+          break;
+        case 'github':
+          mockIdentity = 'Github User (github.user@example.com)';
+          break;
+        case 'twitter':
+          mockIdentity = 'Twitter User (twitter.user@example.com)';
+          break;
+        default:
+          mockIdentity = 'Unknown User';
+      }
+      document.getElementById('mock-identity').textContent = mockIdentity;
+
+      // Set button actions
+      document.getElementById('allow-btn').addEventListener('click', function() {
+        // Generate a mock code
+        const code = Math.random().toString(36).substring(2, 15);
+
+        // Create callback URL with success parameters
+        const redirectUrl = `${callbackUrl}?code=${code}&state=${state}`;
+
+        // Redirect to callback URL
+        window.location.href = redirectUrl;
+      });
+
+      document.getElementById('deny-btn').addEventListener('click', function() {
+        // Create callback URL with error parameters
+        const redirectUrl = `${callbackUrl}?error=access_denied&state=${state}`;
+
+        // Redirect to callback URL
+        window.location.href = redirectUrl;
+      });
+    });
+  </script>
+</body>
+</html>

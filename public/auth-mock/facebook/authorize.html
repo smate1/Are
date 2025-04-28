@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Facebook Login</title>
+  <style>
+    body {
+      font-family: 'Helvetica', Arial, sans-serif;
+      background-color: #f0f2f5;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      width: 400px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      text-align: center;
+    }
+
+    .facebook-logo {
+      margin-bottom: 25px;
+    }
+
+    h1 {
+      font-size: 20px;
+      font-weight: 600;
+      color: #1c1e21;
+      margin: 0 0 15px;
+    }
+
+    .subtitle {
+      font-size: 15px;
+      color: #606770;
+      margin-bottom: 20px;
+    }
+
+    .app-info {
+      display: flex;
+      align-items: center;
+      padding: 12px;
+      border: 1px solid #dddfe2;
+      border-radius: 4px;
+      margin-bottom: 15px;
+    }
+
+    .app-logo {
+      width: 50px;
+      height: 50px;
+      border-radius: 4px;
+      margin-right: 10px;
+    }
+
+    .app-name {
+      font-size: 16px;
+      font-weight: 500;
+      color: #1c1e21;
+      text-align: left;
+    }
+
+    .divider {
+      border-top: 1px solid #dddfe2;
+      margin: 20px 0;
+    }
+
+    .account {
+      display: flex;
+      align-items: center;
+      padding: 8px 12px;
+      border: 1px solid #dddfe2;
+      border-radius: 4px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      text-align: left;
+    }
+
+    .account:hover {
+      background-color: #f5f6f7;
+    }
+
+    .account-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 12px;
+    }
+
+    .account-name {
+      font-size: 15px;
+      font-weight: 500;
+      color: #1c1e21;
+    }
+
+    .button {
+      display: block;
+      width: 100%;
+      padding: 12px 0;
+      background-color: #1877f2;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      margin-top: 15px;
+    }
+
+    .button:hover {
+      background-color: #166fe5;
+    }
+
+    .cancel {
+      display: block;
+      width: 100%;
+      padding: 12px 0;
+      background-color: #e4e6eb;
+      color: #4b4f56;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      margin-top: 10px;
+    }
+
+    .cancel:hover {
+      background-color: #d8dadf;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="facebook-logo">
+      <svg width="112" height="22" xmlns="http://www.w3.org/2000/svg">
+        <path d="M112 4.12821C112 2.16719 110.348 0.5 108.387 0.5H3.613C1.652 0.5 0 2.16719 0 4.12821V18.3718C0 20.3328 1.652 22 3.613 22H58.1133V13.7383H44.0332V10.4348H58.1133V7.99258C58.1133 5.07429 59.8574 2.53249 64.4254 2.53249C66.9472 2.53249 68.8594 2.74832 68.8594 2.74832L68.7754 5.79344H65.5988C63.4347 5.79344 63.0207 6.81286 63.0207 8.35042V10.4348H68.9121L68.7441 13.7383H63.0207V22H108.387C110.348 22 112 20.3328 112 18.3718V4.12821Z" fill="#1877F2"/>
+        <path d="M68.7441 13.7383L68.9121 10.4348H63.0207V8.35042C63.0207 6.81286 63.4347 5.79344 65.5988 5.79344H68.7754L68.8594 2.74832C68.8594 2.74832 66.9472 2.53249 64.4254 2.53249C59.8574 2.53249 58.1133 5.07429 58.1133 7.99258V10.4348H44.0332V13.7383H58.1133V22H63.0207V13.7383H68.7441Z" fill="white"/>
+      </svg>
+    </div>
+
+    <h1>Log in to continue</h1>
+    <p class="subtitle">Era Platform will receive your name, profile picture and email address.</p>
+
+    <div class="app-info">
+      <img src="https://same-assets.com/shared-assets/era-icon.png" alt="Era Platform" class="app-logo">
+      <div class="app-name">Era Platform</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <h2 style="font-size: 16px; margin: 10px 0; text-align: left;">Log in as:</h2>
+
+    <div class="account" onclick="authorizeUser()">
+      <img src="https://same-assets.com/shared-assets/facebook-user.jpg" alt="Avatar" class="account-avatar">
+      <div class="account-name">Facebook User</div>
+    </div>
+
+    <div class="account" onclick="authorizeUser()">
+      <img src="https://same-assets.com/shared-assets/facebook-user2.jpg" alt="Avatar" class="account-avatar">
+      <div class="account-name">Jane Smith</div>
+    </div>
+
+    <button class="button" onclick="authorizeUser()">Continue</button>
+    <button class="cancel" onclick="cancelAuth()">Cancel</button>
+  </div>
+
+  <script>
+    // Parse URL to get redirect URI
+    const urlParams = new URLSearchParams(window.location.search);
+    const redirectUri = urlParams.get('redirect_uri') || '/auth-callback.html';
+
+    // Function to simulate user authorization
+    function authorizeUser() {
+      // Generate mock authorization code
+      const authCode = 'facebook_' + Math.random().toString(36).substring(2, 15);
+
+      // Redirect back to the callback URL with the code
+      window.location.href = `${redirectUri}?code=${authCode}&provider=facebook`;
+    }
+
+    // Function to cancel authorization
+    function cancelAuth() {
+      window.location.href = `${redirectUri}?error=access_denied&provider=facebook`;
+    }
+  </script>
+</body>
+</html>

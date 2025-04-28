@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Era - Map</title>
+  <link rel="stylesheet" href="./css/reset.css">
+  <link rel="stylesheet" href="./css/slick.css">
+  <link rel="stylesheet" href="./css/jquery.fancybox.css">
+  <link rel="icon" type="image/x-icon" href="./images/globe.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="./css/main.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <style>
+    .map-container {
+      display: flex;
+      height: calc(100vh - 160px);
+      width: 100%;
+    }
+
+    #map {
+      flex: 1;
+      height: 100%;
+      z-index: 1;
+    }
+
+    .map-sidebar {
+      width: 300px;
+      background-color: #1a1a1a;
+      overflow-y: auto;
+      padding: 20px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .location-search {
+      margin-bottom: 20px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 10px;
+      background-color: #2a2a2a;
+      border: none;
+      border-radius: 4px;
+      color: #fff;
+      font-family: 'Kanit', sans-serif;
+      margin-bottom: 10px;
+    }
+
+    .map-btn {
+      padding: 8px 12px;
+      background-color: #0b93f6;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: 'Kanit', sans-serif;
+      margin-right: 5px;
+      transition: background-color 0.2s;
+    }
+
+    .map-btn:hover {
+      background-color: #0a84e0;
+    }
+
+    .btn-danger {
+      background-color: #e74c3c;
+    }
+
+    .btn-danger:hover {
+      background-color: #c0392b;
+    }
+
+    .location-list {
+      margin-top: 20px;
+    }
+
+    .location-item {
+      background-color: #2a2a2a;
+      padding: 15px;
+      border-radius: 4px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .location-item:hover {
+      background-color: #333;
+    }
+
+    .location-name {
+      font-weight: 500;
+      margin-bottom: 5px;
+    }
+
+    .location-address {
+      font-size: 14px;
+      color: #aaa;
+      margin-bottom: 10px;
+    }
+
+    .location-actions {
+      display: flex;
+      gap: 5px;
+    }
+
+    .location-meta {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+      font-size: 12px;
+      color: #999;
+    }
+
+    .location-category {
+      background-color: #0b93f6;
+      color: white;
+      padding: 3px 8px;
+      border-radius: 10px;
+      font-size: 11px;
+      display: inline-block;
+      margin-right: 5px;
+    }
+
+    .user-popup {
+      text-align: center;
+    }
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-bottom: 5px;
+    }
+
+    .user-name {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .user-action {
+      margin-top: 10px;
+    }
+
+    .location-popup {
+      max-width: 200px;
+    }
+
+    .location-popup-title {
+      font-weight: bold;
+      font-size: 16px;
+      margin-bottom: 5px;
+    }
+
+    .location-popup-address {
+      font-size: 12px;
+      color: #777;
+      margin-bottom: 5px;
+    }
+
+    .location-popup-rating {
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+      color: #f1c40f;
+      margin-bottom: 5px;
+    }
+
+    .location-popup-description {
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+
+    .location-popup-actions {
+      display: flex;
+      gap: 5px;
+    }
+
+    .friend-list {
+      margin-bottom: 20px;
+    }
+
+    .friend-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .friend-avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+
+    .friend-info {
+      flex: 1;
+    }
+
+    .friend-name {
+      font-size: 14px;
+      margin-bottom: 3px;
+    }
+
+    .friend-status {
+      font-size: 12px;
+      color: #4CAF50;
+    }
+
+    .section-title {
+      font-size: 18px;
+      margin-bottom: 15px;
+      border-bottom: 1px solid #333;
+      padding-bottom: 5px;
+    }
+  </style>
+</head>
+
+<body>
+  <header class="header" id="header">
+    <div class="header__top">
+      <a class="header__logo" href="main.html">
+        <img src="./images/globe.svg" alt="" width="45" height="45">
+      </a>
+      <form class="header__form" action="">
+        <input class="header__input" type="text" placeholder="Search">
+        <button class="header__btn">
+          <img src="./images/search.svg" alt="">
+        </button>
+      </form>
+      <div id="profile" class="profile">
+        <label for="avatar-input" class="avatar-label">
+          <img id="avatar" src="./images/default-avatar.svg" alt="Avatar" class="avatar">
+        </label>
+        <input type="file" id="avatar-input" accept="image/*" class="hidden">
+        <div id="dropdown" class="dropdown hidden">
+          <button class="dropdown-btn" id="profile-btn">Профіль</button>
+          <button class="dropdown-btn" id="settings-btn">Налаштування</button>
+          <button class="dropdown-btn" id="dark-mode-toggle">Dark Mode</button>
+          <button class="dropdown-btn" id="logout-btn">Вийти</button>
+        </div>
+      </div>
+    </div>
+  </header>
+  <div class="main__wrapper">
+    <div class="sidebar">
+      <div class="sidebar__menu">
+        <a class="sidebar__menu-link" href="./main.html">
+          Home
+        </a>
+        <a class="sidebar__menu-link" href="./profile.html">
+          Profile
+        </a>
+        <a class="sidebar__menu-link" href="./social-network.html">
+          Social Media
+        </a>
+        <a class="sidebar__menu-link" href="./chats.html">
+          Chats
+        </a>
+        <a class="sidebar__menu-link" href="./map.html">
+          Map
+        </a>
+      </div>
+    </div>
+    <div class="main__info page-container">
+      <div class="map-container">
+        <div class="map-sidebar">
+          <h2 class="section-title">Locations</h2>
+
+          <div class="location-search">
+            <input type="text" class="search-input" id="location-search" placeholder="Search locations...">
+            <button class="map-btn" id="add-location-btn">Add Location</button>
+            <button class="map-btn" id="my-location-btn">My Location</button>
+          </div>
+
+          <h3 class="section-title">Friends on Map</h3>
+          <div class="friend-list" id="friends-on-map">
+            <!-- Friends will be loaded here -->
+          </div>
+
+          <h3 class="section-title">Saved Locations</h3>
+          <div class="location-list" id="saved-locations">
+            <!-- Locations will be loaded here -->
+          </div>
+        </div>
+        <div id="map"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize map
+      const map = L.map('map').setView([50.4501, 30.5234], 13);
+
+      // Add tile layer (map style)
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap contributors'
+      }).addTo(map);
+
+      // Sample data for demo locations
+      const locations = [
+        {
+          id: 'loc1',
+          name: 'Central Park',
+          address: 'Kyiv, Ukraine',
+          description: 'A beautiful park in the center of the city',
+          coordinates: [50.4501, 30.5234],
+          category: 'Park',
+          rating: 4.7,
+          createdBy: 'testuser',
+          createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24) // 1 day ago
+        },
+        {
+          id: 'loc2',
+          name: 'Awesome Cafe',
+          address: 'Khreshchatyk St, Kyiv',
+          description: 'Great coffee and pastries',
+          coordinates: [50.4481, 30.5214],
+          category: 'Cafe',
+          rating: 4.5,
+          createdBy: 'testuser',
+          createdAt: new Date(Date.now() - 1000 * 60 * 60 * 48) // 2 days ago
+        },
+        {
+          id: 'loc3',
+          name: 'History Museum',
+          address: 'Volodymyrska St, Kyiv',
+          description: 'Learn about local history',
+          coordinates: [50.4521, 30.5124],
+          category: 'Museum',
+          rating: 4.3,
+          createdBy: 'testfriend',
+          createdAt: new Date(Date.now() - 1000 * 60 * 60 * 72) // 3 days ago
+        }
+      ];
+
+      // Sample friends data
+      const friends = [
+        {
+          id: 'user1',
+          name: 'Alex Smith',
+          username: 'alex_smith',
+          avatar: './images/default-avatar.svg',
+          coordinates: [50.4511, 30.5254],
+          lastUpdated: new Date(Date.now() - 1000 * 60 * 5) // 5 minutes ago
+        },
+        {
+          id: 'user2',
+          name: 'Maria Jones',
+          username: 'maria_jones',
+          avatar: './images/default-avatar.svg',
+          coordinates: [50.4491, 30.5204],
+          lastUpdated: new Date(Date.now() - 1000 * 60 * 15) // 15 minutes ago
+        }
+      ];
+
+      // User marker options
+      const userMarkerOptions = {
+        radius: 8,
+        fillColor: "#3498db",
+        color: "#fff",
+        weight: 1,
+        opacity: 1,
+        fillOpacity: 0.8
+      };
+
+      // Friend marker options
+      const friendMarkerOptions = {
+        radius: 8,
+        fillColor: "#2ecc71",
+        color: "#fff",
+        weight: 1,
+        opacity: 1,
+        fillOpacity: 0.8
+      };
+
+      // Location marker options
+      const locationIcon = L.icon({
+        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41]
+      });
+
+      // Create a marker for the user's location
+      let userMarker = null;
+
+      // Create markers for friends
+      friends.forEach(friend => {
+        const marker = L.circleMarker(friend.coordinates, friendMarkerOptions).addTo(map);
+
+        const popupContent = `
+          <div class="user-popup">
+            <img src="${friend.avatar}" alt="${friend.name}" class="user-avatar">
+            <div class="user-name">${friend.name}</div>
+            <div>@${friend.username}</div>
+            <div>Last updated: ${formatTimeAgo(friend.lastUpdated)}</div>
+            <div class="user-action">
+              <button class="map-btn" onclick="window.location.href='chats.html?userId=${friend.id}'">Message</button>
+            </div>
+          </div>
+        `;
+
+        marker.bindPopup(popupContent);
+
+        // Add to friends list in sidebar
+        const friendsList = document.getElementById('friends-on-map');
+        const friendItem = document.createElement('div');
+        friendItem.className = 'friend-item';
+        friendItem.innerHTML = `
+          <img src="${friend.avatar}" alt="${friend.name}" class="friend-avatar">
+          <div class="friend-info">
+            <div class="friend-name">${friend.name}</div>
+            <div class="friend-status">● Online</div>
+          </div>
+        `;
+
+        friendItem.addEventListener('click', () => {
+          map.setView(friend.coordinates, 15);
+          marker.openPopup();
+        });
+
+        friendsList.appendChild(friendItem);
+      });
+
+      // Add location markers
+      locations.forEach(location => {
+        const marker = L.marker(location.coordinates, {icon: locationIcon}).addTo(map);
+
+        const popupContent = `
+          <div class="location-popup">
+            <div class="location-popup-title">${location.name}</div>
+            <div class="location-popup-address">${location.address}</div>
+            <div class="location-popup-rating">★ ${location.rating}</div>
+            <div class="location-popup-description">${location.description}</div>
+            <div class="location-popup-actions">
+              <button class="map-btn">Save</button>
+              <button class="map-btn">Share</button>
+            </div>
+          </div>
+        `;
+
+        marker.bindPopup(popupContent);
+
+        // Add to locations list in sidebar
+        const locationsList = document.getElementById('saved-locations');
+        const locationItem = document.createElement('div');
+        locationItem.className = 'location-item';
+        locationItem.innerHTML = `
+          <div class="location-name">${location.name}</div>
+          <div class="location-address">${location.address}</div>
+          <div>
+            <span class="location-category">${location.category}</span>
+          </div>
+          <div class="location-meta">
+            <span>Added by ${location.createdBy}</span>
+            <span>${formatTimeAgo(location.createdAt)}</span>
+          </div>
+        `;
+
+        locationItem.addEventListener('click', () => {
+          map.setView(location.coordinates, 16);
+          marker.openPopup();
+        });
+
+        locationsList.appendChild(locationItem);
+      });
+
+      // Find my location button
+      document.getElementById('my-location-btn').addEventListener('click', () => {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              const {latitude, longitude} = position.coords;
+
+              // Set the view to the user's location
+              map.setView([latitude, longitude], 15);
+
+              // Add or update the user marker
+              if (userMarker) {
+                userMarker.setLatLng([latitude, longitude]);
+              } else {
+                userMarker = L.circleMarker([latitude, longitude], userMarkerOptions).addTo(map);
+                userMarker.bindPopup("You are here").openPopup();
+              }
+            },
+            (error) => {
+              console.error("Error getting location:", error);
+              alert("Could not get your location. Please check your browser permissions.");
+            }
+          );
+        } else {
+          alert("Geolocation is not supported by your browser.");
+        }
+      });
+
+      // Add new location button
+      document.getElementById('add-location-btn').addEventListener('click', () => {
+        alert("This functionality would allow users to add a new location. Not implemented in this demo.");
+      });
+
+      // Search functionality
+      document.getElementById('location-search').addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        const locationItems = document.querySelectorAll('.location-item');
+
+        locationItems.forEach(item => {
+          const name = item.querySelector('.location-name').textContent.toLowerCase();
+          const address = item.querySelector('.location-address').textContent.toLowerCase();
+
+          if (name.includes(searchTerm) || address.includes(searchTerm)) {
+            item.style.display = 'block';
+          } else {
+            item.style.display = 'none';
+          }
+        });
+      });
+    });
+
+    // Format time ago
+    function formatTimeAgo(date) {
+      const now = new Date();
+      const diffMs = now - date;
+      const diffSecs = Math.floor(diffMs / 1000);
+      const diffMins = Math.floor(diffSecs / 60);
+      const diffHours = Math.floor(diffMins / 60);
+      const diffDays = Math.floor(diffHours / 24);
+
+      if (diffSecs < 60) {
+        return 'just now';
+      } else if (diffMins < 60) {
+        return `${diffMins} ${diffMins === 1 ? 'minute' : 'minutes'} ago`;
+      } else if (diffHours < 24) {
+        return `${diffHours} ${diffHours === 1 ? 'hour' : 'hours'} ago`;
+      } else if (diffDays < 7) {
+        return `${diffDays} ${diffDays === 1 ? 'day' : 'days'} ago`;
+      } else {
+        return date.toLocaleDateString();
+      }
+    }
+  </script>
+
+  <script>
+    // Profile dropdown functionality
+    document.getElementById('avatar').addEventListener('click', function () {
+      const dropdown = document.getElementById('dropdown');
+      dropdown.classList.toggle('hidden');
+    });
+
+    document.getElementById('avatar-input').addEventListener('change', function (event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          document.getElementById('avatar').src = e.target.result;
+          localStorage.setItem('userAvatar', e.target.result);
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    window.addEventListener('click', function (e) {
+      if (!document.getElementById('profile').contains(e.target)) {
+        document.getElementById('dropdown').classList.add('hidden');
+      }
+    });
+
+    document.getElementById('profile-btn').addEventListener('click', function () {
+      window.location.href = 'profile.html';
+    });
+
+    document.getElementById('settings-btn').addEventListener('click', function () {
+      alert('Відкриваємо налаштування!');
+    });
+
+    document.getElementById('dark-mode-toggle').addEventListener('click', function () {
+      document.body.classList.toggle('dark-mode');
+      document.getElementById('header')?.classList.toggle('dark-mode');
+      const darkModeButton = document.getElementById('dark-mode-toggle');
+      darkModeButton.textContent = document.body.classList.contains('dark-mode') ? 'Light Mode' : 'Dark Mode';
+    });
+
+    document.getElementById('logout-btn').addEventListener('click', function () {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = 'auth.html';
+    });
+  </script>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="./js/slick.min.js"></script>
+  <script src="./js/jquery.fancybox.min.js"></script>
+  <script src="./js/main.js"></script>
+</body>
+
+</html>
