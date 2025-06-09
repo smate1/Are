@@ -389,8 +389,12 @@
 
     /* Mobile Styles */
     @media (max-width: 768px) {
+      .main__wrapper{
+        padding-top: 0;
+      }
       .header {
         padding: 0 15px;
+        display: none;
       }
 
       .header__top {
@@ -444,7 +448,7 @@
       }
 
       .chat-container {
-        height: calc(100vh - 76px);
+        height: 100vh;
       }
 
       .chat-list {
@@ -670,7 +674,7 @@
             <h3>Select a conversation to start chatting</h3>
             <p>Or find friends in the Social Network section to start new conversations</p>
           </div>
-          <div id="active-chat" style="display: none; height: 100%; display: flex; flex-direction: column;">
+          <div id="active-chat" style="display: none; height: 100vh; display: flex; flex-direction: column;">
             <div class="chat-header">
               <!-- Mobile back button -->
               <button class="mobile-back-btn" id="mobile-back-btn">
