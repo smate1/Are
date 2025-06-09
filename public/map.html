@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="./css/reset.css">
   <link rel="stylesheet" href="./css/slick.css">
   <link rel="stylesheet" href="./css/jquery.fancybox.css">
-  <link rel="icon" type="image/x-icon" href="./images/globe.svg">
+  <link rel="icon" type="image/x-icon" href="./images/globe-gradient.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -421,7 +421,7 @@
       backdrop-filter: blur(20px);
       border-radius: 20px 20px 0 0;
       z-index: 1000;
-      transform: translateY(calc(100% - 80px));
+      transform: translateY(calc(100% - 75px));
       transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       box-shadow: 0 -20px 40px rgba(0, 0, 0, 0.3);
       border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -471,12 +471,15 @@
 
     /* Mobile Styles */
     @media (max-width: 768px) {
+      .avatar{
+        border: 3px solid #667eea;
+      }
       .header {
         padding: 0 15px;
       }
 
       .header__top {
-        padding: 15px 0;
+        padding: 50px 0 15px;
       }
 
       .mobile-menu-btn {
@@ -552,6 +555,10 @@
         border-radius: 0;
         position: relative;
         z-index: 1;
+      }
+
+      .leaflet-right .leaflet-control {
+        display: none;
       }
 
       /* Fix map container positioning */
@@ -666,7 +673,7 @@
       /* Mobile sidebar toggle button */
       .mobile-sidebar-toggle {
         position: fixed;
-        bottom: 100px;
+        bottom: 95px;
         left: 15px;
         width: 48px;
         height: 48px;
@@ -920,7 +927,7 @@
     /* Floating action button for quick actions */
     .floating-actions {
       position: fixed;
-      bottom: 15px;
+      bottom: 95px;
       right: 15px;
       z-index: 1000;
       display: flex;
@@ -1076,6 +1083,9 @@
     }
 
     @media (max-width: 768px) {
+      .main__wrapper{
+        padding-top: 0;
+      }
       .custom-map-controls {
         margin-bottom: 120px;
         margin-right: 10px;
@@ -1134,7 +1144,7 @@
       </button>
 
       <a class="header__logo" href="main.html">
-        <img src="./images/globe.svg" alt="" width="45" height="45">
+        <img src="./images/globe-gradient.svg" alt="" width="45" height="45">
       </a>
       <form class="header__form" action="">
         <input class="header__input" type="text" placeholder="Search">
@@ -1144,7 +1154,7 @@
       </form>
       <div id="profile" class="profile">
         <label for="avatar-input" class="avatar-label">
-          <img id="avatar" src="./images/default-avatar.svg" alt="Avatar" class="avatar">
+          <img id="avatar" src="./images/avatars/alex.jpg" alt="Avatar" class="avatar">
         </label>
         <input type="file" id="avatar-input" accept="image/*" class="hidden">
         <div id="dropdown" class="dropdown hidden">
