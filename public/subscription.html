@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Era - Premium Subscription</title>
+  <link rel="stylesheet" href="./uploads/css/reset.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="./uploads/css/main.css">
+  <style>
+    .subscription-container {
+      font-family: 'Kanit', sans-serif;
+      height: calc(100vh - 96px);
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      background: linear-gradient(135deg, #0d0418 0%, #1a1a2e 100%);
+      padding: 40px 20px;
+      gap: 40px;
+    }
+
+    .subscription-header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .subscription-title {
+      font-size: 48px;
+      font-weight: 700;
+      color: #fff;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 16px;
+      animation: fadeInDown 0.8s ease-out;
+    }
+
+    .subscription-subtitle {
+      font-size: 20px;
+      color: #ccc;
+      font-weight: 300;
+      animation: fadeInUp 0.8s ease-out 0.2s both;
+    }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .plans-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 30px;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .plan-card {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      padding: 30px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
+      animation: slideInUp 0.6s ease-out;
+    }
+
+    .plan-card:nth-child(1) {
+      animation-delay: 0.1s;
+    }
+
+    .plan-card:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .plan-card:nth-child(3) {
+      animation-delay: 0.3s;
+    }
+
+    @keyframes slideInUp {
+      from {
+        opacity: 0;
+        transform: translateY(50px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .plan-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 25px 50px rgba(102, 126, 234, 0.3);
+      border-color: rgba(102, 126, 234, 0.5);
+    }
+
+    .plan-card.premium {
+      border: 2px solid #667eea;
+      position: relative;
+    }
+
+    .plan-card.premium::before {
+      content: "Most Popular";
+      position: absolute;
+      top: -1px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 8px 20px;
+      border-radius: 0 0 15px 15px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .plan-name {
+      font-size: 28px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .plan-price {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .price-amount {
+      font-size: 42px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .price-currency {
+      font-size: 24px;
+      color: #aaa;
+      font-weight: 400;
+    }
+
+    .price-period {
+      display: block;
+      font-size: 16px;
+      color: #aaa;
+      margin-top: 5px;
+    }
+
+    .plan-features {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 30px 0;
+    }
+
+    .plan-features li {
+      padding: 12px 0;
+      color: #ccc;
+      font-size: 16px;
+      position: relative;
+      padding-left: 30px;
+    }
+
+    .plan-features li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: #667eea;
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    .plan-features li.unavailable {
+      color: #666;
+      opacity: 0.5;
+    }
+
+    .plan-features li.unavailable::before {
+      content: "✗";
+      color: #666;
+    }
+
+    .select-plan-btn {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      border: 2px solid rgba(102, 126, 234, 0.5);
+      padding: 16px 24px;
+      border-radius: 15px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .select-plan-btn:hover {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-color: transparent;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    .plan-card.premium .select-plan-btn {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-color: transparent;
+    }
+
+    .payment-section {
+      max-width: 600px;
+      margin: 60px auto 0;
+      padding: 40px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      display: none;
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    .payment-title {
+      font-size: 32px;
+      font-weight: 600;
+      color: #fff;
+      text-align: center;
+      margin-bottom: 30px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .form-group {
+      margin-bottom: 25px;
+    }
+
+    .form-group label {
+      display: block;
+      color: #fff;
+      margin-bottom: 8px;
+      font-weight: 500;
+      font-size: 16px;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 16px 20px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      font-family: 'Kanit', sans-serif;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .form-group input::placeholder {
+      color: #aaa;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 20px;
+    }
+
+    .payment-methods {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    .payment-method {
+      padding: 15px;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.05);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+      color: #fff;
+      font-weight: 500;
+    }
+
+    .payment-method:hover {
+      border-color: #667eea;
+      background: rgba(102, 126, 234, 0.1);
+    }
+
+    .payment-method.active {
+      border-color: #667eea;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .submit-payment-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 18px 30px;
+      border-radius: 15px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 20px;
+    }
+
+    .submit-payment-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
+    }
+
+    .back-btn {
+      background: none;
+      border: 2px solid rgba(102, 126, 234, 0.5);
+      color: #667eea;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-bottom: 20px;
+    }
+
+    .back-btn:hover {
+      background: rgba(102, 126, 234, 0.1);
+      border-color: #667eea;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 968px) {
+      .subscription-title {
+        font-size: 36px;
+      }
+
+      .subscription-subtitle {
+        font-size: 18px;
+      }
+
+      .subscription-container {
+        padding: 30px 15px;
+        gap: 30px;
+      }
+
+      .plans-container {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      .plan-card {
+        padding: 25px;
+      }
+
+      .payment-section {
+        padding: 30px 20px;
+        margin-top: 40px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .header {
+        padding: 0 15px;
+        min-height: 80px;
+      }
+
+      .header__top {
+        padding: 15px 0;
+      }
+
+      .mobile-menu-btn {
+        display: flex;
+      }
+
+      .sidebar {
+        position: fixed;
+        left: -350px;
+        transition: left 0.3s ease;
+        z-index: 1000;
+        background: linear-gradient(135deg, #0d0418 0%, #1a1a2e 100%);
+        min-width: 350px;
+        backdrop-filter: blur(20px);
+        border-right: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .sidebar.active {
+        left: 0;
+      }
+
+      .sidebar-overlay.active {
+        display: block;
+      }
+
+      .page-container {
+        width: 100%;
+        padding: 0;
+      }
+
+      .subscription-container {
+        padding: 20px 10px;
+        height: calc(100vh - 80px);
+      }
+
+      .subscription-title {
+        font-size: 28px;
+      }
+
+      .subscription-subtitle {
+        font-size: 16px;
+      }
+
+      .plan-card {
+        padding: 20px;
+      }
+
+      .plan-name {
+        font-size: 24px;
+      }
+
+      .price-amount {
+        font-size: 36px;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+
+      .payment-methods {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+
+      .payment-method {
+        padding: 12px;
+        font-size: 14px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .subscription-container {
+        padding: 15px 5px;
+        gap: 20px;
+      }
+
+      .subscription-title {
+        font-size: 24px;
+      }
+
+      .subscription-subtitle {
+        font-size: 14px;
+      }
+
+      .plan-card {
+        padding: 15px;
+      }
+
+      .plan-name {
+        font-size: 20px;
+      }
+
+      .price-amount {
+        font-size: 30px;
+      }
+
+      .plan-features li {
+        font-size: 14px;
+        padding: 8px 0;
+      }
+
+      .payment-section {
+        padding: 20px 15px;
+      }
+
+      .payment-title {
+        font-size: 24px;
+      }
+
+      .form-group input,
+      .form-group select {
+        padding: 12px 15px;
+        font-size: 14px;
+      }
+
+      .payment-methods {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Sidebar overlay */
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+    }
+
+    .sidebar-overlay.active {
+      display: block;
+    }
+
+    /* Mobile menu button */
+    .mobile-menu-btn {
+      display: none;
+      flex-direction: column;
+      justify-content: space-around;
+      width: 30px;
+      height: 30px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .mobile-menu-btn span {
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 2px;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+    }
+
+    /* Success modal */
+    .success-modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(5px);
+    }
+
+    .success-modal-content {
+      background: linear-gradient(135deg, #0d0418 0%, #1a1a2e 100%);
+      margin: 10% auto;
+      padding: 40px;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 500px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      text-align: center;
+      animation: scaleIn 0.5s ease-out;
+    }
+
+    @keyframes scaleIn {
+      from {
+        opacity: 0;
+        transform: scale(0.8);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .success-icon {
+      font-size: 64px;
+      margin-bottom: 20px;
+    }
+
+    .success-title {
+      font-size: 28px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 15px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .success-text {
+      color: #ccc;
+      font-size: 16px;
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+
+    .success-btn {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .success-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+  <header class="header" id="header">
+    <div class="header__top">
+      <!-- Mobile menu button -->
+      <button class="mobile-menu-btn" id="mobile-menu-btn">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <a class="header__logo" href="main.html">
+        <img src="./uploads/images/globe.svg" alt="" width="45" height="45">
+      </a>
+      <form class="header__form" action="">
+        <input class="header__input" type="text" placeholder="Search">
+        <button class="header__btn">
+          <img src="./uploads/images/search.svg" alt="">
+        </button>
+      </form>
+      <div id="profile" class="profile">
+        <label for="avatar-input" class="avatar-label">
+          <img id="avatar" src="./uploads/images/default-avatar.svg" alt="Avatar" class="avatar">
+        </label>
+        <input type="file" id="avatar-input" accept="image/*" class="hidden">
+        <div id="dropdown" class="dropdown hidden">
+          <button class="dropdown-btn" id="profile-btn">Profile</button>
+          <button class="dropdown-btn" id="settings-btn">Settings</button>
+          <button class="dropdown-btn" id="dark-mode-toggle">Dark Mode</button>
+          <button class="dropdown-btn" id="logout-btn">Logout</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="main__wrapper">
+    <div class="sidebar">
+      <div class="sidebar__menu">
+        <a class="sidebar__menu-link" href="./main.html">Home</a>
+        <a class="sidebar__menu-link" href="./profile.html">Profile</a>
+        <a class="sidebar__menu-link" href="./uploads/social-network.html">Social Media</a>
+        <a class="sidebar__menu-link" href="./uploads/chats.html">Chats</a>
+        <a class="sidebar__menu-link" href="./uploads/map.html">Map</a>
+        <a class="sidebar__menu-link" href="./subscription.html">Premium</a>
+      </div>
+    </div>
+
+    <div class="main__info page-container">
+      <div class="subscription-container">
+        <!-- Plans Section -->
+        <div id="plans-section">
+          <div class="subscription-header">
+            <h1 class="subscription-title">🎯 Premium Subscription</h1>
+            <p class="subscription-subtitle">Unlock all Era features for unforgettable travels</p>
+          </div>
+
+          <div class="plans-container">
+            <!-- Basic Plan -->
+            <div class="plan-card" data-plan="basic">
+              <h3 class="plan-name">Basic</h3>
+              <div class="plan-price">
+                <span class="price-amount">9</span>
+                <span class="price-currency">$</span>
+                <span class="price-period">per month</span>
+              </div>
+              <ul class="plan-features">
+                <li>Up to 5 posts per month</li>
+                <li>Basic location search</li>
+                <li>Standard filters</li>
+                <li>Email support</li>
+                <li class="unavailable">Private chats</li>
+                <li class="unavailable">Route export</li>
+                <li class="unavailable">Travel analytics</li>
+              </ul>
+              <button class="select-plan-btn" onclick="selectPlan('basic', 9)">Choose Plan</button>
+            </div>
+
+            <!-- Premium Plan -->
+            <div class="plan-card premium" data-plan="premium">
+              <h3 class="plan-name">Premium</h3>
+              <div class="plan-price">
+                <span class="price-amount">19</span>
+                <span class="price-currency">$</span>
+                <span class="price-period">per month</span>
+              </div>
+              <ul class="plan-features">
+                <li>Unlimited posts</li>
+                <li>Advanced search</li>
+                <li>All filters and tags</li>
+                <li>Private chats</li>
+                <li>Route export</li>
+                <li>Basic analytics</li>
+                <li class="unavailable">VIP support 24/7</li>
+              </ul>
+              <button class="select-plan-btn" onclick="selectPlan('premium', 19)">Choose Plan</button>
+            </div>
+
+            <!-- VIP Plan -->
+            <div class="plan-card" data-plan="vip">
+              <h3 class="plan-name">VIP</h3>
+              <div class="plan-price">
+                <span class="price-amount">39</span>
+                <span class="price-currency">$</span>
+                <span class="price-period">per month</span>
+              </div>
+              <ul class="plan-features">
+                <li>All Premium features</li>
+                <li>VIP support 24/7</li>
+                <li>Detailed analytics</li>
+                <li>Exclusive events</li>
+                <li>Personal manager</li>
+                <li>Early access to new features</li>
+                <li>Unlimited cloud storage</li>
+              </ul>
+              <button class="select-plan-btn" onclick="selectPlan('vip', 39)">Choose Plan</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment Section -->
+        <div id="payment-section" class="payment-section">
+          <button class="back-btn" onclick="showPlans()">← Back to Plans</button>
+          <h2 class="payment-title">Payment Details</h2>
+
+          <div class="selected-plan-info" id="selected-plan-info">
+            <!-- Plan info will be inserted here -->
+          </div>
+
+          <div class="payment-methods">
+            <div class="payment-method active" data-method="card">
+              💳 Card
+            </div>
+            <div class="payment-method" data-method="paypal">
+              🅿️ PayPal
+            </div>
+            <div class="payment-method" data-method="google">
+              🅖 Google Pay
+            </div>
+            <div class="payment-method" data-method="apple">
+              🍎 Apple Pay
+            </div>
+          </div>
+
+          <form id="payment-form">
+            <div class="form-group">
+              <label for="email">Email Address</label>
+              <input type="email" id="email" name="email" placeholder="your@email.com" required>
+            </div>
+
+            <div class="form-group">
+              <label for="card-number">Card Number</label>
+              <input type="text" id="card-number" name="card-number" placeholder="1234 5678 9012 3456" required>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="expiry">Expiry Date</label>
+                <input type="text" id="expiry" name="expiry" placeholder="MM/YY" required>
+              </div>
+              <div class="form-group">
+                <label for="cvv">CVV</label>
+                <input type="text" id="cvv" name="cvv" placeholder="123" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="name">Cardholder Name</label>
+              <input type="text" id="name" name="name" placeholder="John Doe" required>
+            </div>
+
+            <button type="submit" class="submit-payment-btn">Subscribe Now</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success Modal -->
+  <div id="success-modal" class="success-modal">
+    <div class="success-modal-content">
+      <div class="success-icon">🎉</div>
+      <h2 class="success-title">Payment Successful!</h2>
+      <p class="success-text">
+        Thank you for subscribing to Era Premium! You now have access to all premium features.
+        Your subscription is active from this moment.
+      </p>
+      <button class="success-btn" onclick="closeSuccessModal()">Continue</button>
+    </div>
+  </div>
+
+  <script>
+    let selectedPlan = null;
+    let selectedPrice = 0;
+
+    // План selection
+    function selectPlan(planType, price) {
+      selectedPlan = planType;
+      selectedPrice = price;
+
+      document.getElementById('plans-section').style.display = 'none';
+      document.getElementById('payment-section').style.display = 'block';
+
+      // Update selected plan info
+      const planNames = {
+        'basic': 'Basic',
+        'premium': 'Premium',
+        'vip': 'VIP'
+      };
+
+      const planInfo = document.getElementById('selected-plan-info');
+      planInfo.innerHTML = `
+        <div style="background: rgba(102, 126, 234, 0.1); padding: 20px; border-radius: 15px; margin-bottom: 30px; border: 1px solid rgba(102, 126, 234, 0.3);">
+          <h3 style="color: #fff; margin: 0 0 10px 0; font-size: 24px;">Selected Plan: ${planNames[planType]}</h3>
+          <p style="color: #ccc; margin: 0; font-size: 18px;"><strong>${price}</strong> per month</p>
+        </div>
+      `;
+    }
+
+    function showPlans() {
+      document.getElementById('payment-section').style.display = 'none';
+      document.getElementById('plans-section').style.display = 'block';
+    }
+
+    // Payment method selection
+    document.addEventListener('DOMContentLoaded', function () {
+      const paymentMethods = document.querySelectorAll('.payment-method');
+
+      paymentMethods.forEach(method => {
+        method.addEventListener('click', () => {
+          paymentMethods.forEach(m => m.classList.remove('active'));
+          method.classList.add('active');
+        });
+      });
+    });
+
+    // Card number formatting
+    document.getElementById('card-number').addEventListener('input', function (e) {
+      let value = e.target.value.replace(/\s/g, '').replace(/[^0-9]/gi, '');
+      let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+      e.target.value = formattedValue;
+    });
+
+    // Expiry date formatting
+    document.getElementById('expiry').addEventListener('input', function (e) {
+      let value = e.target.value.replace(/\D/g, '');
+      if (value.length >= 2) {
+        value = value.substring(0, 2) + '/' + value.substring(2, 4);
+      }
+      e.target.value = value;
+    });
+
+    // CVV formatting
+    document.getElementById('cvv').addEventListener('input', function (e) {
+      e.target.value = e.target.value.replace(/\D/g, '').substring(0, 3);
+    });
+
+    // Form submission
+    document.getElementById('payment-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      // Show loading animation
+      const submitBtn = document.querySelector('.submit-payment-btn');
+      const originalText = submitBtn.textContent;
+      submitBtn.textContent = 'Processing Payment...';
+      submitBtn.disabled = true;
+
+      // Simulate payment processing
+      setTimeout(() => {
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+
+        // Show success modal
+        document.getElementById('success-modal').style.display = 'block';
+
+        // Store subscription info
+        localStorage.setItem('subscription', JSON.stringify({
+          plan: selectedPlan,
+          price: selectedPrice,
+          startDate: new Date().toISOString(),
+          active: true
+        }));
+      }, 2000);
+    });
+
+    function closeSuccessModal() {
+      document.getElementById('success-modal').style.display = 'none';
+      // Redirect to main page or dashboard
+      window.location.href = './uploads/social-network.html';
+    }
+
+    // Close modal when clicking outside
+    window.addEventListener('click', function (e) {
+      const modal = document.getElementById('success-modal');
+      if (e.target === modal) {
+        closeSuccessModal();
+      }
+    });
+
+    // Profile dropdown functionality
+    document.getElementById('avatar').addEventListener('click', function () {
+      const dropdown = document.getElementById('dropdown');
+      dropdown.classList.toggle('hidden');
+    });
+
+    document.getElementById('avatar-input').addEventListener('change', function (event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          document.getElementById('avatar').src = e.target.result;
+          localStorage.setItem('userAvatar', e.target.result);
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    window.addEventListener('click', function (e) {
+      if (!document.getElementById('profile').contains(e.target)) {
+        document.getElementById('dropdown').classList.add('hidden');
+      }
+    });
+
+    document.getElementById('profile-btn').addEventListener('click', function () {
+      window.location.href = 'profile.html';
+    });
+
+    document.getElementById('settings-btn').addEventListener('click', function () {
+      alert('Opening settings!');
+    });
+
+    document.getElementById('dark-mode-toggle').addEventListener('click', function () {
+      document.body.classList.toggle('dark-mode');
+      document.getElementById('header')?.classList.toggle('dark-mode');
+      const darkModeButton = document.getElementById('dark-mode-toggle');
+      darkModeButton.textContent = document.body.classList.contains('dark-mode') ? 'Light Mode' : 'Dark Mode';
+    });
+
+    document.getElementById('logout-btn').addEventListener('click', function () {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = 'auth.html';
+    });
+
+    // Mobile menu functionality
+    document.addEventListener('DOMContentLoaded', function () {
+      const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+      const sidebar = document.querySelector('.sidebar');
+      const sidebarOverlay = document.getElementById('sidebar-overlay');
+
+      function toggleMobileMenu() {
+        sidebar.classList.toggle('active');
+        sidebarOverlay.classList.toggle('active');
+      }
+
+      function closeMobileMenu() {
+        sidebar.classList.remove('active');
+        sidebarOverlay.classList.remove('active');
+      }
+
+      if (mobileMenuBtn) {
+        mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+      }
+
+      if (sidebarOverlay) {
+        sidebarOverlay.addEventListener('click', closeMobileMenu);
+      }
+
+      // Close mobile menu when clicking sidebar links
+      const sidebarLinks = document.querySelectorAll('.sidebar__menu-link');
+      sidebarLinks.forEach(link => {
+        link.addEventListener('click', closeMobileMenu);
+      });
+
+      // Close mobile menu on window resize if opened
+      window.addEventListener('resize', function () {
+        if (window.innerWidth > 768) {
+          closeMobileMenu();
+        }
+      });
+    });
+
+    // Check if user already has subscription
+    document.addEventListener('DOMContentLoaded', function () {
+      const subscription = localStorage.getItem('subscription');
+      if (subscription) {
+        const subData = JSON.parse(subscription);
+        if (subData.active) {
+          // User already has active subscription
+          const planNames = {
+            'basic': 'Basic',
+            'premium': 'Premium',
+            'vip': 'VIP'
+          };
+
+          document.querySelector('.subscription-title').textContent = '✅ Active Subscription';
+          document.querySelector('.subscription-subtitle').innerHTML = `
+            You have an active <strong>${planNames[subData.plan]}</strong> subscription for ${subData.price}/month<br>
+            <small style="opacity: 0.7;">Active since ${new Date(subData.startDate).toLocaleDateString('en-US')}</small>
+          `;
+
+          // Hide all plans and show upgrade options instead
+          document.querySelector('.plans-container').innerHTML = `
+            <div class="plan-card" style="grid-column: 1/-1; text-align: center; padding: 40px;">
+              <h3 style="color: #fff; margin-bottom: 20px;">Manage Subscription</h3>
+              <p style="color: #ccc; margin-bottom: 30px;">Your subscription is active and working</p>
+              <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+                <button class="select-plan-btn" style="width: auto; padding: 12px 24px;" onclick="cancelSubscription()">Cancel Subscription</button>
+                <button class="select-plan-btn" style="width: auto; padding: 12px 24px;" onclick="upgradeSubscription()">Change Plan</button>
+              </div>
+            </div>
+          `;
+        }
+      }
+    });
+
+    function cancelSubscription() {
+      if (confirm('Are you sure you want to cancel your subscription?')) {
+        localStorage.removeItem('subscription');
+        alert('Subscription cancelled');
+        location.reload();
+      }
+    }
+
+    function upgradeSubscription() {
+      localStorage.removeItem('subscription');
+      location.reload();
+    }
+  </script>
+</body>
+
+</html>
