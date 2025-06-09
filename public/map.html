@@ -21,23 +21,59 @@
   <style>
     .map-container {
       display: flex;
-      height: calc(100vh - 160px);
+      height: calc(100vh - 96px);
       width: 100%;
+      background: linear-gradient(135deg, #0d0418 0%, #1a1a2e 100%);
     }
 
     #map {
       flex: 1;
       height: 100%;
       z-index: 1;
+      border-radius: 16px;
+      margin: 10px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
     }
 
     .map-sidebar {
-      width: 300px;
-      background-color: #1a1a1a;
+      width: 320px;
+      background: rgba(255, 255, 255, 0.05);
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
       overflow-y: auto;
+      overflow-x: hidden;
       padding: 20px;
       position: relative;
       z-index: 2;
+      scroll-behavior: smooth;
+    }
+
+    /* Custom Scrollbar Styling */
+    .map-sidebar::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .map-sidebar::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      margin: 10px 0;
+    }
+
+    .map-sidebar::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 10px;
+      transition: all 0.3s ease;
+    }
+
+    .map-sidebar::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+      box-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
+    }
+
+    /* Firefox Scrollbar */
+    .map-sidebar {
+      scrollbar-width: thin;
+      scrollbar-color: #667eea rgba(255, 255, 255, 0.05);
     }
 
     .location-search {
@@ -46,37 +82,55 @@
 
     .search-input {
       width: 100%;
-      padding: 10px;
-      background-color: #2a2a2a;
-      border: none;
-      border-radius: 4px;
+      padding: 12px 20px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 24px;
       color: #fff;
       font-family: 'Kanit', sans-serif;
-      margin-bottom: 10px;
+      margin-bottom: 15px;
+      transition: all 0.3s ease;
+      font-size: 14px;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .search-input::placeholder {
+      color: #aaa;
     }
 
     .map-btn {
-      padding: 8px 12px;
-      background-color: #0b93f6;
+      padding: 12px 18px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
       border: none;
-      border-radius: 4px;
+      border-radius: 25px;
       cursor: pointer;
       font-family: 'Kanit', sans-serif;
-      margin-right: 5px;
-      transition: background-color 0.2s;
+      margin-right: 8px;
+      margin-bottom: 8px;
+      transition: all 0.3s ease;
+      font-size: 14px;
+      font-weight: 500;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
     }
 
     .map-btn:hover {
-      background-color: #0a84e0;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
     }
 
     .btn-danger {
-      background-color: #e74c3c;
+      background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+      box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
     }
 
     .btn-danger:hover {
-      background-color: #c0392b;
+      box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
     }
 
     .location-list {
@@ -84,50 +138,100 @@
     }
 
     .location-item {
-      background-color: #2a2a2a;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
       padding: 15px;
-      border-radius: 4px;
-      margin-bottom: 10px;
+      border-radius: 16px;
+      margin-bottom: 12px;
       cursor: pointer;
-      transition: background-color 0.2s;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .location-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+      transition: left 0.5s;
+    }
+
+    .location-item:hover::before {
+      left: 100%;
     }
 
     .location-item:hover {
-      background-color: #333;
+      transform: translateY(-3px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+      border-color: rgba(102, 126, 234, 0.3);
+      background: rgba(255, 255, 255, 0.08);
     }
 
     .location-name {
-      font-weight: 500;
-      margin-bottom: 5px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #fff;
+      font-size: 16px;
     }
 
     .location-address {
       font-size: 14px;
-      color: #aaa;
-      margin-bottom: 10px;
+      color: #ccc;
+      margin-bottom: 12px;
     }
 
     .location-actions {
       display: flex;
-      gap: 5px;
+      gap: 8px;
     }
 
     .location-meta {
       display: flex;
       justify-content: space-between;
-      margin-top: 10px;
+      margin-top: 12px;
       font-size: 12px;
-      color: #999;
+      color: #aaa;
     }
 
     .location-category {
-      background-color: #0b93f6;
-      color: white;
-      padding: 3px 8px;
-      border-radius: 10px;
-      font-size: 11px;
+      background: rgba(102, 126, 234, 0.2);
+      color: #667eea;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
       display: inline-block;
-      margin-right: 5px;
+      margin-right: 8px;
+    }
+
+    .location-category.shopping {
+      background: rgba(238, 90, 36, 0.2);
+      color: #ee5a24;
+    }
+
+    .location-category.food {
+      background: rgba(255, 183, 77, 0.2);
+      color: #ffb74d;
+    }
+
+    .location-category.landmark {
+      background: rgba(156, 39, 176, 0.2);
+      color: #9c27b0;
+    }
+
+    .location-category.museum {
+      background: rgba(67, 160, 71, 0.2);
+      color: #43a047;
+    }
+
+    .location-category.park {
+      background: rgba(76, 175, 80, 0.2);
+      color: #4caf50;
     }
 
     .user-popup {
@@ -135,15 +239,18 @@
     }
 
     .user-avatar {
-      width: 40px;
-      height: 40px;
+      width: 45px;
+      height: 45px;
       border-radius: 50%;
-      margin-bottom: 5px;
+      margin-bottom: 8px;
+      border: 2px solid #667eea;
+      object-fit: cover;
     }
 
     .user-name {
-      font-weight: bold;
+      font-weight: 600;
       margin-bottom: 5px;
+      color: #333;
     }
 
     .user-action {
@@ -151,19 +258,20 @@
     }
 
     .location-popup {
-      max-width: 200px;
+      max-width: 220px;
     }
 
     .location-popup-title {
-      font-weight: bold;
+      font-weight: 600;
       font-size: 16px;
-      margin-bottom: 5px;
+      margin-bottom: 6px;
+      color: #333;
     }
 
     .location-popup-address {
-      font-size: 12px;
-      color: #777;
-      margin-bottom: 5px;
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 6px;
     }
 
     .location-popup-rating {
@@ -171,17 +279,18 @@
       align-items: center;
       font-size: 14px;
       color: #f1c40f;
-      margin-bottom: 5px;
+      margin-bottom: 8px;
     }
 
     .location-popup-description {
-      font-size: 12px;
-      margin-bottom: 10px;
+      font-size: 13px;
+      margin-bottom: 12px;
+      color: #555;
     }
 
     .location-popup-actions {
       display: flex;
-      gap: 5px;
+      gap: 8px;
     }
 
     .friend-list {
@@ -191,14 +300,27 @@
     .friend-item {
       display: flex;
       align-items: center;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .friend-item:hover {
+      background: rgba(255, 255, 255, 0.08);
+      transform: translateX(5px);
     }
 
     .friend-avatar {
-      width: 30px;
-      height: 30px;
+      width: 35px;
+      height: 35px;
       border-radius: 50%;
-      margin-right: 10px;
+      margin-right: 12px;
+      border: 2px solid #667eea;
+      object-fit: cover;
     }
 
     .friend-info {
@@ -208,25 +330,593 @@
     .friend-name {
       font-size: 14px;
       margin-bottom: 3px;
+      color: #fff;
+      font-weight: 500;
     }
 
     .friend-status {
       font-size: 12px;
-      color: #4CAF50;
+      color: #4ade80;
+      font-weight: 500;
     }
 
     .section-title {
-      font-size: 18px;
-      margin-bottom: 15px;
-      border-bottom: 1px solid #333;
-      padding-bottom: 5px;
+      font-size: 20px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 10px;
+      color: #fff;
+      font-weight: 600;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Mobile Navigation Buttons */
+    .mobile-menu-btn {
+      display: none;
+      flex-direction: column;
+      justify-content: space-around;
+      width: 30px;
+      height: 30px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .mobile-menu-btn span {
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 2px;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+    }
+
+    /* Mobile Sidebar Overlay */
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+    }
+
+    /* Tablet Styles */
+    @media (max-width: 1024px) {
+      .header__form {
+        width: auto;
+      }
+
+      .header__input {
+        width: 350px;
+      }
+
+      .sidebar {
+        min-width: 280px;
+      }
+
+      .page-container {
+        width: calc(100% - 280px);
+      }
+
+      .map-sidebar {
+        width: 280px;
+      }
+    }
+
+    /* Mobile Styles */
+    @media (max-width: 768px) {
+      .header {
+        padding: 0 15px;
+      }
+
+      .header__top {
+        padding: 15px 0;
+      }
+
+      .mobile-menu-btn {
+        display: flex;
+      }
+
+      .header__form {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: #0a0a0a;
+        border-top: 1px solid #333;
+        padding: 15px;
+        display: none;
+      }
+
+      .header__form.active {
+        display: block;
+      }
+
+      .header__input {
+        width: 100%;
+      }
+
+      .sidebar {
+        position: fixed;
+        left: -350px;
+        transition: left 0.3s ease;
+        z-index: 1000;
+        background: linear-gradient(135deg, #0d0418 0%, #1a1a2e 100%);
+        min-width: 350px;
+        backdrop-filter: blur(20px);
+      }
+
+      .sidebar.active {
+        left: 0;
+      }
+
+      .sidebar-overlay.active {
+        display: block;
+      }
+
+      .page-container {
+        width: 100%;
+        left: 0;
+      }
+
+      .map-container {
+        height: calc(100vh - 76px);
+        flex-direction: column;
+        margin: 0;
+        padding: 0;
+      }
+
+      .map-sidebar {
+        width: 100%;
+        height: 40%;
+        order: 2;
+        border-right: none;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        -webkit-overflow-scrolling: touch;
+        scroll-snap-type: y proximity;
+        margin: 0;
+        border-radius: 0;
+        position: relative;
+        /* Prevent fixed positioning issues */
+      }
+
+      .location-item,
+      .friend-item {
+        scroll-snap-align: start;
+      }
+
+      #map {
+        height: 60%;
+        order: 1;
+        margin: 0;
+        border-radius: 0;
+        position: relative;
+        /* Ensure map is properly positioned */
+        z-index: 1;
+        width: 100%;
+        /* Ensure full width */
+      }
+
+      /* Fix map container positioning */
+      .leaflet-container {
+        width: 100% !important;
+        height: 100% !important;
+        position: relative !important;
+        /* Remove fixed positioning */
+      }
+
+      .search-input {
+        font-size: 16px;
+      }
+
+      .map-btn {
+        padding: 10px 16px;
+        font-size: 14px;
+        margin-bottom: 10px;
+        width: 100%;
+        margin-right: 0;
+      }
+
+      .location-item {
+        padding: 12px;
+      }
+
+      .friend-item {
+        padding: 10px;
+      }
+
+      .friend-avatar {
+        width: 40px;
+        height: 40px;
+      }
+
+      .user-avatar {
+        width: 50px;
+        height: 50px;
+      }
+
+      /* Fix floating action buttons on mobile */
+      .floating-actions {
+        bottom: 15px;
+        right: 15px;
+        gap: 10px;
+      }
+
+      .fab {
+        width: 48px;
+        height: 48px;
+        font-size: 18px;
+      }
+    }
+
+    /* Small Mobile Styles */
+    @media (max-width: 480px) {
+      .header__logo img {
+        width: 35px;
+        height: 35px;
+      }
+
+      .avatar {
+        width: 40px;
+        height: 40px;
+      }
+
+      .map-sidebar {
+        padding: 15px;
+      }
+
+      .section-title {
+        font-size: 18px;
+      }
+
+      .location-name {
+        font-size: 15px;
+      }
+
+      .location-address {
+        font-size: 13px;
+      }
+
+      .friend-name {
+        font-size: 13px;
+      }
+
+      .search-input {
+        padding: 10px 15px;
+      }
+
+      .map-btn {
+        padding: 8px 14px;
+        font-size: 13px;
+      }
+    }
+
+    /* Loading Animation */
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    .loading-spinner {
+      border: 3px solid rgba(255, 255, 255, 0.1);
+      border-top: 3px solid #667eea;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 15px;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .loading-text {
+      color: #aaa;
+      font-size: 14px;
+    }
+
+    /* Animation for items */
+    .location-item {
+      animation: slideInLeft 0.6s ease-out;
+      animation-fill-mode: both;
+    }
+
+    .friend-item {
+      animation: slideInRight 0.6s ease-out;
+      animation-fill-mode: both;
+    }
+
+    /* Staggered animation delays */
+    .location-item:nth-child(1) {
+      animation-delay: 0.1s;
+    }
+
+    .location-item:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .location-item:nth-child(3) {
+      animation-delay: 0.3s;
+    }
+
+    .location-item:nth-child(4) {
+      animation-delay: 0.4s;
+    }
+
+    .location-item:nth-child(5) {
+      animation-delay: 0.5s;
+    }
+
+    .friend-item:nth-child(1) {
+      animation-delay: 0.1s;
+    }
+
+    .friend-item:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .friend-item:nth-child(3) {
+      animation-delay: 0.3s;
+    }
+
+    @keyframes slideInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-40px) scale(0.9);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+      }
+    }
+
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(40px) scale(0.9);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+      }
+    }
+
+    /* Scroll-reveal animation */
+    .scroll-item {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.6s ease-out;
+    }
+
+    .scroll-item.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Parallax scroll effect for background elements */
+    .map-sidebar::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 200%;
+      background:
+        radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(118, 75, 162, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 80%, rgba(102, 126, 234, 0.08) 0%, transparent 50%);
+      z-index: -1;
+      animation: floatBackground 20s ease-in-out infinite;
+    }
+
+    @keyframes floatBackground {
+
+      0%,
+      100% {
+        transform: translateY(0) rotate(0deg);
+      }
+
+      50% {
+        transform: translateY(-20px) rotate(0.5deg);
+      }
+    }
+
+    /* Enhanced hover states with micro-interactions */
+    .location-item,
+    .friend-item {
+      transform-origin: center;
+      will-change: transform;
+    }
+
+    .location-item:hover,
+    .friend-item:hover {
+      transform: translateY(-3px) scale(1.02);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .location-item:active,
+    .friend-item:active {
+      transform: translateY(-1px) scale(0.98);
+      transition: all 0.1s ease;
+    }
+
+    /* Ripple effect for items */
+    .location-item,
+    .friend-item {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .location-item::after,
+    .friend-item::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(102, 126, 234, 0.15);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+
+    .location-item:hover::after,
+    .friend-item:hover::after {
+      width: 300px;
+      height: 300px;
+    }
+
+    /* Floating action button for quick actions */
+    .floating-actions {
+      position: fixed;
+      bottom: 15px;
+      right: 15px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .fab {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .fab:hover {
+      transform: translateY(-3px) scale(1.1);
+      box-shadow: 0 12px 35px rgba(102, 126, 234, 0.5);
+    }
+
+    .fab:active {
+      transform: translateY(-1px) scale(1.05);
+    }
+
+    .fab::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      transform: translate(-50%, -50%);
+      transition: width 0.3s, height 0.3s;
+    }
+
+    .fab:hover::before {
+      width: 60px;
+      height: 60px;
+    }
+
+    .fab-tooltip {
+      position: absolute;
+      right: 65px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .fab:hover .fab-tooltip {
+      opacity: 1;
+    }
+
+    /* Custom Avatar Marker Styles */
+    .custom-avatar-marker {
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .custom-avatar-marker:hover {
+      transform: scale(1.1);
+      z-index: 1000;
+    }
+
+    /* Scroll to top button */
+    .scroll-to-top {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      color: white;
+      cursor: pointer;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.3s ease;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .scroll-to-top.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .scroll-to-top:hover {
+      transform: translateY(-2px) scale(1.1);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
     }
   </style>
 </head>
 
 <body>
+  <!-- Sidebar overlay for mobile -->
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
   <header class="header" id="header">
     <div class="header__top">
+      <!-- Mobile menu button -->
+      <button class="mobile-menu-btn" id="mobile-menu-btn">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
       <a class="header__logo" href="main.html">
         <img src="./images/globe.svg" alt="" width="45" height="45">
       </a>
@@ -251,7 +941,7 @@
     </div>
   </header>
   <div class="main__wrapper">
-    <div class="sidebar">
+    <div class="sidebar" id="sidebar">
       <div class="sidebar__menu">
         <a class="sidebar__menu-link" href="./main.html">
           Home
@@ -273,25 +963,62 @@
     <div class="main__info page-container">
       <div class="map-container">
         <div class="map-sidebar">
-          <h2 class="section-title">Locations</h2>
+          <h2 class="section-title">🌍 Explore London</h2>
 
           <div class="location-search">
             <input type="text" class="search-input" id="location-search" placeholder="Search locations...">
-            <button class="map-btn" id="add-location-btn">Add Location</button>
-            <button class="map-btn" id="my-location-btn">My Location</button>
+            <button class="map-btn" id="add-location-btn">📍 Add Place</button>
+            <button class="map-btn" id="my-location-btn">📱 Find Me</button>
           </div>
 
-          <h3 class="section-title">Friends on Map</h3>
+          <div class="loading" id="friends-loading">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Loading friends...</div>
+          </div>
+
+          <h3 class="section-title">🗺️ Friends Nearby</h3>
           <div class="friend-list" id="friends-on-map">
             <!-- Friends will be loaded here -->
           </div>
 
-          <h3 class="section-title">Saved Locations</h3>
+          <div class="loading" id="locations-loading">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Loading locations...</div>
+          </div>
+
+          <h3 class="section-title">📍 Popular Places</h3>
           <div class="location-list" id="saved-locations">
             <!-- Locations will be loaded here -->
           </div>
+
+          <!-- Scroll to top button -->
+          <button class="scroll-to-top" id="scroll-to-top">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M7 14L12 9L17 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round" />
+            </svg>
+          </button>
         </div>
         <div id="map"></div>
+      </div>
+
+      <!-- Floating Action Buttons -->
+      <div class="floating-actions">
+        <button class="fab" onclick="focusSearch()">
+          <span class="fab-tooltip">Quick Search</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" />
+            <path d="M21 21L16.65 16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" />
+          </svg>
+        </button>
+        <button class="fab" onclick="document.getElementById('my-location-btn').click()">
+          <span class="fab-tooltip">Find My Location</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" stroke="currentColor" stroke-width="2" />
+            <circle cx="12" cy="10" r="3" stroke="currentColor" stroke-width="2" />
+          </svg>
+        </button>
       </div>
     </div>
   </div>
@@ -300,8 +1027,16 @@
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // Initialize map
-      const map = L.map('map').setView([50.4501, 30.5234], 13);
+      // Mobile navigation variables
+      let isMobile = window.innerWidth <= 768;
+
+      // Check if mobile
+      const updateMobileState = () => {
+        isMobile = window.innerWidth <= 768;
+      };
+
+      // Initialize map (London, UK)
+      const map = L.map('map').setView([51.5074, -0.1278], 13);
 
       // Add tile layer (map style)
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -309,62 +1044,158 @@
         attribution: '© OpenStreetMap contributors'
       }).addTo(map);
 
-      // Sample data for demo locations
+      // Sample data for demo locations (London, UK)
       const locations = [
         {
           id: 'loc1',
-          name: 'Central Park',
-          address: 'Kyiv, Ukraine',
-          description: 'A beautiful park in the center of the city',
-          coordinates: [50.4501, 30.5234],
+          name: 'Hyde Park',
+          address: 'Hyde Park, London W2 2UH, UK',
+          description: 'One of London\'s largest parks, perfect for walks and outdoor activities',
+          coordinates: [51.5074, -0.1657],
           category: 'Park',
-          rating: 4.7,
-          createdBy: 'testuser',
+          rating: 4.8,
+          createdBy: 'sarah_j',
           createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24) // 1 day ago
         },
         {
           id: 'loc2',
-          name: 'Awesome Cafe',
-          address: 'Khreshchatyk St, Kyiv',
-          description: 'Great coffee and pastries',
-          coordinates: [50.4481, 30.5214],
-          category: 'Cafe',
-          rating: 4.5,
-          createdBy: 'testuser',
+          name: 'Covent Garden Market',
+          address: 'Covent Garden, London WC2E 8RF, UK',
+          description: 'Historic market with shops, restaurants and street performers',
+          coordinates: [51.5118, -0.1226],
+          category: 'Shopping',
+          rating: 4.6,
+          createdBy: 'mike_london',
           createdAt: new Date(Date.now() - 1000 * 60 * 60 * 48) // 2 days ago
         },
         {
           id: 'loc3',
-          name: 'History Museum',
-          address: 'Volodymyrska St, Kyiv',
-          description: 'Learn about local history',
-          coordinates: [50.4521, 30.5124],
+          name: 'British Museum',
+          address: 'Great Russell St, Bloomsbury, London WC1B 3DG, UK',
+          description: 'World-famous museum with artifacts from around the globe',
+          coordinates: [51.5194, -0.1270],
           category: 'Museum',
-          rating: 4.3,
-          createdBy: 'testfriend',
+          rating: 4.9,
+          createdBy: 'emma_culture',
           createdAt: new Date(Date.now() - 1000 * 60 * 60 * 72) // 3 days ago
+        },
+        {
+          id: 'loc4',
+          name: 'Tower Bridge',
+          address: 'Tower Bridge Rd, London SE1 2UP, UK',
+          description: 'Iconic Victorian bridge with stunning views of London',
+          coordinates: [51.5055, -0.0754],
+          category: 'Landmark',
+          rating: 4.7,
+          createdBy: 'tom_explorer',
+          createdAt: new Date(Date.now() - 1000 * 60 * 60 * 96) // 4 days ago
+        },
+        {
+          id: 'loc5',
+          name: 'Borough Market',
+          address: '8 Southwark St, London SE1 1TL, UK',
+          description: 'Historic food market with amazing local and international cuisine',
+          coordinates: [51.5055, -0.0910],
+          category: 'Food',
+          rating: 4.5,
+          createdBy: 'lucy_foodie',
+          createdAt: new Date(Date.now() - 1000 * 60 * 60 * 120) // 5 days ago
         }
       ];
 
-      // Sample friends data
+      // Sample friends data (London, UK)
       const friends = [
         {
           id: 'user1',
-          name: 'Alex Smith',
-          username: 'alex_smith',
-          avatar: './images/default-avatar.svg',
-          coordinates: [50.4511, 30.5254],
-          lastUpdated: new Date(Date.now() - 1000 * 60 * 5) // 5 minutes ago
+          name: 'Oliver Thompson',
+          username: 'oliver_uk',
+          avatar: 'https://ugc.same-assets.com/uvc1o-B7xGB_u9o0NvzD4gkWfbFdKAJa.jpeg',
+          coordinates: [51.5145, -0.1270], // Near Oxford Street
+          lastUpdated: new Date(Date.now() - 1000 * 60 * 5), // 5 minutes ago
+          status: 'online'
         },
         {
           id: 'user2',
-          name: 'Maria Jones',
-          username: 'maria_jones',
-          avatar: './images/default-avatar.svg',
-          coordinates: [50.4491, 30.5204],
-          lastUpdated: new Date(Date.now() - 1000 * 60 * 15) // 15 minutes ago
+          name: 'Emily Carter',
+          username: 'emily_london',
+          avatar: 'https://ugc.same-assets.com/cxVE2PfcdpMEiqQhAhznmGpVZCeJs02L.jpeg',
+          coordinates: [51.5033, -0.1195], // Near London Bridge
+          lastUpdated: new Date(Date.now() - 1000 * 60 * 15), // 15 minutes ago
+          status: 'online'
+        },
+        {
+          id: 'user3',
+          name: 'James Wilson',
+          username: 'james_explorer',
+          avatar: 'https://ugc.same-assets.com/z7Rlc5Gb8scnatAlGP59pQVxxR4n1FZj.jpeg',
+          coordinates: [55.5007, -0.1246], // Near Westminster
+          lastUpdated: new Date(Date.now() - 1000 * 60 * 45), // 45 minutes ago
+          status: 'online'
+        },
+
+        {
+          id: 'user5',
+          name: 'Daniel Garcia',
+          username: 'dan_adventurer',
+          avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face',
+          coordinates: [51.5155, -0.0922], // Near The City
+          lastUpdated: new Date(Date.now() - 1000 * 60 * 30), // 30 minutes ago
+          status: 'away'
+        },
+        {
+          id: 'user6',
+          name: 'Luna Martinez',
+          username: 'luna_artist',
+          avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face',
+          coordinates: [51.4994, -0.1270], // Near South Bank
+          lastUpdated: new Date(Date.now() - 1000 * 60 * 8), // 8 minutes ago
+          status: 'online'
         }
       ];
+
+      // Create custom avatar marker
+      const createAvatarMarker = (avatarUrl, size = 40) => {
+        const iconHtml = `
+          <div style="
+            width: ${size}px;
+            height: ${size}px;
+            border-radius: 50%;
+            border: 3px solid #667eea;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            overflow: hidden;
+            position: relative;
+          ">
+            <img src="${avatarUrl}" alt="Avatar" style="
+              width: 100%;
+              height: 100%;
+              object-fit: cover;
+              border-radius: 50%;
+            ">
+            <div style="
+              position: absolute;
+              bottom: -2px;
+              right: -2px;
+              width: 12px;
+              height: 12px;
+              background: #4ade80;
+              border: 2px solid white;
+              border-radius: 50%;
+            "></div>
+          </div>
+        `;
+
+        return L.divIcon({
+          html: iconHtml,
+          className: 'custom-avatar-marker',
+          iconSize: [size, size],
+          iconAnchor: [size / 2, size / 2],
+          popupAnchor: [0, -size / 2]
+        });
+      };
 
       // User marker options
       const userMarkerOptions = {
@@ -386,106 +1217,233 @@
         fillOpacity: 0.8
       };
 
-      // Location marker options
-      const locationIcon = L.icon({
-        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-        popupAnchor: [1, -34],
-        shadowSize: [41, 41]
-      });
+      // Location marker options by category
+      const getLocationIcon = (category) => {
+        const iconUrls = {
+          'Park': 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+          'Shopping': 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-orange.png',
+          'Museum': 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
+          'Landmark': 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-violet.png',
+          'Food': 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-yellow.png'
+        };
+
+        return L.icon({
+          iconUrl: iconUrls[category] || 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+          shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+          iconSize: [25, 41],
+          iconAnchor: [12, 41],
+          popupAnchor: [1, -34],
+          shadowSize: [41, 41]
+        });
+      };
 
       // Create a marker for the user's location
       let userMarker = null;
 
-      // Create markers for friends
-      friends.forEach(friend => {
-        const marker = L.circleMarker(friend.coordinates, friendMarkerOptions).addTo(map);
-
-        const popupContent = `
-          <div class="user-popup">
-            <img src="${friend.avatar}" alt="${friend.name}" class="user-avatar">
-            <div class="user-name">${friend.name}</div>
-            <div>@${friend.username}</div>
-            <div>Last updated: ${formatTimeAgo(friend.lastUpdated)}</div>
-            <div class="user-action">
-              <button class="map-btn" onclick="window.location.href='chats.html?userId=${friend.id}'">Message</button>
-            </div>
-          </div>
-        `;
-
-        marker.bindPopup(popupContent);
-
-        // Add to friends list in sidebar
+      // Show loading and render friends with delay for better UX
+      const renderFriends = () => {
+        const friendsLoading = document.getElementById('friends-loading');
         const friendsList = document.getElementById('friends-on-map');
-        const friendItem = document.createElement('div');
-        friendItem.className = 'friend-item';
-        friendItem.innerHTML = `
-          <img src="${friend.avatar}" alt="${friend.name}" class="friend-avatar">
-          <div class="friend-info">
-            <div class="friend-name">${friend.name}</div>
-            <div class="friend-status">● Online</div>
-          </div>
-        `;
 
-        friendItem.addEventListener('click', () => {
-          map.setView(friend.coordinates, 15);
-          marker.openPopup();
-        });
+        friendsLoading.style.display = 'block';
+        friendsList.innerHTML = '';
 
-        friendsList.appendChild(friendItem);
-      });
+        setTimeout(() => {
+          friendsLoading.style.display = 'none';
 
-      // Add location markers
-      locations.forEach(location => {
-        const marker = L.marker(location.coordinates, {icon: locationIcon}).addTo(map);
+          friends.forEach(friend => {
+            // Use avatar marker instead of circle marker
+            // Adjust size based on activity (more recent = larger)
+            const timeDiff = Date.now() - friend.lastUpdated.getTime();
+            const minutesAgo = Math.floor(timeDiff / (1000 * 60));
+            let markerSize = 45;
 
-        const popupContent = `
-          <div class="location-popup">
-            <div class="location-popup-title">${location.name}</div>
-            <div class="location-popup-address">${location.address}</div>
-            <div class="location-popup-rating">★ ${location.rating}</div>
-            <div class="location-popup-description">${location.description}</div>
-            <div class="location-popup-actions">
-              <button class="map-btn">Save</button>
-              <button class="map-btn">Share</button>
-            </div>
-          </div>
-        `;
+            if (minutesAgo <= 5) markerSize = 50; // Very recent
+            else if (minutesAgo <= 15) markerSize = 45; // Recent
+            else if (minutesAgo <= 60) markerSize = 40; // Within hour
+            else markerSize = 35; // Older
 
-        marker.bindPopup(popupContent);
+            const marker = L.marker(friend.coordinates, {
+              icon: createAvatarMarker(friend.avatar, markerSize)
+            }).addTo(map);
 
-        // Add to locations list in sidebar
+            const popupContent = `
+              <div class="user-popup">
+                <img src="${friend.avatar}" alt="${friend.name}" class="user-avatar">
+                <div class="user-name">${friend.name}</div>
+                <div>@${friend.username}</div>
+                <div>Last updated: ${formatTimeAgo(friend.lastUpdated)}</div>
+                <div class="user-action">
+                  <button class="map-btn" onclick="window.location.href='chats.html?userId=${friend.id}'">Message</button>
+                </div>
+              </div>
+            `;
+
+            marker.bindPopup(popupContent);
+
+            // Add to friends list in sidebar
+            const friendItem = document.createElement('div');
+            friendItem.className = 'friend-item';
+            const statusColor = friend.status === 'online' ? '#4ade80' : '#f59e0b';
+            const statusText = friend.status === 'online' ? 'Online' : 'Away';
+
+            friendItem.innerHTML = `
+              <img src="${friend.avatar}" alt="${friend.name}" class="friend-avatar">
+              <div class="friend-info">
+                <div class="friend-name">${friend.name}</div>
+                <div class="friend-status" style="color: ${statusColor}">● ${statusText}</div>
+              </div>
+            `;
+
+            friendItem.addEventListener('click', () => {
+              map.setView(friend.coordinates, 15);
+              marker.openPopup();
+            });
+
+            friendsList.appendChild(friendItem);
+          });
+        }, 800);
+      };
+
+      // Show loading and render locations with delay for better UX
+      const renderLocations = () => {
+        const locationsLoading = document.getElementById('locations-loading');
         const locationsList = document.getElementById('saved-locations');
-        const locationItem = document.createElement('div');
-        locationItem.className = 'location-item';
-        locationItem.innerHTML = `
-          <div class="location-name">${location.name}</div>
-          <div class="location-address">${location.address}</div>
-          <div>
-            <span class="location-category">${location.category}</span>
-          </div>
-          <div class="location-meta">
-            <span>Added by ${location.createdBy}</span>
-            <span>${formatTimeAgo(location.createdAt)}</span>
-          </div>
-        `;
 
-        locationItem.addEventListener('click', () => {
-          map.setView(location.coordinates, 16);
-          marker.openPopup();
+        locationsLoading.style.display = 'block';
+        locationsList.innerHTML = '';
+
+        setTimeout(() => {
+          locationsLoading.style.display = 'none';
+
+          locations.forEach(location => {
+            const marker = L.marker(location.coordinates, { icon: getLocationIcon(location.category) }).addTo(map);
+
+            const popupContent = `
+              <div class="location-popup">
+                <div class="location-popup-title">${location.name}</div>
+                <div class="location-popup-address">${location.address}</div>
+                <div class="location-popup-rating">★ ${location.rating}</div>
+                <div class="location-popup-description">${location.description}</div>
+                <div class="location-popup-actions">
+                  <button class="map-btn">Save</button>
+                  <button class="map-btn">Share</button>
+                </div>
+              </div>
+            `;
+
+            marker.bindPopup(popupContent);
+
+            // Add to locations list in sidebar
+            const locationItem = document.createElement('div');
+            locationItem.className = 'location-item';
+            locationItem.innerHTML = `
+              <div class="location-name">${location.name}</div>
+              <div class="location-address">${location.address}</div>
+              <div>
+                <span class="location-category ${location.category.toLowerCase()}">${location.category}</span>
+              </div>
+              <div class="location-meta">
+                <span>Added by ${location.createdBy}</span>
+                <span>${formatTimeAgo(location.createdAt)}</span>
+              </div>
+            `;
+
+            locationItem.addEventListener('click', () => {
+              map.setView(location.coordinates, 16);
+              marker.openPopup();
+            });
+
+            locationsList.appendChild(locationItem);
+          });
+        }, 1200);
+      };
+
+      // Initialize friends and locations rendering
+      renderFriends();
+      renderLocations();
+
+      // Scroll to top functionality for sidebar
+      const scrollToTopBtn = document.getElementById('scroll-to-top');
+      const sidebar = document.querySelector('.map-sidebar');
+
+      if (scrollToTopBtn && sidebar) {
+        sidebar.addEventListener('scroll', () => {
+          if (sidebar.scrollTop > 300) {
+            scrollToTopBtn.classList.add('visible');
+          } else {
+            scrollToTopBtn.classList.remove('visible');
+          }
         });
 
-        locationsList.appendChild(locationItem);
-      });
+        scrollToTopBtn.addEventListener('click', () => {
+          sidebar.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+          });
+        });
+      }
+
+      // Scroll reveal functionality
+      const initScrollReveal = () => {
+        const sidebar = document.querySelector('.map-sidebar');
+        const revealItems = sidebar.querySelectorAll('.location-item, .friend-item');
+
+        const revealOnScroll = () => {
+          revealItems.forEach(item => {
+            const itemTop = item.getBoundingClientRect().top;
+            const itemBottom = item.getBoundingClientRect().bottom;
+            const sidebarHeight = sidebar.clientHeight;
+
+            // Reveal when item is in the middle 60% of the sidebar viewport
+            if (itemTop < sidebarHeight * 0.8 && itemBottom > sidebarHeight * 0.2) {
+              item.classList.add('revealed');
+            }
+          });
+        };
+
+        sidebar.addEventListener('scroll', revealOnScroll);
+        revealOnScroll(); // Initial check
+      };
+
+      // Smooth scroll to item function
+      const scrollToItem = (element) => {
+        const sidebar = document.querySelector('.map-sidebar');
+        const elementTop = element.offsetTop;
+        const sidebarTop = sidebar.scrollTop;
+        const sidebarHeight = sidebar.clientHeight;
+        const elementHeight = element.clientHeight;
+
+        const targetScroll = elementTop - (sidebarHeight / 2) + (elementHeight / 2);
+
+        sidebar.scrollTo({
+          top: targetScroll,
+          behavior: 'smooth'
+        });
+      };
+
+      // Enhanced interaction for better UX
+      setTimeout(() => {
+        initScrollReveal();
+
+        // Add smooth focus effects
+        document.querySelectorAll('.location-item, .friend-item').forEach(item => {
+          item.addEventListener('mouseenter', function () {
+            this.style.zIndex = '10';
+          });
+
+          item.addEventListener('mouseleave', function () {
+            this.style.zIndex = '1';
+          });
+        });
+      }, 1500);
 
       // Find my location button
       document.getElementById('my-location-btn').addEventListener('click', () => {
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(
             (position) => {
-              const {latitude, longitude} = position.coords;
+              const { latitude, longitude } = position.coords;
 
               // Set the view to the user's location
               map.setView([latitude, longitude], 15);
@@ -550,6 +1508,48 @@
         return `${diffDays} ${diffDays === 1 ? 'day' : 'days'} ago`;
       } else {
         return date.toLocaleDateString();
+      }
+    }
+
+    // Mobile menu functionality
+    document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebar-overlay');
+      sidebar.classList.toggle('active');
+      overlay.classList.toggle('active');
+    });
+
+    // Sidebar overlay click
+    document.getElementById('sidebar-overlay').addEventListener('click', () => {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebar-overlay');
+      sidebar.classList.remove('active');
+      overlay.classList.remove('active');
+    });
+
+    // Window resize handler
+    window.addEventListener('resize', () => {
+      const isMobileNow = window.innerWidth <= 768;
+      if (!isMobileNow) {
+        // Reset mobile classes when switching to desktop
+        document.getElementById('sidebar').classList.remove('active');
+        document.getElementById('sidebar-overlay').classList.remove('active');
+      }
+
+      // Resize map container when switching orientations
+      setTimeout(() => {
+        if (typeof map !== 'undefined') {
+          map.invalidateSize();
+        }
+      }, 100);
+    });
+
+    // Quick focus search function for FAB button
+    function focusSearch() {
+      const searchInput = document.getElementById('location-search');
+      if (searchInput) {
+        searchInput.focus();
+        searchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     }
   </script>

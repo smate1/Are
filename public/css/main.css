@@ -13,7 +13,7 @@ body {
 	font-style: normal;
 	color: #fff;
 	font-size: 16px;
-	background: #0a0a0a;
+	background: linear-gradient(135deg, #0d0418 0%, #1a1a2e 100%);
 	max-height: 100vh;
 }
 
@@ -23,7 +23,7 @@ body {
 } */
 .header {
 	border-bottom: 1px solid #fff;
-	background: #0a0a0a;
+	background: linear-gradient(135deg, #0d0418 0%, #1a1a2e 100%);
 	position: fixed;
 	width: 100%;
 	z-index: 100;
@@ -187,21 +187,38 @@ header.dark-mode {
 
 .main__title {
 	margin-bottom: 30px;
+	margin-top: 25px;
 	text-align: center;
 	font-size: 55px;
 	font-weight: 500;
 }
 
 .main__post-img {
-	border-radius: 10px;
-	margin-bottom: 20px;
 	object-fit: cover;
 }
 
+.main__post-images{
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	justify-items: center;
+}
 .main__post-text {
 	font-size: 18px;
 	font-weight: 300;
 	font-family: 'Kanit';
+	margin-top: 20px;
+}
+.main__post-images img:nth-child(1) {
+	border-radius: 10px 0px 0px 0px;
+}
+.main__post-images img:nth-child(2) {
+	border-radius: 0px 10px 0px 0px;
+}
+.main__post-images img:nth-child(3) {
+	border-radius: 0px 0px 0px 10px;
+}
+.main__post-images img:nth-child(4) {
+	border-radius: 0px 0px 10px 0px;
 }
 
 .main__post + .main__post {

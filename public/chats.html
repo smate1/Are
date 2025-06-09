@@ -18,7 +18,7 @@
   <link rel="stylesheet" href="./css/main.css">
   <style>
     .chat-container {
-      background-color: #121212;
+      background: linear-gradient(135deg, #0d0418 0%, #1a1a2e 100%);
       height: calc(100vh - 96px);
       width: 100%;
       display: flex;
@@ -26,26 +26,46 @@
 
     .chat-list {
       width: 300px;
-      background-color: #1a1a1a;
-      border-right: 1px solid #333;
-      overflow-y: auto;
+      background: rgba(255, 255, 255, 0.05);
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      overflow: hidden;
     }
 
     .chat-user {
       display: flex;
       align-items: center;
       padding: 15px;
-      border-bottom: 1px solid #333;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       cursor: pointer;
-      transition: background-color 0.2s;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .chat-user::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+      transition: left 0.5s;
+    }
+
+    .chat-user:hover::before {
+      left: 100%;
     }
 
     .chat-user:hover {
-      background-color: #252525;
+      background: rgba(255, 255, 255, 0.08);
+      transform: translateX(5px);
     }
 
     .chat-user.active {
-      background-color: #1e3a5c;
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
+      border-left: 3px solid #667eea;
     }
 
     .chat-avatar {
@@ -54,6 +74,65 @@
       border-radius: 50%;
       margin-right: 15px;
       object-fit: cover;
+      border: 2px solid #667eea;
+      transition: all 0.3s ease;
+    }
+
+    .chat-avatar:hover {
+      border-color: #764ba2;
+      transform: scale(1.1);
+    }
+
+    /* Online/Offline Status */
+    .avatar-container {
+      position: relative;
+      display: inline-block;
+    }
+
+    .status-indicator {
+      position: absolute;
+      bottom: 2px;
+      right: 18px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.9);
+      transition: all 0.3s ease;
+    }
+
+    .status-indicator.online {
+      background: linear-gradient(135deg, #4ade80, #22c55e);
+      box-shadow: 0 0 10px rgba(34, 197, 94, 0.5);
+      animation: pulse-online 2s ease-in-out infinite;
+    }
+
+    .status-indicator.offline {
+      background: linear-gradient(135deg, #6b7280, #4b5563);
+      box-shadow: 0 0 5px rgba(107, 114, 128, 0.3);
+    }
+
+    @keyframes pulse-online {
+
+      0%,
+      100% {
+        box-shadow: 0 0 10px rgba(34, 197, 94, 0.5);
+      }
+
+      50% {
+        box-shadow: 0 0 20px rgba(34, 197, 94, 0.8);
+      }
+    }
+
+    .last-seen {
+      font-size: 11px;
+      color: #888;
+      margin-top: 2px;
+      font-style: italic;
+    }
+
+    .last-seen.online {
+      color: #4ade80;
+      font-weight: 500;
     }
 
     .chat-info {
@@ -61,14 +140,15 @@
     }
 
     .chat-name {
-      font-weight: 500;
+      font-weight: 600;
       font-size: 16px;
       margin-bottom: 5px;
+      color: #fff;
     }
 
     .chat-last-message {
       font-size: 13px;
-      color: #aaa;
+      color: #ccc;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -84,19 +164,26 @@
       flex: 1;
       display: flex;
       flex-direction: column;
+      background: rgba(255, 255, 255, 0.02);
     }
 
     .chat-header {
       display: flex;
       align-items: center;
       padding: 15px;
-      border-bottom: 1px solid #333;
-      background-color: #1a1a1a;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
     }
 
     .chat-title {
       font-size: 18px;
-      font-weight: 500;
+      font-weight: 600;
+      color: #fff;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
     .chat-messages {
@@ -110,19 +197,37 @@
     .message {
       max-width: 75%;
       margin-bottom: 10px;
-      padding: 10px 15px;
-      border-radius: 18px;
+      padding: 12px 18px;
+      border-radius: 20px;
       position: relative;
+      backdrop-filter: blur(10px);
+      animation: messageSlideIn 0.3s ease-out;
+    }
+
+    @keyframes messageSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .message.sent {
       align-self: flex-end;
-      background-color: #0b93f6;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
     }
 
     .message.received {
       align-self: flex-start;
-      background-color: #333;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #fff;
     }
 
     .message-time {
@@ -135,31 +240,50 @@
     .chat-input-container {
       display: flex;
       padding: 15px;
-      background-color: #1a1a1a;
-      border-top: 1px solid #333;
+      background: rgba(255, 255, 255, 0.05);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
     }
 
     .chat-input {
       flex: 1;
-      background-color: #2a2a2a;
-      border: none;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       border-radius: 24px;
-      padding: 10px 20px;
+      padding: 12px 20px;
       color: #fff;
       font-size: 14px;
+      transition: all 0.3s ease;
+    }
+
+    .chat-input:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .chat-input::placeholder {
+      color: #aaa;
     }
 
     .send-button {
-      background-color: #0b93f6;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       border: none;
       border-radius: 50%;
-      width: 40px;
-      height: 40px;
+      width: 45px;
+      height: 45px;
       margin-left: 10px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .send-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
     }
 
     .no-conversation {
@@ -168,7 +292,7 @@
       align-items: center;
       justify-content: center;
       height: 100%;
-      color: #777;
+      color: #aaa;
       text-align: center;
       padding: 20px;
     }
@@ -177,14 +301,321 @@
       width: 80px;
       height: 80px;
       margin-bottom: 20px;
-      opacity: 0.5;
+      opacity: 0.3;
+      filter: drop-shadow(0 0 10px rgba(102, 126, 234, 0.3));
+    }
+
+    .no-conversation h3 {
+      color: #fff;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Mobile Navigation Buttons */
+    .mobile-menu-btn {
+      display: none;
+      flex-direction: column;
+      justify-content: space-around;
+      width: 30px;
+      height: 30px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .mobile-menu-btn span {
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 2px;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+    }
+
+    .mobile-back-btn {
+      display: none;
+      background: transparent;
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      padding: 5px;
+      margin-right: 10px;
+      border-radius: 5px;
+      transition: background-color 0.2s;
+    }
+
+    .mobile-back-btn:hover {
+      background: rgba(102, 126, 234, 0.2);
+    }
+
+    /* Mobile Sidebar Overlay */
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+    }
+
+    /* Tablet Styles */
+    @media (max-width: 1024px) {
+      .header__form {
+        width: auto;
+      }
+
+      .header__input {
+        width: 350px;
+      }
+
+      .sidebar {
+        min-width: 280px;
+      }
+
+      .page-container {
+        width: calc(100% - 280px);
+      }
+
+      .chat-list {
+        width: 260px;
+      }
+    }
+
+    /* Mobile Styles */
+    @media (max-width: 768px) {
+      .header {
+        padding: 0 15px;
+      }
+
+      .header__top {
+        padding: 15px 0;
+      }
+
+      .mobile-menu-btn {
+        display: flex;
+      }
+
+      .header__form {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: #0a0a0a;
+        border-top: 1px solid #333;
+        padding: 15px;
+        display: none;
+      }
+
+      .header__form.active {
+        display: block;
+      }
+
+      .header__input {
+        width: 100%;
+      }
+
+      .sidebar {
+        position: fixed;
+        left: -350px;
+        transition: left 0.3s ease;
+        z-index: 1000;
+        background: linear-gradient(135deg, #0d0418 0%, #1a1a2e 100%);
+        min-width: 350px;
+        backdrop-filter: blur(20px);
+      }
+
+      .sidebar.active {
+        left: 0;
+      }
+
+      .sidebar-overlay.active {
+        display: block;
+      }
+
+      .page-container {
+        width: 100%;
+        left: 0;
+      }
+
+      .chat-container {
+        height: calc(100vh - 76px);
+      }
+
+      .chat-list {
+        width: 100%;
+        position: absolute;
+        left: 0;
+        transition: left 0.3s ease;
+        z-index: 10;
+      }
+
+      .chat-list.hidden-mobile {
+        left: -100%;
+      }
+
+      .chat-main {
+        width: 100%;
+        position: absolute;
+        left: 100%;
+        transition: left 0.3s ease;
+        z-index: 5;
+      }
+
+      .chat-main.active-mobile {
+        left: 0;
+      }
+
+      .mobile-back-btn {
+        display: block;
+      }
+
+      .chat-user {
+        padding: 20px 15px;
+      }
+
+      .chat-avatar {
+        width: 50px;
+        height: 50px;
+      }
+
+      .chat-name {
+        font-size: 18px;
+      }
+
+      .chat-last-message {
+        font-size: 14px;
+        max-width: none;
+      }
+
+      .message {
+        max-width: 85%;
+      }
+
+      .chat-input-container {
+        padding: 10px 15px;
+      }
+
+      .chat-input {
+        padding: 12px 18px;
+        font-size: 16px;
+      }
+
+      .send-button {
+        width: 45px;
+        height: 45px;
+      }
+    }
+
+    /* Small Mobile Styles */
+    @media (max-width: 480px) {
+      .header__logo img {
+        width: 35px;
+        height: 35px;
+      }
+
+      .avatar {
+        width: 40px;
+        height: 40px;
+      }
+
+      .chat-avatar {
+        width: 45px;
+        height: 45px;
+      }
+
+      .chat-user {
+        padding: 15px 10px;
+      }
+
+      .chat-name {
+        font-size: 16px;
+      }
+
+      .chat-last-message {
+        font-size: 13px;
+      }
+
+      .message {
+        max-width: 90%;
+        padding: 8px 12px;
+      }
+
+      .chat-input {
+        padding: 10px 15px;
+        font-size: 16px;
+      }
+
+      .send-button {
+        width: 40px;
+        height: 40px;
+      }
+    }
+
+    /* Loading Animation */
+    .chat-list-loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 200px;
+    }
+
+    .loading-spinner {
+      border: 3px solid rgba(255, 255, 255, 0.1);
+      border-top: 3px solid #667eea;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Card animations */
+    .chat-user {
+      animation: slideInLeft 0.5s ease-out;
+    }
+
+    @keyframes slideInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
     }
   </style>
 </head>
 
 <body>
+  <!-- Sidebar overlay for mobile -->
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
   <header class="header" id="header">
     <div class="header__top">
+      <!-- Mobile menu button -->
+      <button class="mobile-menu-btn" id="mobile-menu-btn">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
       <a class="header__logo" href="main.html">
         <img src="./images/globe.svg" alt="" width="45" height="45">
       </a>
@@ -209,7 +640,7 @@
     </div>
   </header>
   <div class="main__wrapper">
-    <div class="sidebar">
+    <div class="sidebar" id="sidebar">
       <div class="sidebar__menu">
         <a class="sidebar__menu-link" href="./main.html">
           Home
@@ -241,8 +672,22 @@
           </div>
           <div id="active-chat" style="display: none; height: 100%; display: flex; flex-direction: column;">
             <div class="chat-header">
-              <img src="./images/default-avatar.svg" id="chat-avatar" alt="User" class="chat-avatar">
-              <div class="chat-title" id="chat-name">Username</div>
+              <!-- Mobile back button -->
+              <button class="mobile-back-btn" id="mobile-back-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M19 12H5"></path>
+                  <path d="M12 19l-7-7 7-7"></path>
+                </svg>
+              </button>
+              <div class="avatar-container">
+                <img src="./images/default-avatar.svg" id="chat-avatar" alt="User" class="chat-avatar">
+                <div class="status-indicator" id="chat-status-indicator"></div>
+              </div>
+              <div>
+                <div class="chat-title" id="chat-name">Username</div>
+                <div class="last-seen" id="chat-last-seen"></div>
+              </div>
             </div>
             <div class="chat-messages" id="messages-container">
               <!-- Chat messages will be added here -->
@@ -250,7 +695,8 @@
             <div class="chat-input-container">
               <input type="text" id="message-input" class="chat-input" placeholder="Type a message...">
               <button class="send-button" id="send-button">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M22 2L11 13"></path>
                   <path d="M22 2L15 22L11 13L2 9L22 2Z"></path>
                 </svg>
@@ -264,6 +710,9 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      // Mobile navigation variables
+      let isMobile = window.innerWidth <= 768;
+
       // Sample data for conversations
       const conversations = [
         {
@@ -271,7 +720,9 @@
           user: {
             id: 'user1',
             name: 'Alex Smith',
-            avatar: './images/default-avatar.svg'
+            avatar: './images/avatars/alex.jpg',
+            isOnline: true,
+            lastSeen: new Date()
           },
           lastMessage: {
             text: 'Hey, how are you doing?',
@@ -284,7 +735,9 @@
           user: {
             id: 'user2',
             name: 'Maria Jones',
-            avatar: './images/default-avatar.svg'
+            avatar: './images/avatars/maria.jpg',
+            isOnline: false,
+            lastSeen: new Date(Date.now() - 1000 * 60 * 30) // 30 хвилин тому
           },
           lastMessage: {
             text: 'Did you see that new place in the city center?',
@@ -297,14 +750,17 @@
           user: {
             id: 'user3',
             name: 'John Williams',
-            avatar: './images/default-avatar.svg'
+            avatar: './images/avatars/john.jpg',
+            isOnline: false,
+            lastSeen: new Date(Date.now() - 1000 * 60 * 60 * 3) // 3 години тому
           },
           lastMessage: {
             text: 'I\'ll be in your area tomorrow, want to meet up?',
             timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24),
             isRead: true
           }
-        }
+        },
+
       ];
 
       // Sample messages for conversation 1
@@ -380,6 +836,26 @@
       // Current conversation state
       let activeConversationId = null;
 
+      // Check if mobile
+      const updateMobileState = () => {
+        isMobile = window.innerWidth <= 768;
+      };
+
+      // Mobile navigation functions
+      const showChatList = () => {
+        if (isMobile) {
+          document.getElementById('conversations-list').classList.remove('hidden-mobile');
+          document.getElementById('chat-main').classList.remove('active-mobile');
+        }
+      };
+
+      const showChat = () => {
+        if (isMobile) {
+          document.getElementById('conversations-list').classList.add('hidden-mobile');
+          document.getElementById('chat-main').classList.add('active-mobile');
+        }
+      };
+
       // Render conversation list
       const renderConversationList = () => {
         const listElement = document.getElementById('conversations-list');
@@ -387,15 +863,20 @@
 
         conversations.forEach(conversation => {
           const lastMessageTime = formatTime(conversation.lastMessage.timestamp);
+          const lastSeenText = formatLastSeen(conversation.user.lastSeen, conversation.user.isOnline);
           const isActive = activeConversationId === conversation.id;
 
           const conversationElement = document.createElement('div');
           conversationElement.className = `chat-user ${isActive ? 'active' : ''}`;
           conversationElement.innerHTML = `
-            <img src="${conversation.user.avatar}" alt="${conversation.user.name}" class="chat-avatar">
+            <div class="avatar-container">
+              <img src="${conversation.user.avatar}" alt="${conversation.user.name}" class="chat-avatar">
+              <div class="status-indicator ${conversation.user.isOnline ? 'online' : 'offline'}"></div>
+            </div>
             <div class="chat-info">
               <div class="chat-name">${conversation.user.name}</div>
               <div class="chat-last-message">${conversation.lastMessage.text}</div>
+              <div class="last-seen ${conversation.user.isOnline ? 'online' : ''}">${lastSeenText}</div>
             </div>
             <div class="chat-time">${lastMessageTime}</div>
           `;
@@ -404,6 +885,9 @@
             activeConversationId = conversation.id;
             renderConversationList();
             renderConversation(conversation.id);
+            if (isMobile) {
+              showChat();
+            }
           });
 
           listElement.appendChild(conversationElement);
@@ -422,6 +906,13 @@
         // Set conversation header
         document.getElementById('chat-avatar').src = conversation.user.avatar;
         document.getElementById('chat-name').textContent = conversation.user.name;
+
+        // Set status indicator and last seen
+        const statusIndicator = document.getElementById('chat-status-indicator');
+        const lastSeenElement = document.getElementById('chat-last-seen');
+        statusIndicator.className = `status-indicator ${conversation.user.isOnline ? 'online' : 'offline'}`;
+        lastSeenElement.textContent = formatLastSeen(conversation.user.lastSeen, conversation.user.isOnline);
+        lastSeenElement.className = `last-seen ${conversation.user.isOnline ? 'online' : ''}`;
 
         // Render messages
         const messagesContainer = document.getElementById('messages-container');
@@ -464,8 +955,100 @@
         }
       };
 
+      // Format last seen time
+      const formatLastSeen = (date, isOnline) => {
+        if (isOnline) {
+          return 'online';
+        }
+
+        const now = new Date();
+        const diffMs = now - date;
+        const diffMinutes = Math.floor(diffMs / (1000 * 60));
+        const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+        if (diffMinutes < 1) {
+          return 'just now';
+        } else if (diffMinutes < 60) {
+          return `${diffMinutes}m ago`;
+        } else if (diffHours < 24) {
+          return `${diffHours}h ago`;
+        } else if (diffDays < 7) {
+          return `${diffDays}d ago`;
+        } else {
+          return `last seen ${date.toLocaleDateString('en-US')}`;
+        }
+      };
+
+      // Mobile menu functionality
+      document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+        sidebar.classList.toggle('active');
+        overlay.classList.toggle('active');
+      });
+
+      // Mobile back button functionality
+      document.getElementById('mobile-back-btn').addEventListener('click', () => {
+        showChatList();
+      });
+
+      // Sidebar overlay click
+      document.getElementById('sidebar-overlay').addEventListener('click', () => {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+        sidebar.classList.remove('active');
+        overlay.classList.remove('active');
+      });
+
+      // Window resize handler
+      window.addEventListener('resize', () => {
+        updateMobileState();
+        if (!isMobile) {
+          // Reset mobile classes when switching to desktop
+          document.getElementById('conversations-list').classList.remove('hidden-mobile');
+          document.getElementById('chat-main').classList.remove('active-mobile');
+          document.getElementById('sidebar').classList.remove('active');
+          document.getElementById('sidebar-overlay').classList.remove('active');
+        }
+      });
+
+      // Simulate status updates (for demo purposes)
+      const simulateStatusUpdates = () => {
+        setInterval(() => {
+          conversations.forEach(conversation => {
+            // Randomly change online status every 30 seconds
+            if (Math.random() < 0.3) {
+              conversation.user.isOnline = !conversation.user.isOnline;
+              if (!conversation.user.isOnline) {
+                conversation.user.lastSeen = new Date();
+              }
+            }
+          });
+
+          // Re-render if conversations list is visible
+          renderConversationList();
+
+          // Update active chat status if needed
+          if (activeConversationId) {
+            const activeConversation = conversations.find(c => c.id === activeConversationId);
+            if (activeConversation) {
+              const statusIndicator = document.getElementById('chat-status-indicator');
+              const lastSeenElement = document.getElementById('chat-last-seen');
+              if (statusIndicator && lastSeenElement) {
+                statusIndicator.className = `status-indicator ${activeConversation.user.isOnline ? 'online' : 'offline'}`;
+                lastSeenElement.textContent = formatLastSeen(activeConversation.user.lastSeen, activeConversation.user.isOnline);
+                lastSeenElement.className = `last-seen ${activeConversation.user.isOnline ? 'online' : ''}`;
+              }
+            }
+          }
+        }, 30000); // Update every 30 seconds
+      };
+
       // Initialize
+      updateMobileState();
       renderConversationList();
+      simulateStatusUpdates();
 
       // Add event listener to send button
       document.getElementById('send-button').addEventListener('click', () => {
