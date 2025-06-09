@@ -31,7 +31,6 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
     }
 
     .social-title {
@@ -372,7 +371,18 @@
         transform: rotate(360deg);
       }
     }
-
+    @media (max-width: 968px) {
+      .social-title{
+        font-size: 20px;
+      }
+      .create-post-btn{
+        padding: 10px 24px;
+        font-size: 12px;
+      }
+      .social-container{
+        padding-top: 50px;
+      }
+    }
     /* Mobile Styles */
     @media (max-width: 768px) {
       .header {
@@ -421,7 +431,6 @@
         flex-direction: column;
         gap: 15px;
         text-align: center;
-        margin-bottom: 20px;
       }
 
       .social-title {
